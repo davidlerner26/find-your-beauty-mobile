@@ -1,6 +1,6 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import * as Clipboard from 'expo-clipboard';
-import { Link, useLocalSearchParams } from 'expo-router';
+import { Link, useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
 import {
   Linking,
@@ -12,6 +12,7 @@ import {
   View,
 } from 'react-native';
 import { Image } from 'expo-image';
+import { Button } from '../../../components/button';
 import { HeartButton } from '../../../components/heart-button';
 import { PhotoPager } from '../../../components/photo-pager';
 import { Rating } from '../../../components/rating';
@@ -30,6 +31,7 @@ import { registerView } from '../../../services/profile-views';
 import { users } from '../../../services/users';
 import { fixed } from '../../../theme/colors';
 import { catalogLabel } from '../../../utils/catalog';
+import { formatPrice, roundMoney } from '../../../utils/money';
 import { workingHours } from '../../../utils/hours';
 import { instagramUrl } from '../../../utils/instagram';
 import { viewsLabel } from '../../../utils/labels';
@@ -59,9 +61,12 @@ export default function ProfessionalPage() {
 function Details({ artist }: { artist: Professional }) {
   const auth = useAuth();
   const toast = useToast();
+  const router = useRouter();
   const { width } = useWindowDimensions();
   const [aboutOpen, setAboutOpen] = useState(false);
   const [chosen, setChosen] = useState<ServiceCategory[]>([]);
+  // The services the client picked to book
+  const [picked, setPicked] = useState<string[]>([]);
   // What is missing on the profile of the client for booking (empty: nothing)
   const [missing, setMissing] = useState<string[]>([]);
 
@@ -98,6 +103,13 @@ function Details({ artist }: { artist: Professional }) {
   const photos = artist.gallery?.length ? artist.gallery : [artist.image];
   const hours = workingHours(artist.availability ?? DEFAULT_AVAILABILITY);
   const services = artist.services.filter((service) => active.includes(service.category));
+  const selected = artist.services.filter((service) => picked.includes(service.id));
+  const total = roundMoney(selected.reduce((sum, service) => sum + service.price, 0));
+  const togglePicked = (id: string) =>
+    setPicked((current) =>
+      current.includes(id) ? current.filter((x) => x !== id) : [...current, id],
+    );
+  const canBook = isClient && !missing.length;
   const about = aboutOpen ? artist.about : artist.about.slice(0, 1);
 
   const copyAddress = async () => {
@@ -142,6 +154,16 @@ function Details({ artist }: { artist: Professional }) {
               </Text>
               <MaterialIcons name="content-copy" size={18} color={fixed.gray} />
             </Pressable>
+          ) : null}
+          {auth.role !== 'professional' ? (
+            <Link
+              href={`/mensagens/${artist.id}` as never}
+              accessibilityRole="link"
+              accessibilityLabel={t('Conversar com {{name}}', { name: artist.name })}
+              style={styles.chat}
+            >
+              {t('Conversar')}
+            </Link>
           ) : null}
           {artist.serviceMode === 'both' ? (
             <Text style={styles.muted}>{t('Também atende a domicílio')}</Text>
@@ -229,7 +251,12 @@ function Details({ artist }: { artist: Professional }) {
                 </View>
               ) : null}
               {services.map((service) => (
-                <ServiceCard key={service.id} service={service} />
+                <ServiceCard
+                  key={service.id}
+                  service={service}
+                  selected={picked.includes(service.id)}
+                  onToggle={canBook || !auth.user ? () => togglePicked(service.id) : undefined}
+                />
               ))}
             </View>
           ) : null}
@@ -278,6 +305,28 @@ function Details({ artist }: { artist: Professional }) {
           ) : null}
         </View>
       </ScrollView>
+      {selected.length ? (
+        <View style={styles.bar}>
+          <View>
+            <Text style={styles.bold}>
+              {t('Total')} ({selected.length} {selected.length === 1 ? t('serviço') : t('serviços')}
+              )
+            </Text>
+            <Text style={styles.barPrice}>{formatPrice(total)}</Text>
+          </View>
+          <View style={{ minWidth: 140 }}>
+            <Button
+              label={t('Agendar')}
+              onPress={() =>
+                router.push({
+                  pathname: '/profissionais/[id]/agendar',
+                  params: { id: artist.id, servicos: picked.join(',') },
+                } as never)
+              }
+            />
+          </View>
+        </View>
+      ) : null}
     </Screen>
   );
 }
@@ -324,5 +373,17 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     fontWeight: '600',
   },
+  bar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 12,
+    padding: 12,
+    borderTopWidth: 1,
+    borderTopColor: fixed.borderSoft,
+    backgroundColor: fixed.white,
+  },
+  barPrice: { fontSize: 20, fontWeight: '700', color: fixed.ink },
+  chat: { color: fixed.accentText, fontWeight: '600', paddingVertical: 4 },
   notFound: { color: fixed.gray, textAlign: 'center', marginTop: 40 },
 });

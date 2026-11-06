@@ -59,3 +59,17 @@ export const cleanCode = (text: string) => text.replace(/\D/g, '').slice(0, CODE
 // "01:05" for the time until another code can be asked for
 export const clock = (seconds: number) =>
   `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
+
+export type ProfileValues = Pick<SignupValues, 'firstName' | 'lastName' | 'phone' | 'cpf'>;
+
+// The data of the client the profile edits (the e-mail and the password are not edited there)
+export const validateProfile = (values: ProfileValues): Errors<keyof ProfileValues> => {
+  const { email, password, ...rest } = validateSignup({
+    ...values,
+    email: 'x@x.xx',
+    password: 'a1!aaa',
+  });
+  void email;
+  void password;
+  return rest;
+};

@@ -3,6 +3,7 @@ import {
   clock,
   hasErrors,
   validateLogin,
+  validateProfile,
   validateReset,
   validateSignup,
 } from './auth-forms';
@@ -75,5 +76,25 @@ describe('code', () => {
   it('writes the wait as mm:ss', () => {
     expect(clock(60)).toBe('01:00');
     expect(clock(5)).toBe('00:05');
+  });
+});
+
+describe('validateProfile', () => {
+  const profile = {
+    firstName: 'Ana',
+    lastName: 'Silva',
+    phone: '(21) 99747-2878',
+    cpf: '529.982.247-25',
+  };
+
+  it('accepts a complete profile, without asking for the e-mail or the password', () => {
+    expect(validateProfile(profile)).toEqual({});
+  });
+
+  it('says which fields are wrong', () => {
+    expect(Object.keys(validateProfile({ ...profile, firstName: '', cpf: '1' }))).toEqual([
+      'firstName',
+      'cpf',
+    ]);
   });
 });
