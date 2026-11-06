@@ -1,10 +1,11 @@
 import { MaterialIcons } from '@expo/vector-icons';
-import { Tabs } from 'expo-router';
+import { Redirect, Tabs } from 'expo-router';
 import { useAuth } from '../../contexts/auth';
 import { useMessages } from '../../contexts/messages';
 import { useNotifications } from '../../contexts/notifications';
 import { t } from '../../i18n';
 import { fixed } from '../../theme/colors';
+import { PATHS } from '../../utils/paths';
 
 type IconName = keyof typeof MaterialIcons.glyphMap;
 // The icon of a tab: a function that draws it with the color and the size the bar gives
@@ -19,6 +20,10 @@ export default function TabsLayout() {
   const { unreadTotal: messages } = useMessages();
   const { unreadTotal: notifications } = useNotifications();
   const news = auth.user ? messages + notifications : 0;
+
+  // Professionals have their own area (and an unfinished sign up goes back to its second step)
+  if (auth.signupIncomplete) return <Redirect href={PATHS.proSignup as never} />;
+  if (auth.role === 'professional') return <Redirect href={PATHS.proHome as never} />;
 
   return (
     <Tabs

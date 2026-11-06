@@ -6,6 +6,8 @@ const dev = {
   siteUrl: 'https://dev.findyourbeauty.com.br',
   // Features that are only on in the test environment for now (production has them off, like the site)
   features: { featuredProfessionals: true, checkout: true },
+  // Instagram API with Instagram Login: the same Meta app as the site (the id is public)
+  instagramAppId: '1138530759119798',
   firebase: {
     apiKey: 'AIzaSyBwamplQdQ7d2BYMuD56DfVigkO1fuSpEw',
     authDomain: 'find-your-beauty-dev.firebaseapp.com',
@@ -24,6 +26,7 @@ export const environment =
         name: 'prod' as const,
         siteUrl: env.EXPO_PUBLIC_SITE_URL ?? 'https://findyourbeauty.com.br',
         features: { featuredProfessionals: false, checkout: false },
+        instagramAppId: env.EXPO_PUBLIC_INSTAGRAM_APP_ID ?? '',
         firebase: {
           apiKey: env.EXPO_PUBLIC_FIREBASE_API_KEY ?? '',
           authDomain: env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN ?? '',

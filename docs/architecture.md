@@ -62,6 +62,21 @@ native SDK, which does not run in Expo Go: they come with the first development 
 stored with the uid it belongs to, so the list of a previous account never shows for another one. Photos for the chat
 are shrunk before upload (`services/images.ts`, `utils/image-size.ts`).
 
+**Professional area.** Routes under `src/app/pro/`: `(tabs)` is the agenda (`/pro`), the messages and the profile; the login and
+the sign up are outside the tabs. `LoginForm` and `SignupForm` serve both areas (`pro` prop) and the guards of
+`utils/guards.ts` keep each account in its area. The second step of the sign up is the same editor as the profile
+(`ProProfileForm signup`), shown by `/pro/cadastro` while `signupIncomplete`. The editor writes drafts the same way the
+site does (`utils/profile-form.ts`, `utils/service-draft.ts`, ported with their specs); gallery photos are saved as soon
+as they are added or removed. The address is found with the geocoder of the phone and written the way Google writes
+the addresses of the site (`utils/address-format.ts`), because the neighborhood filter and the short address of the
+cards read that format. The professional area keeps the light look of the client area for now (the site's blue theme
+is not applied).
+
+**Instagram.** `services/instagram.ts` opens the authorization in the system browser (`openAuthSessionAsync`) and sends
+the code to the same Cloud Functions as the site. The redirect address has to be listed in the Meta app
+(`Linking.createURL('pro/instagram')`: `findyourbeauty://pro/instagram` in a build); Meta may require an https address,
+in which case the site needs a page that hands the code over to the app.
+
 **Legal pages** are the pages of the site, opened in the in-app browser (`components/legal-screen.tsx`): one copy of the
 text in three languages. **The address** of the sign up is checked by geocoding it (`expo-location`), since the site's
 Google Places suggestions need a key restricted to the app.
@@ -77,7 +92,7 @@ and a Spanish entry with the same placeholders, and an entry nobody uses fails t
 1. Foundation (done): repo, tooling, config, theme, i18n, Firebase, Auth, guards.
 2. Client, read side (done): home, search with filters, map, professional page with reviews, onboarding, login, sign up, e-mail code, password reset, legal. Left for later phases: Google sign in (needs OAuth client ids), booking from the professional page (phase 3).
 3. Client, transactions (done, except cards and real payments): booking, simulated payment, agenda, inbox and chat, notifications, profile. Cards and Stripe need a development build.
-4. Professional area: sign up (2 steps), agenda, messages, notifications, profile editor, Instagram.
+4. Professional area (done): sign up in 2 steps, agenda (accept, decline, cancel), messages, profile editor, Instagram connection.
 5. Admin: approvals.
 6. Polish: push notifications, accessibility pass, EAS build config.
 
