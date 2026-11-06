@@ -1,4 +1,4 @@
-import { maskMoney, moneyToText, parseMoney, roundMoney } from './money';
+import { formatPrice, maskMoney, moneyToText, parseMoney, roundMoney } from './money';
 
 // The test build is in Portuguese: "1.234,50"
 describe('maskMoney', () => {
@@ -36,5 +36,12 @@ describe('roundMoney', () => {
   it('removes float noise', () => {
     expect(0.1 + 0.2).not.toBe(0.3);
     expect(roundMoney(0.1 + 0.2)).toBe(0.3);
+  });
+});
+
+describe('formatPrice', () => {
+  it('writes reais with two decimals', () => {
+    expect(formatPrice(15.5).replace(/\s/g, ' ')).toBe('R$ 15,50');
+    expect(formatPrice(null).replace(/\s/g, ' ')).toBe('R$ 0,00');
   });
 });

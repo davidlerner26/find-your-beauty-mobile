@@ -40,4 +40,6 @@ notes (Expo changes a lot: check the docs of the installed SDK before using an A
 - `ng test`-style mocks do not exist here: use `jest.mock` for native modules (see `jest.setup.ts`).
 - Types of `firebase/auth` come from the React Native build by a declaration in `src/types/firebase-auth.d.ts`
   (`getReactNativePersistence` is not in the default types).
+- `.npmrc` has `legacy-peer-deps=true` (the a11y ESLint plugin declares ESLint <= 8 as a peer), so npm does not install
+  peer dependencies by itself: if a tool asks for one (like `@react-native/jest-preset`), install it.
 - Google sign in and Stripe need a development build, not Expo Go.

@@ -17,3 +17,7 @@ export const moneyToText = (value: number) => format(Math.round(value * 100));
 
 // Sums prices without float noise (0.1 + 0.2 stays 0.3)
 export const roundMoney = (value: number) => Math.round(value * 100) / 100;
+
+// 15.5 -> "R$ 15,50"
+export const formatPrice = (value: number | null | undefined) =>
+  (value ?? 0).toLocaleString(INTL_LOCALE, { style: 'currency', currency: 'BRL' });
