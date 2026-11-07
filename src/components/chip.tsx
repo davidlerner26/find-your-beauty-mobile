@@ -8,6 +8,7 @@ export function Chip({
   active,
   large,
   soft,
+  disabled,
   onPress,
 }: {
   label: string;
@@ -16,6 +17,7 @@ export function Chip({
   large?: boolean;
   // A chip without border, in the light color of the theme (the popular searches)
   soft?: boolean;
+  disabled?: boolean;
   onPress: () => void;
 }) {
   const theme = useTheme();
@@ -29,13 +31,15 @@ export function Chip({
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={label}
-      accessibilityState={{ selected: !!active }}
+      accessibilityState={{ selected: !!active, disabled: !!disabled }}
+      disabled={disabled}
       onPress={onPress}
       style={[
         styles.chip,
         large && styles.large,
         soft && styles.soft,
         { backgroundColor: look.backgroundColor, borderColor: look.borderColor },
+        disabled && { opacity: 0.45 },
       ]}
     >
       <Text style={{ color: look.color, fontWeight: '500' }}>{label}</Text>

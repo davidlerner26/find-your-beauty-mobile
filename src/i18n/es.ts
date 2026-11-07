@@ -401,7 +401,7 @@ export const es: Record<string, string> = {
   Próximos: 'Próximas',
   Pular: 'Omitir',
   Qua: 'Mié',
-  Qualquer: 'Cualquiera',
+  'Sem limite': 'Sin límite',
   'Qualquer nota': 'Cualquier nota',
   Quarta: 'Miércoles',
   'Que bom te ver de novo! Entre para usar o app.':

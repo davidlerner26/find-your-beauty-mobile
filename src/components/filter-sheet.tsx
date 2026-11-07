@@ -1,18 +1,20 @@
 import { MaterialIcons } from '@expo/vector-icons';
+import Slider from '@react-native-community/slider';
 import { useMemo, useState } from 'react';
 import { Modal, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { Text } from './text';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { t } from '../i18n';
-import { fixed } from '../theme/colors';
+import { fixed, radius } from '../theme/colors';
+import { useTheme } from '../theme/theme';
 import { catalogLabel } from '../utils/catalog';
 import { monthDays, startOfDay, startOfMonth } from '../utils/calendar';
 import { INTL_LOCALE } from '../utils/locale';
 import { Filters, MAX_KM, noFilters, SortKey } from '../utils/search-filter';
 import { Button } from './button';
 import { Chip } from './chip';
+import { SelectField } from './select-field';
 
-const DISTANCES = [2, 5, 10, 20, MAX_KM];
 const RATINGS = [1, 2, 3, 4, 5];
 
 type Props = {
@@ -47,6 +49,7 @@ export function FilterSheet(props: Props) {
 }
 
 function FilterBody({ applied, allTags, neighborhoods, hasPosition, onApply, onClose }: Props) {
+  const theme = useTheme();
   const [draft, setDraft] = useState<Filters>({ ...applied, tags: [...applied.tags] });
   const [month, setMonth] = useState(() => startOfMonth(new Date()));
 
@@ -78,7 +81,14 @@ function FilterBody({ applied, allTags, neighborhoods, hasPosition, onApply, onC
           <Text accessibilityRole="header" style={styles.headTitle}>
             {t('Filtros')}
           </Text>
-          <Button variant="link" label={t('Redefinir')} onPress={() => setDraft(noFilters())} />
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={t('Redefinir')}
+            onPress={() => setDraft(noFilters())}
+            style={styles.reset}
+          >
+            <Text style={styles.resetText}>{t('Redefinir')}</Text>
+          </Pressable>
         </View>
 
         <ScrollView contentContainerStyle={styles.body}>
@@ -89,10 +99,8 @@ function FilterBody({ applied, allTags, neighborhoods, hasPosition, onApply, onC
                 key={option.key}
                 label={option.label}
                 active={draft.sort === option.key}
-                onPress={() => {
-                  if (option.key === 'distance' && !hasPosition) return;
-                  set('sort', draft.sort === option.key ? null : option.key);
-                }}
+                disabled={option.key === 'distance' && !hasPosition}
+                onPress={() => set('sort', draft.sort === option.key ? null : option.key)}
               />
             ))}
           </View>
@@ -103,21 +111,15 @@ function FilterBody({ applied, allTags, neighborhoods, hasPosition, onApply, onC
           ) : null}
 
           <Title>{t('Bairro')}</Title>
-          <View style={styles.wrap}>
-            <Chip
-              label={t('Todos os bairros do Rio de Janeiro')}
-              active={draft.neighborhood === null}
-              onPress={() => set('neighborhood', null)}
-            />
-            {neighborhoods.map((name) => (
-              <Chip
-                key={name}
-                label={name}
-                active={draft.neighborhood === name}
-                onPress={() => set('neighborhood', name)}
-              />
-            ))}
-          </View>
+          <SelectField
+            label={t('Bairro')}
+            value={draft.neighborhood}
+            options={[
+              { value: null, label: t('Todos os bairros do Rio de Janeiro') },
+              ...neighborhoods.map((name) => ({ value: name, label: name })),
+            ]}
+            onChange={(value) => set('neighborhood', value)}
+          />
 
           <Title>{t('Disponível em')}</Title>
           <View style={styles.month}>
@@ -128,24 +130,25 @@ function FilterBody({ applied, allTags, neighborhoods, hasPosition, onApply, onC
               onPress={() => setMonth(new Date(month.getFullYear(), month.getMonth() - 1, 1))}
               style={{ opacity: isCurrentMonth ? 0.3 : 1 }}
             >
-              <MaterialIcons name="chevron-left" size={28} color={fixed.ink} />
+              <MaterialIcons name="chevron-left" size={28} color={theme.primary} />
             </Pressable>
-            <Text style={styles.bold}>{monthLabel}</Text>
+            <Text style={[styles.bold, styles.capital]}>{monthLabel}</Text>
             <Pressable
               accessibilityRole="button"
               accessibilityLabel={t('Próximo mês')}
               onPress={() => setMonth(new Date(month.getFullYear(), month.getMonth() + 1, 1))}
             >
-              <MaterialIcons name="chevron-right" size={28} color={fixed.ink} />
+              <MaterialIcons name="chevron-right" size={28} color={theme.primary} />
             </Pressable>
           </View>
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ gap: 8 }}
+            contentContainerStyle={styles.days}
           >
             {days.map((day) => {
               const selected = draft.date?.getTime() === day.date.getTime();
+              const isToday = day.date.getTime() === today.getTime();
               return (
                 <Pressable
                   key={day.number}
@@ -156,10 +159,17 @@ function FilterBody({ applied, allTags, neighborhoods, hasPosition, onApply, onC
                   accessibilityState={{ selected, disabled: day.disabled }}
                   disabled={day.disabled}
                   onPress={() => set('date', selected ? null : day.date)}
-                  style={[styles.day, selected && styles.dayOn, day.disabled && { opacity: 0.35 }]}
+                  style={[
+                    styles.day,
+                    isToday && { borderColor: theme.primary },
+                    selected && { backgroundColor: theme.primary, borderColor: theme.primary },
+                    day.disabled && { opacity: 0.35 },
+                  ]}
                 >
-                  <Text style={{ color: selected ? fixed.white : fixed.gray }}>{day.weekday}</Text>
-                  <Text style={[styles.bold, selected && { color: fixed.white }]}>
+                  <Text style={[styles.capital, { color: selected ? fixed.white : fixed.gray }]}>
+                    {day.weekday}
+                  </Text>
+                  <Text style={[styles.dayNumber, selected && { color: fixed.white }]}>
                     {day.number}
                   </Text>
                 </Pressable>
@@ -206,35 +216,39 @@ function FilterBody({ applied, allTags, neighborhoods, hasPosition, onApply, onC
                 onPress={() => set('minRating', draft.minRating === star ? 0 : star)}
               >
                 <MaterialIcons
-                  name={star <= draft.minRating ? 'star' : 'star-border'}
+                  name="star"
                   size={36}
-                  color={fixed.accent}
+                  color={star <= draft.minRating ? fixed.accent : fixed.border}
                 />
               </Pressable>
             ))}
           </View>
-          <Text style={styles.muted}>
+          <Text style={{ color: theme.primary }}>
             {draft.minRating
               ? t('{{count}} estrelas ou mais', { count: draft.minRating })
               : t('Qualquer nota')}
           </Text>
 
           <Title>{t('Distância')}</Title>
-          <View style={styles.wrap}>
-            {DISTANCES.map((km) => (
-              <Chip
-                key={km}
-                label={km === MAX_KM ? t('Qualquer') : t('Até {{km}} km', { km })}
-                active={draft.maxKm === km}
-                onPress={() => hasPosition && set('maxKm', km)}
-              />
-            ))}
-          </View>
-          {!hasPosition ? (
-            <Text style={styles.muted}>
-              {t('Permita a localização para filtrar por distância.')}
-            </Text>
-          ) : null}
+          <Slider
+            accessibilityLabel={t('Distância')}
+            minimumValue={1}
+            maximumValue={MAX_KM}
+            step={1}
+            value={draft.maxKm}
+            disabled={!hasPosition}
+            onValueChange={(value) => set('maxKm', Math.round(value))}
+            minimumTrackTintColor={theme.primary}
+            thumbTintColor={theme.primary}
+            maximumTrackTintColor={fixed.border}
+          />
+          <Text style={styles.muted}>
+            {!hasPosition
+              ? t('Permita a localização para filtrar por distância.')
+              : draft.maxKm >= MAX_KM
+                ? t('Sem limite')
+                : t('Até {{km}} km', { km: draft.maxKm })}
+          </Text>
         </ScrollView>
 
         <View style={styles.footer}>
@@ -247,23 +261,36 @@ function FilterBody({ applied, allTags, neighborhoods, hasPosition, onApply, onC
 
 const styles = StyleSheet.create({
   sheet: { flex: 1, backgroundColor: fixed.white },
-  head: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 8 },
-  headTitle: { fontSize: 16, fontWeight: '700', color: fixed.ink },
-  body: { padding: 16, gap: 12 },
-  title: { fontSize: 18, fontWeight: '700', color: fixed.ink, marginTop: 8 },
-  wrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  head: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
+  headTitle: { fontSize: 17, fontWeight: '700', color: fixed.ink },
+  reset: { minHeight: 36, paddingHorizontal: 8, justifyContent: 'center' },
+  resetText: { color: fixed.danger, fontSize: 16 },
+  body: { paddingHorizontal: 24, paddingBottom: 24, gap: 12 },
+  title: { fontSize: 18, fontWeight: '700', color: fixed.ink, marginTop: 16 },
+  wrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
   muted: { color: fixed.gray },
   bold: { fontWeight: '700', color: fixed.ink },
+  capital: { textTransform: 'capitalize' },
   month: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  days: { gap: 10, paddingVertical: 4 },
   day: {
-    width: 52,
-    paddingVertical: 8,
+    width: 56,
+    height: 80,
+    gap: 4,
     alignItems: 'center',
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: fixed.border,
+    justifyContent: 'center',
+    borderRadius: radius.pill,
+    borderWidth: 2,
+    borderColor: fixed.surface,
+    backgroundColor: fixed.surface,
   },
-  dayOn: { backgroundColor: fixed.brand, borderColor: fixed.brand },
+  dayNumber: { fontSize: 21, fontWeight: '700', color: fixed.ink },
   stars: { flexDirection: 'row', gap: 4 },
-  footer: { padding: 16, borderTopWidth: 1, borderTopColor: fixed.borderSoft },
+  footer: { padding: 24, paddingTop: 12 },
 });
