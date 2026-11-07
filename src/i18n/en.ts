@@ -99,6 +99,11 @@ export const en: Record<string, string> = {
   'Você está logado': 'You are signed in',
   'Editar meus dados': 'Edit my data',
   'Sem nome': 'No name',
+  Aceitar: 'Accept',
+  'No seu endereço': 'At your address',
+  'Seu perfil não está publicado, então os clientes não encontram você. Abra o perfil, complete os dados e marque para mostrar.':
+    'Your profile is not published, so clients cannot find you. Open the profile, complete the data and mark it to show.',
+  Confirmar: 'Confirm',
   Cancelar: 'Cancel',
   'Cancelar agendamento': 'Cancel booking',
   'Cancelar o agendamento com {{name}}?': 'Cancel the booking with {{name}}?',
@@ -119,7 +124,6 @@ export const en: Record<string, string> = {
   'Conecte a conta profissional do Instagram para mostrar suas fotos mais recentes no perfil.':
     'Connect your professional Instagram account to show your latest photos on your profile.',
   Confirmado: 'Confirmed',
-  Confirmar: 'Confirm',
   'Confirmar endereço': 'Confirm address',
   'Confirme a nova senha': 'Confirm the new password',
   'Confirme o seu e-mail': 'Confirm your e-mail',
@@ -329,7 +333,6 @@ export const en: Record<string, string> = {
   'Nenhum serviço cadastrado.': 'No services registered.',
   'Nenhuma conversa encontrada.': 'No conversations found.',
   'Nenhuma foto.': 'No photos.',
-  'Nenhuma solicitação no momento.': 'No requests at the moment.',
   'No endereço do profissional': "At the professional's address",
   'No estúdio': 'At the studio',
   'No meu endereço': 'At my address',
@@ -450,8 +453,6 @@ export const en: Record<string, string> = {
   Serviços: 'Services',
   'Seu cadastro ainda está em análise. Você poderá entrar assim que for aprovado.':
     'Your registration is still under review. You will be able to sign in as soon as it is approved.',
-  'Seu perfil ainda não aparece para os clientes. Toque para completar.':
-    'Your profile is not visible to clients yet. Tap to complete it.',
   'Seus dados ainda não foram salvos.': 'Your details have not been saved yet.',
   Sex: 'Fri',
   Sexta: 'Friday',

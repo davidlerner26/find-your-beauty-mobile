@@ -1,7 +1,8 @@
 import { Link } from '../../../components/link';
-import { Alert, Pressable, StyleSheet, View } from 'react-native';
+import { Alert, StyleSheet } from 'react-native';
 import { Text } from '../../../components/text';
 import { Guard } from '../../../components/guard';
+import { ProBookingCard } from '../../../components/pro-booking-card';
 import { Screen } from '../../../components/screen';
 import { useAuth } from '../../../contexts/auth';
 import { useBookings } from '../../../contexts/bookings';
@@ -13,11 +14,7 @@ import { Booking } from '../../../models/booking';
 import { setBookingStatus } from '../../../services/bookings';
 import { fixed } from '../../../theme/colors';
 import { proAgendaLists } from '../../../utils/booking-lists';
-import { bookingDateLabel, statusLabel } from '../../../utils/booking-labels';
-import { catalogLabel } from '../../../utils/catalog';
-import { formatClock } from '../../../utils/format-date';
 import { log } from '../../../utils/log';
-import { formatPrice } from '../../../utils/money';
 import { PATHS } from '../../../utils/paths';
 
 export default function ProAgendaScreen() {
@@ -67,52 +64,8 @@ function ProAgenda() {
     run();
   };
 
-  const action = (label: string, onPress: () => void, tone: 'solid' | 'danger' | 'outline') => (
-    <Pressable
-      accessibilityRole="button"
-      accessibilityLabel={label}
-      onPress={onPress}
-      style={[styles.action, tone === 'solid' && styles.solid, tone === 'danger' && styles.danger]}
-    >
-      <Text
-        style={[
-          styles.actionText,
-          tone === 'solid' && { color: fixed.white },
-          tone === 'danger' && { color: fixed.dangerStrong },
-        ]}
-      >
-        {label}
-      </Text>
-    </Pressable>
-  );
-
-  const card = (booking: Booking, actions: React.ReactNode) => (
-    <View key={booking.id} style={styles.card}>
-      <View style={styles.between}>
-        <Text style={styles.name}>{booking.clientName}</Text>
-        <Text style={[styles.status, statusColor(booking)]}>{statusLabel(booking.status)}</Text>
-      </View>
-      <Text style={styles.when}>
-        {bookingDateLabel(booking)} · {formatClock(booking.startsAt)}
-      </Text>
-      {booking.place === 'home' && booking.clientAddress ? (
-        <Text style={styles.muted}>
-          {t('Atendimento a domicílio')}: {booking.clientAddress}
-        </Text>
-      ) : null}
-      {booking.services.map((service) => (
-        <View key={service.id} style={styles.between}>
-          <Text style={styles.muted}>{catalogLabel(service.name)}</Text>
-          <Text style={styles.muted}>{formatPrice(service.price)}</Text>
-        </View>
-      ))}
-      {booking.notes ? <Text style={styles.muted}>“{booking.notes}”</Text> : null}
-      <View style={styles.between}>
-        <Text style={styles.bold}>{t('Total')}</Text>
-        <Text style={styles.bold}>{formatPrice(booking.total)}</Text>
-      </View>
-      {actions ? <View style={styles.actions}>{actions}</View> : null}
-    </View>
+  const card = (booking: Booking) => (
+    <ProBookingCard key={booking.id} booking={booking} onAnswer={answer} />
   );
 
   return (
@@ -123,43 +76,26 @@ function ProAgenda() {
 
       {profile && !profile.published ? (
         <Link href={PATHS.proProfile as never} accessibilityRole="link" style={styles.notice}>
-          {t('Seu perfil ainda não aparece para os clientes. Toque para completar.')}
+          {t(
+            'Seu perfil não está publicado, então os clientes não encontram você. Abra o perfil, complete os dados e marque para mostrar.',
+          )}
         </Link>
       ) : null}
 
-      <Text accessibilityRole="header" style={styles.heading}>
-        {t('Solicitações')}
-      </Text>
       {pending.length ? (
-        pending.map((booking) =>
-          card(
-            booking,
-            <>
-              {action(t('Confirmar'), () => answer(booking, 'confirmed'), 'solid')}
-              {action(t('Recusar'), () => answer(booking, 'declined'), 'danger')}
-            </>,
-          ),
-        )
-      ) : (
-        <Text style={styles.muted}>{t('Nenhuma solicitação no momento.')}</Text>
-      )}
+        <>
+          <Text accessibilityRole="header" style={styles.heading}>
+            {t('Solicitações')}
+          </Text>
+          {pending.map(card)}
+        </>
+      ) : null}
 
       <Text accessibilityRole="header" style={styles.heading}>
         {t('Próximos')}
       </Text>
       {upcoming.length ? (
-        upcoming.map((booking) =>
-          card(
-            booking,
-            <>
-              {action(
-                t('Cancelar agendamento'),
-                () => answer(booking, 'cancelledByProfessional'),
-                'danger',
-              )}
-            </>,
-          ),
-        )
+        upcoming.map(card)
       ) : (
         <Text style={styles.muted}>{t('Nenhum agendamento confirmado.')}</Text>
       )}
@@ -169,56 +105,23 @@ function ProAgenda() {
           <Text accessibilityRole="header" style={styles.heading}>
             {t('Histórico')}
           </Text>
-          {history.map((booking) => card(booking, null))}
+          {history.map(card)}
         </>
       ) : null}
     </Screen>
   );
 }
 
-const statusColor = (booking: Booking) =>
-  booking.status === 'confirmed' || booking.status === 'completed'
-    ? { color: fixed.success }
-    : booking.status === 'pending'
-      ? { color: fixed.warning }
-      : { color: fixed.dangerStrong };
-
 const styles = StyleSheet.create({
   title: { fontSize: 24, fontWeight: '700', color: fixed.ink },
-  heading: { fontSize: 20, fontWeight: '700', color: fixed.ink },
+  heading: { fontSize: 18, fontWeight: '700', color: fixed.ink, marginTop: 8 },
   notice: {
     backgroundColor: fixed.warningBg,
     color: fixed.warning,
-    padding: 14,
+    paddingVertical: 16,
+    paddingHorizontal: 20,
     borderRadius: 12,
     overflow: 'hidden',
-    fontWeight: '600',
   },
   muted: { color: fixed.gray },
-  bold: { fontWeight: '700', color: fixed.ink },
-  card: {
-    gap: 6,
-    padding: 14,
-    borderWidth: 1,
-    borderColor: fixed.borderSoft,
-    borderRadius: 14,
-    backgroundColor: fixed.white,
-  },
-  between: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 8 },
-  name: { fontSize: 17, fontWeight: '700', color: fixed.ink },
-  when: { fontWeight: '600', color: fixed.ink },
-  status: { fontWeight: '700', fontSize: 13 },
-  actions: { flexDirection: 'row', gap: 8, flexWrap: 'wrap', marginTop: 4 },
-  action: {
-    minHeight: 42,
-    paddingHorizontal: 16,
-    borderRadius: 999,
-    borderWidth: 1.5,
-    borderColor: fixed.brand,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  solid: { backgroundColor: fixed.brand },
-  danger: { borderColor: fixed.dangerStrong },
-  actionText: { fontWeight: '600', color: fixed.brand },
 });

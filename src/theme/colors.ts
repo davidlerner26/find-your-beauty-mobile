@@ -53,6 +53,15 @@ export type Theme = {
   onBubble: string;
   bubbleMine: string;
   onBubbleMine: string;
+  // Cards: the background and the border (the client has a shadow instead of a border)
+  cardBg: string;
+  cardBorder: string;
+  // The stronger line (the dashed line over a total)
+  lineStrong: string;
+  // The bottom bar: background, icons that are not selected and the selected one
+  tabBarBg: string;
+  tabBarFg: string;
+  tabBarActive: string;
 };
 
 export const clientTheme: Theme = {
@@ -71,6 +80,12 @@ export const clientTheme: Theme = {
   onBubble: fixed.white,
   bubbleMine: '#e8edf3',
   onBubbleMine: fixed.ink,
+  cardBg: fixed.white,
+  cardBorder: 'transparent',
+  lineStrong: fixed.border,
+  tabBarBg: fixed.white,
+  tabBarFg: '#aab2c0',
+  tabBarActive: fixed.brand,
 };
 
 // The professional area: the blue becomes the background and the letters turn white
@@ -90,4 +105,10 @@ export const proTheme: Theme = {
   onBubble: fixed.white,
   bubbleMine: fixed.white,
   onBubbleMine: fixed.brand,
+  cardBg: 'rgba(255, 255, 255, 0.1)',
+  cardBorder: 'rgba(255, 255, 255, 0.22)',
+  lineStrong: 'rgba(255, 255, 255, 0.35)',
+  tabBarBg: fixed.brandDark,
+  tabBarFg: 'rgba(255, 255, 255, 0.6)',
+  tabBarActive: fixed.white,
 };

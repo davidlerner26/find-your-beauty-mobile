@@ -4,6 +4,7 @@ import { Text, TextInput } from './text';
 import { t } from '../i18n';
 import { ServiceCategory } from '../models/professional';
 import { fixed } from '../theme/colors';
+import { useTheme } from '../theme/theme';
 import { catalogLabel } from '../utils/catalog';
 import { maskDuration } from '../utils/duration';
 import { maskMoney } from '../utils/money';
@@ -64,6 +65,7 @@ export function ServicesEditor({
   onDiscard,
   uploading,
 }: Props) {
+  const theme = useTheme();
   const update = (id: string, patch: Partial<ServiceDraft>) =>
     onChange(services.map((service) => (service.id === id ? { ...service, ...patch } : service)));
 
@@ -85,7 +87,15 @@ export function ServicesEditor({
       {services.map((service) => {
         const missing = tried && !isServiceComplete(service);
         return (
-          <View key={service.id} style={[styles.card, missing && styles.cardMissing]}>
+          <View
+            key={service.id}
+            style={[
+              styles.card,
+              { backgroundColor: theme.cardBg },
+              theme.name === 'pro' && { borderColor: theme.cardBorder },
+              missing && styles.cardMissing,
+            ]}
+          >
             <Field label={t('Categoria')} error={missing && !service.category}>
               <View style={styles.chips}>
                 {CATEGORIES.map((category) => (
@@ -159,7 +169,7 @@ export function ServicesEditor({
 
             <Text style={styles.label}>{t('Outros preços, por dia e horário')}</Text>
             {service.priceRules.map((rule) => (
-              <View key={rule.id} style={styles.rule}>
+              <View key={rule.id} style={[styles.rule, { backgroundColor: theme.primaryLight }]}>
                 <View style={styles.chips}>
                   {WEEKDAYS.map((day) => (
                     <Chip

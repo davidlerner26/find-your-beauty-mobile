@@ -2,25 +2,30 @@ import { Tabs } from 'expo-router';
 import { ComponentProps } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { fixed } from '../theme/colors';
+import { useTheme } from '../theme/theme';
 
 type TabBarProps = Parameters<NonNullable<ComponentProps<typeof Tabs>['tabBar']>>[0];
 
-// The color of the icons that are not selected (`--tabbar-fg` of the site)
-const INACTIVE = '#aab2c0';
 const HEIGHT = 80;
 
 // The bottom bar of the site: only icons, the selected one in the blue of the brand with a dot under it, and a
 // dot of the accent color on what has news.
 export function TabBar({ state, descriptors, navigateToTab, insets }: TabBarProps) {
   const { bottom } = insets;
+  const theme = useTheme();
 
   return (
     <View>
-      <View style={[styles.bar, { height: HEIGHT + bottom, paddingBottom: bottom }]}>
+      <View
+        style={[
+          styles.bar,
+          { height: HEIGHT + bottom, paddingBottom: bottom, backgroundColor: theme.tabBarBg },
+        ]}
+      >
         {state.routes.map((route, index) => {
           const { options } = descriptors[route.key];
           const focused = state.index === index;
-          const color = focused ? fixed.brand : INACTIVE;
+          const color = focused ? theme.tabBarActive : theme.tabBarFg;
           const badge = options.tabBarBadge;
 
           return (
@@ -36,7 +41,7 @@ export function TabBar({ state, descriptors, navigateToTab, insets }: TabBarProp
                 {options.tabBarIcon?.({ focused, color, size: 28 })}
                 {badge ? <View style={styles.badge} /> : null}
               </View>
-              <View style={[styles.dot, focused && { backgroundColor: fixed.brand }]} />
+              <View style={[styles.dot, focused && { backgroundColor: theme.tabBarActive }]} />
             </Pressable>
           );
         })}
@@ -50,7 +55,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
-    backgroundColor: fixed.white,
     shadowColor: fixed.ink,
     shadowOpacity: 0.08,
     shadowRadius: 18,
@@ -68,7 +72,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     backgroundColor: fixed.accent,
     borderWidth: 2,
-    borderColor: fixed.white,
+    borderColor: 'transparent',
   },
   dot: { width: 5, height: 5, borderRadius: 3, backgroundColor: 'transparent' },
 });

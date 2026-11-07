@@ -15,6 +15,7 @@ import {
   pickInRange,
 } from '../utils/range-picker';
 import { startOfMonth } from '../utils/calendar';
+import { ThemeProvider } from '../theme/theme';
 
 const WEEKDAYS = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
 
@@ -37,66 +38,76 @@ export function DateRangePicker({ range, onChange, min, blocked }: Props) {
   const cells = monthCells(month, min);
 
   return (
-    <View style={styles.wrap}>
-      <View style={styles.head}>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel={t('Mês anterior')}
-          disabled={!canGoBack}
-          onPress={() => setMonth(new Date(month.getFullYear(), month.getMonth() - 1, 1))}
-          style={{ opacity: canGoBack ? 1 : 0.3 }}
-        >
-          <MaterialIcons name="chevron-left" size={28} color={fixed.ink} />
-        </Pressable>
-        <Text style={styles.month}>{label}</Text>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel={t('Próximo mês')}
-          onPress={() => setMonth(new Date(month.getFullYear(), month.getMonth() + 1, 1))}
-        >
-          <MaterialIcons name="chevron-right" size={28} color={fixed.ink} />
-        </Pressable>
+    // A white card with the colors of the light theme, also in the professional area
+    <ThemeProvider>
+      <View style={styles.wrap}>
+        <View style={styles.head}>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={t('Mês anterior')}
+            disabled={!canGoBack}
+            onPress={() => setMonth(new Date(month.getFullYear(), month.getMonth() - 1, 1))}
+            style={{ opacity: canGoBack ? 1 : 0.3 }}
+          >
+            <MaterialIcons name="chevron-left" size={28} color={fixed.ink} />
+          </Pressable>
+          <Text style={styles.month}>{label}</Text>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={t('Próximo mês')}
+            onPress={() => setMonth(new Date(month.getFullYear(), month.getMonth() + 1, 1))}
+          >
+            <MaterialIcons name="chevron-right" size={28} color={fixed.ink} />
+          </Pressable>
+        </View>
+        <View style={styles.grid}>
+          {WEEKDAYS.map((day, n) => (
+            <Text key={n} style={styles.weekday}>
+              {day}
+            </Text>
+          ))}
+          {cells.map((cell, n) => {
+            if (!cell) return <View key={n} style={styles.cell} />;
+            const taken = isBlockedDay(cell.key, blocked);
+            const edge = isEdgeOfRange(range, cell.key);
+            const inside = isInsideRange(range, cell.key);
+            return (
+              <Pressable
+                key={n}
+                accessibilityRole="button"
+                accessibilityLabel={`${cell.day}`}
+                accessibilityState={{ selected: edge || inside, disabled: cell.disabled || taken }}
+                disabled={cell.disabled || taken}
+                onPress={() => onChange(pickInRange(range, cell.key))}
+                style={[
+                  styles.cell,
+                  inside && styles.inside,
+                  edge && styles.edge,
+                  taken && styles.taken,
+                  cell.disabled && { opacity: 0.3 },
+                ]}
+              >
+                <Text
+                  style={{ color: edge ? fixed.white : taken ? fixed.dangerStrong : fixed.ink }}
+                >
+                  {cell.day}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </View>
       </View>
-      <View style={styles.grid}>
-        {WEEKDAYS.map((day, n) => (
-          <Text key={n} style={styles.weekday}>
-            {day}
-          </Text>
-        ))}
-        {cells.map((cell, n) => {
-          if (!cell) return <View key={n} style={styles.cell} />;
-          const taken = isBlockedDay(cell.key, blocked);
-          const edge = isEdgeOfRange(range, cell.key);
-          const inside = isInsideRange(range, cell.key);
-          return (
-            <Pressable
-              key={n}
-              accessibilityRole="button"
-              accessibilityLabel={`${cell.day}`}
-              accessibilityState={{ selected: edge || inside, disabled: cell.disabled || taken }}
-              disabled={cell.disabled || taken}
-              onPress={() => onChange(pickInRange(range, cell.key))}
-              style={[
-                styles.cell,
-                inside && styles.inside,
-                edge && styles.edge,
-                taken && styles.taken,
-                cell.disabled && { opacity: 0.3 },
-              ]}
-            >
-              <Text style={{ color: edge ? fixed.white : taken ? fixed.dangerStrong : fixed.ink }}>
-                {cell.day}
-              </Text>
-            </Pressable>
-          );
-        })}
-      </View>
-    </View>
+    </ThemeProvider>
   );
 }
 
 const styles = StyleSheet.create({
-  wrap: { gap: 8 },
+  wrap: {
+    padding: 16,
+    borderRadius: 16,
+    backgroundColor: fixed.white,
+    gap: 8,
+  },
   head: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   month: { fontWeight: '700', color: fixed.ink, textTransform: 'capitalize' },
   grid: { flexDirection: 'row', flexWrap: 'wrap' },

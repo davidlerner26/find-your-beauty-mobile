@@ -100,7 +100,7 @@ export function Inbox({ pro = false }: { pro?: boolean }) {
 
   return (
     <View style={styles.screen}>
-      <View style={styles.strip}>
+      <View style={[styles.strip, { borderBottomColor: theme.line }]}>
         {(['mensagens', 'notificacoes'] as const).map((name) => (
           <Pressable
             key={name}
@@ -137,7 +137,7 @@ export function Inbox({ pro = false }: { pro?: boolean }) {
       {!auth.user ? null : tab === 'mensagens' ? (
         <>
           <View style={styles.search}>
-            <MaterialIcons name="search" size={24} color={theme.primary} />
+            <MaterialIcons name="search" size={24} color={fixed.brand} />
             <TextInput
               accessibilityLabel={
                 pro ? t('Buscar mensagens ou cliente') : t('Buscar mensagens ou profissional')
@@ -171,7 +171,7 @@ export function Inbox({ pro = false }: { pro?: boolean }) {
                 accessibilityRole="button"
                 accessibilityLabel={item.title}
                 onPress={() => router.push(item.href as never)}
-                style={[styles.row, styles.divided]}
+                style={[styles.row, styles.divided, { borderBottomColor: theme.line }]}
               >
                 {item.image ? (
                   <Image
@@ -223,7 +223,7 @@ export function Inbox({ pro = false }: { pro?: boolean }) {
                 accessibilityRole="button"
                 accessibilityLabel={item.text.map((part) => part.text).join('')}
                 onPress={() => open(item)}
-                style={[styles.row, styles.divided]}
+                style={[styles.row, styles.divided, { borderBottomColor: theme.line }]}
               >
                 <View style={[styles.icon, { backgroundColor: theme.primaryLight }]}>
                   <MaterialIcons

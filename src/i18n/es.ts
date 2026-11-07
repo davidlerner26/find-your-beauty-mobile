@@ -100,6 +100,11 @@ export const es: Record<string, string> = {
   'Você está logado': 'Has iniciado sesión',
   'Editar meus dados': 'Editar mis datos',
   'Sem nome': 'Sin nombre',
+  Aceitar: 'Aceptar',
+  'No seu endereço': 'En tu dirección',
+  'Seu perfil não está publicado, então os clientes não encontram você. Abra o perfil, complete os dados e marque para mostrar.':
+    'Tu perfil no está publicado, así que los clientes no te encuentran. Abre el perfil, completa los datos y márcalo para mostrarlo.',
+  Confirmar: 'Confirmar',
   Cancelar: 'Cancelar',
   'Cancelar agendamento': 'Cancelar reserva',
   'Cancelar o agendamento com {{name}}?': '¿Cancelar la reserva con {{name}}?',
@@ -120,7 +125,6 @@ export const es: Record<string, string> = {
   'Conecte a conta profissional do Instagram para mostrar suas fotos mais recentes no perfil.':
     'Conecta tu cuenta profesional de Instagram para mostrar tus fotos más recientes en tu perfil.',
   Confirmado: 'Confirmada',
-  Confirmar: 'Confirmar',
   'Confirmar endereço': 'Confirmar dirección',
   'Confirme a nova senha': 'Confirma la nueva contraseña',
   'Confirme o seu e-mail': 'Confirma tu correo',
@@ -333,7 +337,6 @@ export const es: Record<string, string> = {
   'Nenhum serviço cadastrado.': 'No hay servicios registrados.',
   'Nenhuma conversa encontrada.': 'No se encontraron conversaciones.',
   'Nenhuma foto.': 'No hay fotos.',
-  'Nenhuma solicitação no momento.': 'No hay solicitudes por ahora.',
   'No endereço do profissional': 'En la dirección del profesional',
   'No estúdio': 'En el estudio',
   'No meu endereço': 'En mi dirección',
@@ -457,8 +460,6 @@ export const es: Record<string, string> = {
   Serviços: 'Servicios',
   'Seu cadastro ainda está em análise. Você poderá entrar assim que for aprovado.':
     'Tu registro aún está en revisión. Podrás iniciar sesión en cuanto sea aprobado.',
-  'Seu perfil ainda não aparece para os clientes. Toque para completar.':
-    'Tu perfil aún no aparece para los clientes. Toca para completarlo.',
   'Seus dados ainda não foram salvos.': 'Tus datos aún no se han guardado.',
   Sex: 'Vie',
   Sexta: 'Viernes',
