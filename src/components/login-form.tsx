@@ -10,6 +10,7 @@ import { PATHS } from '../utils/paths';
 import { authErrorMessage } from '../utils/validators';
 import { AuthField, AuthScreen, FormError } from './auth-kit';
 import { Button } from './button';
+import { GoogleButton } from './google-button';
 import { Guard } from './guard';
 import { Link } from './link';
 import { Text } from './text';
@@ -37,7 +38,7 @@ export function LoginForm({ pro = false }: { pro?: boolean }) {
 function Login({ pro }: { pro: boolean }) {
   const router = useRouter();
   const theme = useTheme();
-  const { signInClient, signInProfessional } = useAuthActions();
+  const { signInClient, signInProfessional, signInWithGoogle } = useAuthActions();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [submitted, setSubmitted] = useState(false);
@@ -114,6 +115,15 @@ function Login({ pro }: { pro: boolean }) {
           loading={submitting}
         />
       </View>
+
+      <GoogleButton
+        label={t('Entrar com Google')}
+        run={async () => {
+          const signedIn = await signInWithGoogle(pro ? 'professional' : 'client');
+          if (signedIn) router.replace((pro ? PATHS.proHome : PATHS.home) as never);
+          return signedIn;
+        }}
+      />
 
       <Text style={[styles.switch, { color: theme.text }]}>
         {t('Não tem uma conta?')}{' '}
