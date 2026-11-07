@@ -10,11 +10,13 @@ import { formatPrice } from '../utils/money';
 import { ruleLabel } from '../utils/pricing';
 import { CardSurface } from './card-surface';
 import { PhotoPager } from './photo-pager';
+import { ServiceSheet } from './service-sheet';
 
 const PHOTO = 136;
 
 // A service of the professional, like the site: photos on the left, name, price and duration, the prices by day and
-// time and the description, and a round button on the corner to add it to the booking (or take it out)
+// time and the description, and a round button on the corner to add it to the booking (or take it out). The card
+// opens the sheet of the service.
 export function ServiceCard({
   service,
   selected,
@@ -26,6 +28,7 @@ export function ServiceCard({
   onToggle?: () => void;
 }) {
   const theme = useTheme();
+  // The sheet with the whole service (the card opens it)
   const [open, setOpen] = useState(false);
   // The photos have the height of the card; the card has the height of the text
   const [height, setHeight] = useState(150);
@@ -34,70 +37,71 @@ export function ServiceCard({
   const name = catalogLabel(service.name);
 
   return (
-    <CardSurface>
-      {hasPhotos ? (
-        <View style={styles.photos}>
-          <PhotoPager photos={service.photos ?? []} width={PHOTO} height={height} label={name} />
-        </View>
-      ) : null}
-      <View
-        style={[styles.info, hasPhotos && { marginLeft: PHOTO }]}
-        onLayout={(e) => setHeight(Math.round(e.nativeEvent.layout.height))}
-      >
-        <View style={styles.text}>
-          <Text accessibilityRole="header" numberOfLines={2} style={styles.name}>
-            {name}
-          </Text>
-          <Text style={{ color: theme.primary }}>
-            <Text style={styles.price}>{formatPrice(service.price)}</Text>
-            <Text style={styles.muted}> · {formatDuration(service.durationMinutes)}</Text>
-          </Text>
-          {service.priceRules?.map((rule, n) => (
-            <Text key={n} style={styles.rule}>
-              {ruleLabel(rule)}: <Text style={styles.price}>{formatPrice(rule.price)}</Text>
+    <Pressable accessibilityRole="button" accessibilityLabel={name} onPress={() => setOpen(true)}>
+      <CardSurface>
+        {hasPhotos ? (
+          <View style={styles.photos}>
+            <PhotoPager photos={service.photos ?? []} width={PHOTO} height={height} label={name} />
+          </View>
+        ) : null}
+        <View
+          style={[styles.info, hasPhotos && { marginLeft: PHOTO }]}
+          onLayout={(e) => setHeight(Math.round(e.nativeEvent.layout.height))}
+        >
+          <View style={styles.text}>
+            <Text accessibilityRole="header" numberOfLines={2} style={styles.name}>
+              {name}
             </Text>
-          ))}
-          {service.description ? (
-            <>
-              <Text style={styles.description} numberOfLines={open ? undefined : 2}>
-                {service.description}
+            <Text style={{ color: theme.primary }}>
+              <Text style={styles.price}>{formatPrice(service.price)}</Text>
+              <Text style={styles.muted}> · {formatDuration(service.durationMinutes)}</Text>
+            </Text>
+            {service.priceRules?.map((rule, n) => (
+              <Text key={n} style={styles.rule}>
+                {ruleLabel(rule)}: <Text style={styles.price}>{formatPrice(rule.price)}</Text>
               </Text>
-              {long ? (
-                <Pressable
-                  accessibilityRole="button"
-                  accessibilityLabel={open ? t('Ler menos') : t('Ler mais')}
-                  onPress={() => setOpen((current) => !current)}
-                >
-                  <Text style={[styles.readMore, { color: theme.primary }]}>
-                    {open ? t('Ler menos') : t('Ler mais')}
-                  </Text>
-                </Pressable>
-              ) : null}
-            </>
+            ))}
+            {service.description ? (
+              <>
+                <Text style={styles.description} numberOfLines={2}>
+                  {service.description}
+                </Text>
+                {long ? (
+                  <Text style={[styles.readMore, { color: theme.primary }]}>{t('Ler mais')}</Text>
+                ) : null}
+              </>
+            ) : null}
+          </View>
+          {onToggle ? (
+            <Pressable
+              accessibilityRole="button"
+              accessibilityState={{ selected: !!selected }}
+              accessibilityLabel={
+                selected ? t('Remover {{name}}', { name }) : t('Adicionar {{name}}', { name })
+              }
+              onPress={onToggle}
+              style={[
+                styles.toggle,
+                selected
+                  ? { backgroundColor: fixed.white, borderColor: fixed.danger }
+                  : { backgroundColor: theme.primary, borderColor: theme.primary },
+              ]}
+            >
+              <Text style={[styles.toggleText, { color: selected ? fixed.danger : fixed.white }]}>
+                {selected ? '−' : '+'}
+              </Text>
+            </Pressable>
           ) : null}
         </View>
-        {onToggle ? (
-          <Pressable
-            accessibilityRole="button"
-            accessibilityState={{ selected: !!selected }}
-            accessibilityLabel={
-              selected ? t('Remover {{name}}', { name }) : t('Adicionar {{name}}', { name })
-            }
-            onPress={onToggle}
-            style={[
-              styles.toggle,
-              selected
-                ? { backgroundColor: fixed.white, borderColor: fixed.danger }
-                : { backgroundColor: theme.primary, borderColor: theme.primary },
-            ]}
-          >
-            <Text style={[styles.toggleText, { color: selected ? fixed.danger : fixed.white }]}>
-              {selected ? '−' : '+'}
-            </Text>
-          </Pressable>
-        ) : null}
-      </View>
-    </CardSurface>
+      </CardSurface>
+      <ServiceSheet
+        service={service}
+        visible={open}
+        selected={!!selected}
+        onToggle={onToggle}
+        onClose={() => setOpen(false)}
+      />
+    </Pressable>
   );
 }
 

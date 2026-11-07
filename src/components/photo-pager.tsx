@@ -22,6 +22,8 @@ type Props = {
   style?: ViewStyle;
   // Called when a photo is tapped
   onPressPhoto?: (index: number) => void;
+  // The current photo is a longer bar in the accent color (the sheet of a service)
+  activeBar?: boolean;
 };
 
 // Photos side by side that snap one by one, with dots (the carousels of the cards and of the professional page)
@@ -34,6 +36,7 @@ export function PhotoPager({
   label,
   style,
   onPressPhoto,
+  activeBar,
 }: Props) {
   const [index, setIndex] = useState(0);
   const onScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) =>
@@ -65,7 +68,10 @@ export function PhotoPager({
       {photos.length > 1 ? (
         <View style={styles.dots} accessibilityElementsHidden importantForAccessibility="no">
           {photos.map((photo, n) => (
-            <View key={`${n}-${photo}`} style={[styles.dot, n === index && styles.dotOn]} />
+            <View
+              key={`${n}-${photo}`}
+              style={[styles.dot, n === index && (activeBar ? styles.dotBar : styles.dotOn)]}
+            />
           ))}
         </View>
       ) : null}
@@ -81,8 +87,10 @@ const styles = StyleSheet.create({
     right: 0,
     flexDirection: 'row',
     justifyContent: 'center',
+    alignItems: 'center',
     gap: 5,
   },
   dot: { width: 6, height: 6, borderRadius: 3, backgroundColor: 'rgba(255,255,255,0.6)' },
   dotOn: { backgroundColor: fixed.white },
+  dotBar: { width: 26, backgroundColor: fixed.accent },
 });
