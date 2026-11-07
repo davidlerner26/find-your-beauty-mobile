@@ -6,7 +6,7 @@ import { useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { Text } from '../../components/text';
 import { Chip } from '../../components/chip';
-import { ProfessionalCard } from '../../components/professional-card';
+import { FeaturedCard, FEATURED_GAP, NearbyCard } from '../../components/home-cards';
 import { Screen } from '../../components/screen';
 import { Spinner } from '../../components/spinner';
 import { useAuth } from '../../contexts/auth';
@@ -15,17 +15,26 @@ import { useUserLocation } from '../../contexts/location';
 import { useProfessionals } from '../../contexts/professionals';
 import { environment } from '../../config/environment';
 import { t } from '../../i18n';
-import { SERVICE_NAMES, ServiceCategory } from '../../models/professional';
+import { SERVICE_ICONS, SERVICE_NAMES, ServiceCategory } from '../../models/professional';
 import { fixed } from '../../theme/colors';
+import { useTheme } from '../../theme/theme';
 import { catalogLabel } from '../../utils/catalog';
 import { focusPosition } from '../../utils/labels';
 import { PATHS } from '../../utils/paths';
 import { toCard } from '../../utils/search-filter';
 
 const INTERESTS: ServiceCategory[] = ['Maquiagem', 'Cabelo'];
+const CATEGORY_ICONS: Record<ServiceCategory, string> = {
+  Maquiagem: 'brush',
+  Cabelo: 'content-cut',
+};
+
+// The icon names of the site are Material Symbols ("content_cut"); the font of the app writes them with a hyphen
+const iconName = (name: string) => name.replace(/_/g, '-') as never;
 
 export default function Home() {
   const router = useRouter();
+  const theme = useTheme();
   const auth = useAuth();
   const favorites = useFavorites();
   const { position } = useUserLocation();
@@ -147,9 +156,17 @@ export default function Home() {
           <Text accessibilityRole="header" style={styles.heading}>
             {t('Profissionais em destaque')}
           </Text>
-          {featured.map((card) => (
-            <ProfessionalCard key={card.id} card={card} />
-          ))}
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            // The cards go to the edges of the screen (the content has 24px on the sides)
+            style={styles.bleed}
+            contentContainerStyle={{ gap: FEATURED_GAP, paddingHorizontal: 24 }}
+          >
+            {featured.map((card) => (
+              <FeaturedCard key={card.id} card={card} />
+            ))}
+          </ScrollView>
         </View>
       ) : null}
 
@@ -157,9 +174,10 @@ export default function Home() {
         <Text accessibilityRole="header" style={styles.heading}>
           {t('Categorias')}
         </Text>
-        <View style={styles.wrap}>
+        <View style={styles.wrapLarge}>
           {INTERESTS.map((interest) => (
             <Chip
+              large
               key={interest}
               label={catalogLabel(interest)}
               active={active.includes(interest)}
@@ -179,19 +197,33 @@ export default function Home() {
               key={row.category}
               horizontal
               showsHorizontalScrollIndicator={false}
-              contentContainerStyle={{ gap: 8 }}
+              style={styles.bleed}
+              contentContainerStyle={{ gap: 16, paddingHorizontal: 24 }}
             >
               {row.services.map((name) => (
-                <Chip
+                <Pressable
                   key={name}
-                  label={catalogLabel(name)}
+                  accessibilityRole="button"
+                  accessibilityLabel={catalogLabel(name)}
                   onPress={() =>
                     router.push({
                       pathname: '/explore',
                       params: { service: name, categories: active.join(',') },
                     } as never)
                   }
-                />
+                  style={styles.service}
+                >
+                  <View style={[styles.serviceIcon, { backgroundColor: theme.primaryLight }]}>
+                    <MaterialIcons
+                      name={iconName(SERVICE_ICONS[name] ?? CATEGORY_ICONS[row.category])}
+                      size={32}
+                      color={theme.primary}
+                    />
+                  </View>
+                  <Text style={[styles.serviceLabel, { color: theme.primary }]}>
+                    {catalogLabel(name)}
+                  </Text>
+                </Pressable>
               ))}
             </ScrollView>
           ))}
@@ -204,7 +236,7 @@ export default function Home() {
             {t('Profissionais próximos')}
           </Text>
           {nearby.map((card) => (
-            <ProfessionalCard key={card.id} card={card} />
+            <NearbyCard key={card.id} card={card} />
           ))}
         </View>
       ) : null}
@@ -213,21 +245,32 @@ export default function Home() {
 }
 
 const styles = StyleSheet.create({
-  logo: { width: 176, height: 32 },
-  hero: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  title: { fontSize: 24, fontWeight: '700', color: fixed.ink },
+  logo: { width: 229, height: 42 },
+  hero: { flexDirection: 'row', alignItems: 'flex-start', gap: 16 },
+  title: { fontSize: 32, fontWeight: '700', color: fixed.ink },
   muted: { color: fixed.gray },
   searchButton: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: 52,
+    height: 52,
+    borderRadius: 26,
     backgroundColor: fixed.brand,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  section: { gap: 12 },
+  section: { gap: 20 },
+  // Scroll rows go from edge to edge of the screen: cancels the 24px of the screen
+  bleed: { marginHorizontal: -24 },
   heading: { fontSize: 20, fontWeight: '700', color: fixed.ink },
-  wrap: { flexDirection: 'row', gap: 8, flexWrap: 'wrap' },
+  wrapLarge: { flexDirection: 'row', gap: 16, flexWrap: 'wrap' },
+  service: { width: 96, alignItems: 'center', gap: 8 },
+  serviceIcon: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  serviceLabel: { fontSize: 14, lineHeight: 18, textAlign: 'center' },
   follow: { alignItems: 'center', gap: 4, width: 72 },
   avatar: { width: 64, height: 64, borderRadius: 32, backgroundColor: fixed.surface },
   followName: { fontSize: 12, color: fixed.ink },

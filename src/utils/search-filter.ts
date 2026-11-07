@@ -3,6 +3,7 @@ import {
   DEFAULT_AVAILABILITY,
   hasLocation,
   locationLabel,
+  shortLocationLabel,
   Professional,
 } from '../models/professional';
 import { catalogLabel } from './catalog';
@@ -103,6 +104,8 @@ export const toCard = (professional: Professional, user: Point | null) => {
     // The photos of the work (the profile photo when there is no gallery), like the cards of the home
     photos: professional.gallery.length ? professional.gallery : [professional.image],
     address: locationLabel(professional),
+    // Without city and postal code: the cards of the home
+    shortAddress: shortLocationLabel(professional),
     distance: km === null ? null : formatDistance(km),
     km,
     // The cheapest service: "a partir de"

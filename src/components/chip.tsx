@@ -6,10 +6,13 @@ import { useTheme } from '../theme/theme';
 export function Chip({
   label,
   active,
+  large,
   onPress,
 }: {
   label: string;
   active?: boolean;
+  // The big chips of "Categorias" on the home: selected is the light color of the theme, like the site
+  large?: boolean;
   onPress: () => void;
 }) {
   const theme = useTheme();
@@ -21,12 +24,20 @@ export function Chip({
       onPress={onPress}
       style={[
         styles.chip,
-        active
-          ? { backgroundColor: theme.primary, borderColor: theme.primary }
-          : { backgroundColor: fixed.white, borderColor: fixed.border },
+        large && styles.large,
+        active && large
+          ? { backgroundColor: theme.primaryLight, borderColor: theme.primary }
+          : active
+            ? { backgroundColor: theme.primary, borderColor: theme.primary }
+            : { backgroundColor: fixed.white, borderColor: fixed.border },
       ]}
     >
-      <Text style={{ color: active ? theme.onPrimary : fixed.ink, fontWeight: '500' }}>
+      <Text
+        style={{
+          color: active ? (large ? theme.primary : theme.onPrimary) : fixed.ink,
+          fontWeight: '500',
+        }}
+      >
         {label}
       </Text>
     </Pressable>
@@ -41,4 +52,5 @@ const styles = StyleSheet.create({
     borderRadius: radius.pill,
     borderWidth: 1,
   },
+  large: { paddingHorizontal: 32, minHeight: 56 },
 });
