@@ -1,13 +1,16 @@
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
-import { Link } from '../components/link';
 import { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
-import { Text } from '../components/text';
+import { Pressable, StyleSheet, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button } from '../components/button';
-import { Screen } from '../components/screen';
+import { GoogleButton } from '../components/google-button';
+import { Link } from '../components/link';
+import { Shade } from '../components/shade';
+import { Text } from '../components/text';
+import { useAuthActions } from '../contexts/auth';
 import { t } from '../i18n';
-import { fixed } from '../theme/colors';
+import { fixed, radius } from '../theme/colors';
 import { PATHS } from '../utils/paths';
 
 const STEPS = [
@@ -33,73 +36,110 @@ const STEPS = [
   },
 ];
 
-// The first visit: four steps, the last one asks to sign up
+// The first visit: a photo on the whole screen and four steps; the last one asks to sign up (it has no dots)
 export default function Onboarding() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
+  const { signInWithGoogle } = useAuthActions();
   const [current, setCurrent] = useState(0);
   const step = STEPS[current];
   const last = current === STEPS.length - 1;
+  const beforeLast = current === STEPS.length - 2;
 
   return (
-    <Screen scroll={false} padded={false}>
+    <View style={styles.screen}>
       <Image
         accessibilityIgnoresInvertColors
         source={step.image}
         contentFit="cover"
-        style={styles.image}
-        accessibilityLabel=""
+        contentPosition="top"
+        transition={300}
+        style={StyleSheet.absoluteFill}
       />
-      <View style={styles.body}>
+      <Shade />
+
+      <View style={[styles.panel, { paddingBottom: 32 + insets.bottom }]}>
         <Text accessibilityRole="header" style={styles.title}>
           {step.title()}
         </Text>
-        <Text style={styles.muted}>{step.description()}</Text>
-
-        {!last ? (
-          <View style={styles.dots} accessibilityLabel={t('Passo {{n}}', { n: current + 1 })}>
-            {STEPS.slice(0, -1).map((_, n) => (
-              <View key={n} style={[styles.dot, n === current && styles.dotOn]} />
-            ))}
-          </View>
-        ) : null}
+        <Text style={styles.description}>{step.description()}</Text>
 
         {last ? (
           <>
+            <GoogleButton
+              onDark
+              label={t('Entrar com Google')}
+              run={async () => {
+                const signedIn = await signInWithGoogle('client');
+                if (signedIn) router.replace(PATHS.home as never);
+                return signedIn;
+              }}
+            />
             <Button
-              label={t('Criar conta')}
+              label={t('Entrar com e-mail')}
               onPress={() => router.replace(PATHS.signup as never)}
             />
-            <Button
-              variant="outline"
-              label={t('Entrar')}
-              onPress={() => router.replace(PATHS.login as never)}
-            />
-            <Link href={PATHS.home as never} accessibilityRole="link" style={styles.skip}>
-              {t('Entrar sem conta')}
-            </Link>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={t('Continuar como visitante')}
+              onPress={() => router.replace(PATHS.home as never)}
+              style={styles.visitor}
+            >
+              <Text style={styles.visitorLabel}>{t('Continuar como visitante')}</Text>
+            </Pressable>
           </>
         ) : (
           <>
-            <Button label={t('Próximo')} onPress={() => setCurrent((n) => n + 1)} />
+            <View style={styles.dots} accessibilityLabel={t('Passo {{n}}', { n: current + 1 })}>
+              {STEPS.slice(0, -1).map((_, n) => (
+                <Pressable
+                  key={n}
+                  accessibilityRole="button"
+                  accessibilityLabel={t('Passo {{n}}', { n: n + 1 })}
+                  hitSlop={8}
+                  onPress={() => setCurrent(n)}
+                  style={[
+                    styles.dot,
+                    n === current && [styles.dotOn, { backgroundColor: fixed.accent }],
+                  ]}
+                />
+              ))}
+            </View>
             <Button
-              variant="link"
-              label={t('Pular')}
-              onPress={() => setCurrent(STEPS.length - 1)}
+              label={beforeLast ? t('Começar') : t('Próximo')}
+              onPress={() => setCurrent((n) => n + 1)}
             />
           </>
         )}
+
+        <Text style={styles.signin}>
+          {t('Já tem uma conta?')}{' '}
+          <Link href={PATHS.login as never} accessibilityRole="link" style={styles.signinLink}>
+            {t('Entrar')}
+          </Link>
+        </Text>
       </View>
-    </Screen>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  image: { flex: 1 },
-  body: { padding: 24, gap: 12 },
-  title: { fontSize: 28, fontWeight: '700', color: fixed.ink },
-  muted: { color: fixed.gray, fontSize: 16 },
-  dots: { flexDirection: 'row', gap: 6, justifyContent: 'center' },
-  dot: { width: 8, height: 8, borderRadius: 4, backgroundColor: fixed.border },
-  dotOn: { backgroundColor: fixed.brand },
-  skip: { color: fixed.accentText, fontWeight: '600', textAlign: 'center', padding: 8 },
+  screen: { flex: 1, justifyContent: 'flex-end', backgroundColor: fixed.surface },
+  panel: { paddingHorizontal: 24, paddingTop: 32, gap: 16 },
+  title: { fontSize: 32, fontWeight: '700', color: fixed.white, textAlign: 'center' },
+  description: { fontSize: 18, lineHeight: 27, color: fixed.white, textAlign: 'center' },
+  dots: { flexDirection: 'row', justifyContent: 'center', gap: 8, marginTop: 8 },
+  dot: { width: 10, height: 10, borderRadius: radius.pill, backgroundColor: fixed.white },
+  dotOn: { width: 36 },
+  visitor: {
+    height: 56,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1.5,
+    borderColor: fixed.white,
+    borderRadius: radius.pill,
+  },
+  visitorLabel: { fontSize: 17, color: fixed.white },
+  signin: { color: fixed.white, textAlign: 'center', marginTop: 8 },
+  signinLink: { fontWeight: '600', color: fixed.accent },
 });

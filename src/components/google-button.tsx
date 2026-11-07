@@ -25,8 +25,11 @@ const KNOWN = [
 export function GoogleButton({
   label,
   run,
+  onDark,
 }: {
   label: string;
+  // On a photo (the first screens): no "ou" line and no border, a white button
+  onDark?: boolean;
   // Resolves to true when the person is signed in, false when they closed the Google window
   run: () => Promise<boolean>;
 }) {
@@ -54,18 +57,23 @@ export function GoogleButton({
 
   return (
     <>
-      <View style={styles.divider}>
-        <View style={[styles.line, { backgroundColor: theme.line }]} />
-        <Text style={{ color: theme.muted }}>{t('ou')}</Text>
-        <View style={[styles.line, { backgroundColor: theme.line }]} />
-      </View>
+      {onDark ? null : (
+        <View style={styles.divider}>
+          <View style={[styles.line, { backgroundColor: theme.line }]} />
+          <Text style={{ color: theme.muted }}>{t('ou')}</Text>
+          <View style={[styles.line, { backgroundColor: theme.line }]} />
+        </View>
+      )}
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={label}
         accessibilityState={{ busy }}
         disabled={busy}
         onPress={() => void press()}
-        style={[styles.button, { borderColor: theme.primary, opacity: busy ? 0.6 : 1 }]}
+        style={[
+          styles.button,
+          { borderColor: onDark ? fixed.white : theme.primary, opacity: busy ? 0.6 : 1 },
+        ]}
       >
         <Image
           accessibilityIgnoresInvertColors

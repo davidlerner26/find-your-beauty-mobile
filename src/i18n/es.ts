@@ -140,7 +140,6 @@ export const es: Record<string, string> = {
   'Copiar endereço': 'Copiar dirección',
   'Corte feminino': 'Corte de cabello de mujer',
   'Corte masculino': 'Corte de cabello de hombre',
-  'Criar conta': 'Crear cuenta',
   'Crie a conta do profissional. No próximo passo você completa o perfil: foto, endereço e serviços.':
     'Crea la cuenta del profesional. En el siguiente paso completas el perfil: foto, dirección y servicios.',
   'Crie uma conta': 'Crea una cuenta',
@@ -186,7 +185,6 @@ export const es: Record<string, string> = {
   'Endereço copiado': 'Dirección copiada',
   Entrar: 'Iniciar sesión',
   'Entrar com Google': 'Iniciar sesión con Google',
-  'Entrar sem conta': 'Continuar sin cuenta',
   'Entre na sua conta para agendar.': 'Inicia sesión para reservar.',
   'Entre na sua conta para ver os seus agendamentos.': 'Inicia sesión para ver tus reservas.',
   'Entre na sua conta para ver suas mensagens.': 'Inicia sesión para ver tus mensajes.',
@@ -417,7 +415,6 @@ export const es: Record<string, string> = {
   Próximo: 'Siguiente',
   'Próximo mês': 'Mes siguiente',
   Próximos: 'Próximas',
-  Pular: 'Omitir',
   Qua: 'Mié',
   'Sem limite': 'Sin límite',
   'Qualquer nota': 'Cualquier nota',
@@ -521,4 +518,6 @@ export const es: Record<string, string> = {
   'Nenhum profissional encontrado.': 'No se encontraron profesionales.',
   'Não foi possível obter a sua localização. Permita o acesso nos ajustes.':
     'No pudimos obtener tu ubicación. Permite el acceso en los ajustes.',
+  Começar: 'Empezar',
+  'Entrar com e-mail': 'Continuar con correo',
 };
