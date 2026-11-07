@@ -126,7 +126,12 @@ Open, each one needs an account, a console or a change outside this repo:
 
 - **Identifier.** `br.com.findyourbeauty.app` (iOS and Android) is a proposal; it cannot be changed after the first store
   upload.
-- **Google sign in.** OAuth client ids (iOS, Android, web) in the Google/Firebase console, and a development build.
+- **Google sign in.** The code is done (`services/google.ts`, the Google methods of `contexts/auth.tsx`, `components/google-button.tsx`,
+  with the same rules as the site). It works only in a development or store build: Expo Go has no native module of Google, and
+  there the button is hidden. The OAuth client ids of the test project are in `config/environment.ts` and the iOS URL scheme
+  comes from `app.config.ts`. Still needed: the Android app with its SHA-1 in the Firebase console (so the Android OAuth client
+  exists), the same two ids for production (`EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID` and `EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID` in
+  EAS), and, for the App Store, an equivalent option such as Sign in with Apple.
 - **Android map.** `react-native-maps` on Android needs a Google Maps key for the app (`android.config.googleMaps.apiKey`);
   the key of the site is restricted to web referrers.
 - **Stripe.** `@stripe/stripe-react-native` and saved cards, in a development build, behind `features.checkout`.

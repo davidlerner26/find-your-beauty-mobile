@@ -13,6 +13,7 @@ import { PATHS } from '../utils/paths';
 import { authErrorMessage } from '../utils/validators';
 import { AuthField, AuthScreen, FormError } from './auth-kit';
 import { Button } from './button';
+import { GoogleButton } from './google-button';
 import { Guard } from './guard';
 import { Link } from './link';
 import { Text } from './text';
@@ -43,7 +44,8 @@ export function SignupForm({ pro = false }: { pro?: boolean }) {
 function Signup({ pro }: { pro: boolean }) {
   const router = useRouter();
   const theme = useTheme();
-  const { signUpWithEmail, signUpProfessional } = useAuthActions();
+  const { signUpWithEmail, signUpProfessional, signInWithGoogle, signUpProfessionalWithGoogle } =
+    useAuthActions();
   const [values, setValues] = useState<SignupValues>({
     firstName: '',
     lastName: '',
@@ -190,6 +192,18 @@ function Signup({ pro }: { pro: boolean }) {
           loading={submitting}
         />
       </View>
+
+      <GoogleButton
+        label={t('Cadastrar com Google')}
+        run={async () => {
+          // A professional goes on to the second step (the screen shows it); a client goes to the start
+          const signedIn = pro
+            ? await signUpProfessionalWithGoogle()
+            : await signInWithGoogle('client');
+          if (signedIn && !pro) router.replace(PATHS.home as never);
+          return signedIn;
+        }}
+      />
 
       <Text style={[styles.legal, { color: theme.muted }]}>
         {t('Ao criar a conta você concorda com os')}{' '}

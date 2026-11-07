@@ -43,4 +43,5 @@ notes (Expo changes a lot: check the docs of the installed SDK before using an A
   (`getReactNativePersistence` is not in the default types).
 - `.npmrc` has `legacy-peer-deps=true` (the a11y ESLint plugin declares ESLint <= 8 as a peer), so npm does not install
   peer dependencies by itself: if a tool asks for one (like `@react-native/jest-preset`), install it.
-- Google sign in and Stripe need a development build, not Expo Go.
+- Google sign in and Stripe need a development build, not Expo Go (the Google button is hidden in Expo Go).
+- `app.config.ts` (Expo reads it next to `app.json`) cannot import files of `src/`: what it needs is written in it.

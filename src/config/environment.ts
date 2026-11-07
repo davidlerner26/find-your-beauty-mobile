@@ -8,6 +8,11 @@ const dev = {
   features: { featuredProfessionals: true, checkout: true },
   // Instagram API with Instagram Login: the same Meta app as the site (the id is public)
   instagramAppId: '1138530759119798',
+  // OAuth clients of the Firebase project (Google Cloud Console > Credentials). They are public identifiers.
+  google: {
+    webClientId: '508397329043-ffd9ipq2arkgd6eseumtv2idhqp2mn1m.apps.googleusercontent.com',
+    iosClientId: '508397329043-1ns5lec0e73406h95r0dtq73tat9r06k.apps.googleusercontent.com',
+  },
   firebase: {
     apiKey: 'AIzaSyBwamplQdQ7d2BYMuD56DfVigkO1fuSpEw',
     authDomain: 'find-your-beauty-dev.firebaseapp.com',
@@ -27,6 +32,10 @@ export const environment =
         siteUrl: env.EXPO_PUBLIC_SITE_URL ?? 'https://findyourbeauty.com.br',
         features: { featuredProfessionals: false, checkout: false },
         instagramAppId: env.EXPO_PUBLIC_INSTAGRAM_APP_ID ?? '',
+        google: {
+          webClientId: env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID ?? '',
+          iosClientId: env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID ?? '',
+        },
         firebase: {
           apiKey: env.EXPO_PUBLIC_FIREBASE_API_KEY ?? '',
           authDomain: env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN ?? '',

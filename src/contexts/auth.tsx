@@ -2,7 +2,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   confirmPasswordReset,
   createUserWithEmailAndPassword,
+  deleteUser,
+  GoogleAuthProvider,
   onAuthStateChanged,
+  signInWithCredential,
   signInWithEmailAndPassword,
   signOut,
   updateProfile,
@@ -21,6 +24,7 @@ import {
   useRef,
 } from 'react';
 import { firebaseAuth, functions } from '../services/firebase';
+import { googleIdToken, googleSignOut } from '../services/google';
 import { professionalAccounts } from '../services/professional-accounts';
 import { users } from '../services/users';
 import { APP_LANGUAGE } from '../utils/locale';
@@ -53,6 +57,9 @@ export type AuthActions = {
   signUpProfessional: (data: SignUpData) => Promise<void>;
   signInClient: (email: string, password: string) => Promise<void>;
   signInProfessional: (email: string, password: string) => Promise<void>;
+  // With a Google account. Resolve to false when the person closed the Google window.
+  signInWithGoogle: (area: 'client' | 'professional') => Promise<boolean>;
+  signUpProfessionalWithGoogle: () => Promise<boolean>;
   startVerification: (email: string, password: string | null) => Promise<void>;
   sendVerificationCode: (email: string) => Promise<void>;
   // true when the user is signed in after the code, false when the login has to be done again
@@ -174,6 +181,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     };
 
+    // Opens Google and signs in to Firebase with its id token. Null when the person closed the Google window.
+    const googleCredential = async () => {
+      const idToken = await googleIdToken();
+      if (!idToken) return null;
+      const { user } = await signInWithCredential(
+        firebaseAuth,
+        GoogleAuthProvider.credential(idToken),
+      );
+      return user;
+    };
+
+    // A Google account that signs in for the first time gets the document of a client
+    const createUserDocIfMissing = async (user: User) => {
+      try {
+        const [firstName = '', ...rest] = (user.displayName ?? '').trim().split(/\s+/);
+        await users.createIfMissing(user.uid, {
+          firstName,
+          lastName: rest.join(' '),
+          email: user.email ?? '',
+          phone: user.phoneNumber ?? '',
+        });
+      } catch (error) {
+        log.error('Failed to save user', error);
+      }
+    };
+
     return {
       async signUpWithEmail({
         firstName,
@@ -252,6 +285,73 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         await requireArea('professional');
       },
 
+      // Google: the id token of the account becomes a Firebase session. Each login screen only takes the accounts of
+      // its own area, and an account that is a client can't also be a professional (the same rules as the site).
+      async signInWithGoogle(area) {
+        const user = await googleCredential();
+        if (!user) return false;
+        dispatch({ type: 'pendingApproval', value: false });
+        if (await resolveRole(user)) {
+          await signOut(firebaseAuth);
+          throw { code: 'auth/pending-approval' };
+        }
+        if (area === 'client' && latest.current.role === 'client') {
+          await createUserDocIfMissing(user);
+        }
+        if (
+          area === 'professional' &&
+          latest.current.role !== 'professional' &&
+          !latest.current.signupIncomplete
+        ) {
+          // A Google account with no account here (not even a client) has to sign up first
+          const hasClientAccount = await users.exists(user.uid).catch((error) => {
+            log.error('Failed to check the client account', error);
+            return null;
+          });
+          if (hasClientAccount === false) {
+            // Signing in with Google created the account in Firebase: it is removed, since the sign up wasn't done
+            await deleteUser(user).catch((error) => {
+              log.warn('Failed to remove the unfinished account, signing out instead', error);
+              return signOut(firebaseAuth);
+            });
+            throw { code: 'auth/professional-not-registered' };
+          }
+        }
+        await requireArea(area);
+        return true;
+      },
+
+      // Sign up with a Google account: the account becomes a professional waiting for the profile step
+      async signUpProfessionalWithGoogle() {
+        const user = await googleCredential();
+        if (!user) return false;
+        dispatch({ type: 'signupSubmitted', value: false });
+        dispatch({ type: 'pendingApproval', value: false });
+
+        const [profile, isClient] = await Promise.all([
+          professionalAccounts.status(user.uid),
+          users.exists(user.uid),
+        ]);
+        if (!profile) {
+          if (isClient) {
+            await signOut(firebaseAuth);
+            throw { code: 'auth/account-is-client' };
+          }
+          await professionalAccounts.create({
+            uid: user.uid,
+            name: user.displayName ?? '',
+            email: user.email ?? '',
+            phone: user.phoneNumber ?? '',
+          });
+        }
+
+        if (await resolveRole(user)) {
+          await signOut(firebaseAuth);
+          throw { code: 'auth/pending-approval' };
+        }
+        return true;
+      },
+
       startVerification,
       sendVerificationCode,
 
@@ -310,7 +410,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // The "sent" message was seen: the next visit to the sign up shows the form again
       clearSignupSubmitted: () => dispatch({ type: 'signupSubmitted', value: false }),
 
-      signOut: () => signOut(firebaseAuth),
+      signOut: async () => {
+        await signOut(firebaseAuth);
+        await googleSignOut();
+      },
     };
   }, [resolveRole]);
 
