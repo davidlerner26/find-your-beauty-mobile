@@ -41,6 +41,7 @@ export const es: Record<string, string> = {
   Agendar: 'Reservar',
   'Agendar serviço': 'Reservar servicio',
   Aguardando: 'Pendiente',
+  'Aguardando aprovação': 'Esperando aprobación',
   'Ainda não há avaliações.': 'Aún no hay reseñas.',
   'Ainda não há profissionais para sugerir.': 'Aún no hay profesionales para sugerir.',
   'Algo deu errado. Tente novamente.': 'Algo salió mal. Inténtalo de nuevo.',
@@ -53,6 +54,8 @@ export const es: Record<string, string> = {
   Anteriores: 'Anteriores',
   'Ao criar a conta você concorda com os': 'Al crear la cuenta aceptas los',
   'Aplicação de cílios': 'Aplicación de pestañas',
+  Aprovado: 'Aprobado',
+  Aprovar: 'Aprobar',
   Arquivo: 'Archivo',
   às: 'a',
   'As senhas não são iguais.': 'Las contraseñas no coinciden.',
@@ -81,6 +84,7 @@ export const es: Record<string, string> = {
   'Cadastre-se': 'Regístrate',
   'Cadastro de profissional': 'Registro de profesional',
   'Cadastro enviado!': '¡Registro enviado!',
+  'Cadastro: {{when}}': 'Registro: {{when}}',
   Cancelado: 'Cancelada',
   'Cancelado pelo profissional': 'Cancelada por el profesional',
   Cancelar: 'Cancelar',
@@ -108,6 +112,7 @@ export const es: Record<string, string> = {
   'Confirme a nova senha': 'Confirma la nueva contraseña',
   'Confirme o seu e-mail': 'Confirma tu correo',
   'Conheça nossos especialistas': 'Conoce a nuestros especialistas',
+  Contato: 'Contacto',
   'Conte a sua experiência. Deixe uma linha em branco para separar parágrafos.':
     'Cuenta tu experiencia. Deja una línea en blanco para separar párrafos.',
   'Conte como foi (opcional)': 'Cuéntanos cómo fue (opcional)',
@@ -212,6 +217,7 @@ export const es: Record<string, string> = {
   Finalizar: 'Finalizar',
   Folga: 'Libre',
   Foto: 'Foto',
+  'Foto da galeria': 'Foto de la galería',
   'Foto do Instagram de {{name}}': 'Foto de Instagram de {{name}}',
   'Fotos do Instagram atualizadas ({{photos}}).': 'Fotos de Instagram actualizadas ({{photos}}).',
   'Fotos do serviço': 'Fotos del servicio',
@@ -223,6 +229,7 @@ export const es: Record<string, string> = {
   Histórico: 'Historial',
   Horário: 'Hora',
   'Horário de funcionamento': 'Horario de atención',
+  Horários: 'Horarios',
   'Horários de atendimento': 'Horarios de atención',
   Início: 'Inicio',
   'Instagram conectado: @{{username}}.': 'Instagram conectado: @{{username}}.',
@@ -267,8 +274,11 @@ export const es: Record<string, string> = {
   'Não foi possível atualizar os favoritos. Tente novamente.':
     'No se pudieron actualizar los favoritos. Inténtalo de nuevo.',
   'Não foi possível cancelar. Tente novamente.': 'No se pudo cancelar. Inténtalo de nuevo.',
+  'Não foi possível carregar o perfil.': 'No se pudo cargar el perfil.',
+  'Não foi possível carregar os cadastros.': 'No se pudieron cargar los registros.',
   'Não foi possível carregar os dados. Tente novamente.':
     'No se pudieron cargar los datos. Inténtalo de nuevo.',
+  'Não foi possível concluir. Tente novamente.': 'No se pudo completar. Inténtalo de nuevo.',
   'Não foi possível conectar ao Instagram. Tente novamente.':
     'No se pudo conectar con Instagram. Inténtalo de nuevo.',
   'Não foi possível enviar a avaliação. Tente novamente.':
@@ -289,13 +299,20 @@ export const es: Record<string, string> = {
   'Não foi possível verificar seus dados. Tente novamente.':
     'No se pudieron verificar tus datos. Inténtalo de nuevo.',
   'Não há horários livres neste dia.': 'No hay horarios libres este día.',
+  'Não preenchido.': 'Sin completar.',
   'Não tem uma conta?': '¿No tienes una cuenta?',
+  Negado: 'Rechazado',
+  Negar: 'Rechazar',
+  'Negar o cadastro de {{name}}?': '¿Rechazar el registro de {{name}}?',
   'Nenhum agendamento confirmado.': 'No hay reservas confirmadas.',
+  'Nenhum cadastro aguardando aprovação.': 'No hay registros esperando aprobación.',
   'Nenhum período bloqueado. Use para férias e folgas.':
     'No hay períodos bloqueados. Úsalo para vacaciones y días libres.',
   'Nenhum profissional encontrado. Tente outro nome ou serviço.':
     'No se encontraron profesionales. Prueba con otro nombre o servicio.',
+  'Nenhum serviço cadastrado.': 'No hay servicios registrados.',
   'Nenhuma conversa encontrada.': 'No se encontraron conversaciones.',
+  'Nenhuma foto.': 'No hay fotos.',
   'Nenhuma solicitação no momento.': 'No hay solicitudes por ahora.',
   'No endereço do profissional': 'En la dirección del profesional',
   'No estúdio': 'En el estudio',
@@ -342,6 +359,7 @@ export const es: Record<string, string> = {
   'Penteado para festa': 'Peinado para fiesta',
   Perfil: 'Perfil',
   'Perfil atualizado': 'Perfil actualizado',
+  'Perfil do profissional': 'Perfil del profesional',
   'Perfil salvo e publicado! Os clientes já podem encontrar você.':
     '¡Perfil guardado y publicado! Los clientes ya pueden encontrarte.',
   'Perfil salvo, mas ainda não publicado. Falta: {{missing}}.':
@@ -446,6 +464,7 @@ export const es: Record<string, string> = {
   'Usar minha localização': 'Usar mi ubicación',
   'Vários serviços dos melhores profissionais que são nossos parceiros':
     'Varios servicios de los mejores profesionales que son nuestros socios',
+  'Ver perfil completo': 'Ver perfil completo',
   visitante: 'visitante',
   visualização: 'visualización',
   visualizações: 'visualizaciones',

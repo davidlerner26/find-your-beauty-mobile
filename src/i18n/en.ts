@@ -41,6 +41,7 @@ export const en: Record<string, string> = {
   Agendar: 'Book',
   'Agendar serviço': 'Book a service',
   Aguardando: 'Pending',
+  'Aguardando aprovação': 'Waiting for approval',
   'Ainda não há avaliações.': 'No reviews yet.',
   'Ainda não há profissionais para sugerir.': 'There are no professionals to suggest yet.',
   'Algo deu errado. Tente novamente.': 'Something went wrong. Please try again.',
@@ -52,6 +53,8 @@ export const en: Record<string, string> = {
   Anteriores: 'Earlier',
   'Ao criar a conta você concorda com os': 'By creating an account you agree to the',
   'Aplicação de cílios': 'Eyelash application',
+  Aprovado: 'Approved',
+  Aprovar: 'Approve',
   Arquivo: 'File',
   às: 'to',
   'As senhas não são iguais.': 'The passwords do not match.',
@@ -80,6 +83,7 @@ export const en: Record<string, string> = {
   'Cadastre-se': 'Sign up',
   'Cadastro de profissional': 'Professional sign up',
   'Cadastro enviado!': 'Registration sent!',
+  'Cadastro: {{when}}': 'Signed up: {{when}}',
   Cancelado: 'Cancelled',
   'Cancelado pelo profissional': 'Cancelled by the professional',
   Cancelar: 'Cancel',
@@ -107,6 +111,7 @@ export const en: Record<string, string> = {
   'Confirme a nova senha': 'Confirm the new password',
   'Confirme o seu e-mail': 'Confirm your e-mail',
   'Conheça nossos especialistas': 'Meet our specialists',
+  Contato: 'Contact',
   'Conte a sua experiência. Deixe uma linha em branco para separar parágrafos.':
     'Tell us about your experience. Leave a blank line to separate paragraphs.',
   'Conte como foi (opcional)': 'Tell us how it went (optional)',
@@ -211,6 +216,7 @@ export const en: Record<string, string> = {
   Finalizar: 'Confirm',
   Folga: 'Day off',
   Foto: 'Photo',
+  'Foto da galeria': 'Gallery photo',
   'Foto do Instagram de {{name}}': 'Instagram photo of {{name}}',
   'Fotos do Instagram atualizadas ({{photos}}).': 'Instagram photos updated ({{photos}}).',
   'Fotos do serviço': 'Photos of the service',
@@ -222,6 +228,7 @@ export const en: Record<string, string> = {
   Histórico: 'History',
   Horário: 'Time',
   'Horário de funcionamento': 'Opening hours',
+  Horários: 'Hours',
   'Horários de atendimento': 'Working hours',
   Início: 'Home',
   'Instagram conectado: @{{username}}.': 'Instagram connected: @{{username}}.',
@@ -264,8 +271,11 @@ export const en: Record<string, string> = {
   'Não foi possível atualizar os favoritos. Tente novamente.':
     'Could not update the favorites. Try again.',
   'Não foi possível cancelar. Tente novamente.': 'Could not cancel. Try again.',
+  'Não foi possível carregar o perfil.': 'The profile could not be loaded.',
+  'Não foi possível carregar os cadastros.': 'The registrations could not be loaded.',
   'Não foi possível carregar os dados. Tente novamente.':
     'The data could not be loaded. Please try again.',
+  'Não foi possível concluir. Tente novamente.': 'It could not be completed. Please try again.',
   'Não foi possível conectar ao Instagram. Tente novamente.':
     'Could not connect to Instagram. Please try again.',
   'Não foi possível enviar a avaliação. Tente novamente.':
@@ -285,13 +295,20 @@ export const en: Record<string, string> = {
   'Não foi possível verificar seus dados. Tente novamente.':
     'Your data could not be checked. Please try again.',
   'Não há horários livres neste dia.': 'There are no free times on this day.',
+  'Não preenchido.': 'Not filled in.',
   'Não tem uma conta?': "Don't have an account?",
+  Negado: 'Denied',
+  Negar: 'Deny',
+  'Negar o cadastro de {{name}}?': 'Deny the sign up of {{name}}?',
   'Nenhum agendamento confirmado.': 'No confirmed bookings.',
+  'Nenhum cadastro aguardando aprovação.': 'No registrations waiting for approval.',
   'Nenhum período bloqueado. Use para férias e folgas.':
     'No blocked periods. Use it for vacations and days off.',
   'Nenhum profissional encontrado. Tente outro nome ou serviço.':
     'No professionals found. Try another name or service.',
+  'Nenhum serviço cadastrado.': 'No services registered.',
   'Nenhuma conversa encontrada.': 'No conversations found.',
+  'Nenhuma foto.': 'No photos.',
   'Nenhuma solicitação no momento.': 'No requests at the moment.',
   'No endereço do profissional': "At the professional's address",
   'No estúdio': 'At the studio',
@@ -337,6 +354,7 @@ export const en: Record<string, string> = {
   'Penteado para festa': 'Party hairstyle',
   Perfil: 'Profile',
   'Perfil atualizado': 'Profile updated',
+  'Perfil do profissional': 'Professional profile',
   'Perfil salvo e publicado! Os clientes já podem encontrar você.':
     'Profile saved and published! Clients can find you now.',
   'Perfil salvo, mas ainda não publicado. Falta: {{missing}}.':
@@ -439,6 +457,7 @@ export const en: Record<string, string> = {
   'Usar minha localização': 'Use my location',
   'Vários serviços dos melhores profissionais que são nossos parceiros':
     'Many services from the best professionals who are our partners',
+  'Ver perfil completo': 'View full profile',
   visitante: 'visitor',
   visualização: 'view',
   visualizações: 'views',

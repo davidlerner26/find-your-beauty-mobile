@@ -93,7 +93,7 @@ and a Spanish entry with the same placeholders, and an entry nobody uses fails t
 2. Client, read side (done): home, search with filters, map, professional page with reviews, onboarding, login, sign up, e-mail code, password reset, legal. Left for later phases: Google sign in (needs OAuth client ids), booking from the professional page (phase 3).
 3. Client, transactions (done, except cards and real payments): booking, simulated payment, agenda, inbox and chat, notifications, profile. Cards and Stripe need a development build.
 4. Professional area (done): sign up in 2 steps, agenda (accept, decline, cancel), messages, profile editor, Instagram connection.
-5. Admin: approvals.
+5. Admin (done): the list of sign ups waiting for approval and the review of a professional (approve or deny).
 6. Polish: push notifications, accessibility pass, EAS build config.
 
 At the end of each phase the work stops until the next one is approved.
