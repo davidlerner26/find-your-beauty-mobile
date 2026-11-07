@@ -489,7 +489,6 @@ export const es: Record<string, string> = {
   'Todos os bairros do Rio de Janeiro': 'Todos los barrios de Río de Janeiro',
   'Toque no dia que quer bloquear. Para um período, toque também no último dia.':
     'Toca el día que quieres bloquear. Para un período, toca también el último día.',
-  'Toque numa foto para removê-la.': 'Toca una foto para quitarla.',
   Total: 'Total',
   'Trocar foto': 'Cambiar foto',
   'Usar minha localização': 'Usar mi ubicación',
@@ -522,4 +521,7 @@ export const es: Record<string, string> = {
   'Entrar com e-mail': 'Continuar con correo',
   'Voltar ao login': 'Volver a iniciar sesión',
   'O endereço não existe ou foi movido.': 'La dirección no existe o fue movida.',
+  'Mostre o seu trabalho: as fotos aparecem na galeria do seu perfil.':
+    'Muestra tu trabajo: las fotos aparecen en la galería de tu perfil.',
+  'Onde você atende?': '¿Dónde atiendes?',
 };

@@ -1,9 +1,10 @@
 import { Image } from 'expo-image';
+import { useMemo } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { Text, TextInput } from './text';
 import { t } from '../i18n';
 import { ServiceCategory } from '../models/professional';
-import { fixed } from '../theme/colors';
+import { fixed, Theme } from '../theme/colors';
 import { useTheme } from '../theme/theme';
 import { catalogLabel } from '../utils/catalog';
 import { maskDuration } from '../utils/duration';
@@ -47,6 +48,7 @@ function Field({
   error?: boolean;
   children: React.ReactNode;
 }) {
+  const styles = useStyles();
   return (
     <View style={styles.field}>
       <Text style={styles.label}>{label}</Text>
@@ -66,6 +68,7 @@ export function ServicesEditor({
   uploading,
 }: Props) {
   const theme = useTheme();
+  const styles = useStyles();
   const update = (id: string, patch: Partial<ServiceDraft>) =>
     onChange(services.map((service) => (service.id === id ? { ...service, ...patch } : service)));
 
@@ -283,36 +286,43 @@ export function ServicesEditor({
   );
 }
 
-const styles = StyleSheet.create({
-  wrap: { gap: 12 },
-  heading: { fontSize: 20, fontWeight: '700', color: fixed.ink },
-  card: {
-    gap: 10,
-    padding: 14,
-    borderWidth: 1,
-    borderColor: fixed.borderSoft,
-    borderRadius: 14,
-    backgroundColor: fixed.white,
-  },
-  cardMissing: { borderColor: fixed.danger },
-  field: { gap: 6 },
-  label: { fontWeight: '600', color: fixed.ink },
-  chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  row: { flexDirection: 'row', gap: 8, alignItems: 'center' },
-  half: { flex: 1 },
-  input: {
-    minHeight: 44,
-    paddingHorizontal: 12,
-    borderWidth: 1,
-    borderColor: fixed.border,
-    borderRadius: 10,
-    fontSize: 16,
-    color: fixed.ink,
-  },
-  small: { flex: 1, textAlign: 'center' },
-  multiline: { minHeight: 80, textAlignVertical: 'top', paddingTop: 10 },
-  rule: { gap: 8, padding: 10, borderRadius: 10, backgroundColor: fixed.surface },
-  photo: { width: 72, height: 72, borderRadius: 10, backgroundColor: fixed.surface },
-  muted: { color: fixed.gray },
-  error: { color: fixed.dangerStrong, fontSize: 13 },
-});
+const useStyles = () => {
+  const theme = useTheme();
+  return useMemo(() => makeStyles(theme), [theme]);
+};
+
+const makeStyles = (theme: Theme) =>
+  StyleSheet.create({
+    wrap: { gap: 12 },
+    heading: { fontSize: 18, fontWeight: '700', color: theme.text },
+    card: {
+      gap: 10,
+      padding: 14,
+      borderWidth: 1,
+      borderColor: fixed.borderSoft,
+      borderRadius: 14,
+      backgroundColor: fixed.white,
+    },
+    cardMissing: { borderColor: fixed.danger },
+    field: { gap: 6 },
+    label: { fontWeight: '600', color: theme.text },
+    chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+    row: { flexDirection: 'row', gap: 8, alignItems: 'center' },
+    half: { flex: 1 },
+    input: {
+      minHeight: 48,
+      paddingHorizontal: 16,
+      borderWidth: 1.5,
+      borderColor: 'transparent',
+      borderRadius: 14,
+      backgroundColor: theme.field,
+      fontSize: 16,
+      color: fixed.ink,
+    },
+    small: { flex: 1, textAlign: 'center' },
+    multiline: { minHeight: 80, textAlignVertical: 'top', paddingTop: 10 },
+    rule: { gap: 8, padding: 10, borderRadius: 10, backgroundColor: fixed.surface },
+    photo: { width: 72, height: 72, borderRadius: 10, backgroundColor: fixed.surface },
+    muted: { color: theme.muted },
+    error: { color: theme.errorFg, fontSize: 13 },
+  });

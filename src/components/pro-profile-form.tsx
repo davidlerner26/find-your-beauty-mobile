@@ -2,8 +2,17 @@ import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
 import { useEffect, useRef, useState } from 'react';
-import { Alert, Pressable, StyleSheet, Switch, View } from 'react-native';
-import { Text, TextInput } from './text';
+import { MaterialIcons } from '@expo/vector-icons';
+import {
+  ActivityIndicator,
+  Alert,
+  Pressable,
+  StyleSheet,
+  Switch,
+  useWindowDimensions,
+  View,
+} from 'react-native';
+import { Text } from './text';
 import { useAuth, useAuthActions } from '../contexts/auth';
 import { useProfessionals } from '../contexts/professionals';
 import { useToast } from '../contexts/toast';
@@ -25,7 +34,8 @@ import {
 } from '../services/instagram';
 import { professionalAccounts } from '../services/professional-accounts';
 import { removePhoto, uploadPhoto } from '../services/photos';
-import { fixed } from '../theme/colors';
+import { fixed, radius } from '../theme/colors';
+import { useTheme } from '../theme/theme';
 import { formatAddress } from '../utils/address-format';
 import { formatCpf, isValidCpf } from '../utils/cpf';
 import { APP_LANGUAGE } from '../utils/locale';
@@ -42,6 +52,7 @@ import { isServiceComplete, ServiceDraft, toService, toServiceDraft } from '../u
 import { WEEKDAYS } from '../utils/weekdays';
 import { AvailabilityEditor } from './availability-editor';
 import { Button } from './button';
+import { FormField, FormSection } from './form-kit';
 import { Screen } from './screen';
 import { ServicesEditor } from './services-editor';
 import { Spinner } from './spinner';
@@ -115,6 +126,8 @@ export function ProProfileForm({ signup = false }: { signup?: boolean }) {
 function Form({ profile, signup }: { profile: Professional; signup: boolean }) {
   const { signOut, finishSignup } = useAuthActions();
   const toast = useToast();
+  const theme = useTheme();
+  const { width } = useWindowDimensions();
   const uid = profile.id;
   const [draft, setDraft] = useState<Draft>(() => draftOf(profile));
   const [cpf, setCpf] = useState('');
@@ -381,13 +394,15 @@ function Form({ profile, signup }: { profile: Professional; signup: boolean }) {
       ],
     );
 
+  const photoSize = Math.floor((width - 48 - 24) / 3);
+
   return (
     <Screen edges={['top']}>
-      <Text accessibilityRole="header" style={styles.title}>
+      <Text accessibilityRole="header" style={[styles.title, { color: theme.text }]}>
         {signup ? t('Complete o seu perfil') : t('Perfil')}
       </Text>
       {signup ? (
-        <Text style={styles.muted}>
+        <Text style={{ color: theme.muted }}>
           {t(
             'Preencha os dados abaixo. Depois do envio, o cadastro é analisado antes de entrar no ar.',
           )}
@@ -401,183 +416,216 @@ function Form({ profile, signup }: { profile: Professional; signup: boolean }) {
         </Text>
       ) : null}
 
-      <Text accessibilityRole="header" style={styles.heading}>
-        {t('Dados')}
-      </Text>
-      <Labeled label={t('Nome')}>
-        <TextInput
-          accessibilityLabel={t('Nome')}
-          value={draft.name}
-          onChangeText={(name) => set({ name })}
-          style={styles.input}
-        />
-      </Labeled>
-      <Labeled
-        label="CPF"
-        error={tried && !isValidCpf(cpf) ? t('Digite um CPF válido.') : undefined}
-      >
-        <TextInput
-          accessibilityLabel="CPF"
+      <FormSection title={t('Dados')}>
+        <FormField label={t('Nome')} value={draft.name} onChangeText={(name) => set({ name })} />
+        <FormField
+          label="CPF"
           value={cpf}
           onChangeText={(text) => setCpf(formatCpf(text))}
           keyboardType="number-pad"
-          style={styles.input}
+          placeholder="000.000.000-00"
+          error={tried && !isValidCpf(cpf) ? t('Digite um CPF válido.') : undefined}
         />
-      </Labeled>
-      <Labeled label={t('Celular')}>
-        <TextInput
-          accessibilityLabel={t('Celular')}
+        <FormField
+          label={t('Celular')}
+          icon="call"
           value={draft.phone}
           onChangeText={(text) => set({ phone: formatPhone(text) })}
           keyboardType="phone-pad"
-          style={styles.input}
         />
-      </Labeled>
 
-      <Text accessibilityRole="header" style={styles.subheading}>
-        {t('Foto')}
-      </Text>
-      <Text style={styles.muted}>
-        {t('É a sua foto nos cartões, no topo do perfil e nas mensagens.')}
-      </Text>
-      {draft.image ? (
-        <Image
-          accessibilityIgnoresInvertColors
-          source={{ uri: draft.image }}
-          contentFit="cover"
-          style={styles.preview}
-        />
-      ) : (
-        <View style={[styles.preview, styles.empty]}>
-          <Text style={styles.muted}>{t('Sem foto')}</Text>
+        <Text accessibilityRole="header" style={[styles.subheading, { color: theme.text }]}>
+          {t('Foto')}
+        </Text>
+        <Text style={{ color: theme.muted }}>
+          {t('É a sua foto nos cartões, no topo do perfil e nas mensagens.')}
+        </Text>
+        <View style={styles.photoRow}>
+          {draft.image ? (
+            <Image
+              accessibilityIgnoresInvertColors
+              source={{ uri: draft.image }}
+              contentFit="cover"
+              style={styles.preview}
+            />
+          ) : (
+            <View style={[styles.preview, styles.empty, { backgroundColor: theme.primaryLight }]}>
+              <Text style={{ color: theme.primary, fontSize: 14 }}>{t('Sem foto')}</Text>
+            </View>
+          )}
+          <View style={styles.photoButton}>
+            <Button
+              variant="outline"
+              label={draft.image ? t('Trocar foto') : t('Escolher foto')}
+              loading={uploading === 'profile'}
+              onPress={() => void changeProfilePhoto()}
+            />
+          </View>
         </View>
-      )}
-      <Button
-        variant="outline"
-        label={draft.image ? t('Trocar foto') : t('Escolher foto')}
-        loading={uploading === 'profile'}
-        onPress={() => void changeProfilePhoto()}
-      />
 
-      <Labeled label={t('Sobre você')}>
-        <TextInput
-          accessibilityLabel={t('Sobre você')}
+        <FormField
+          label={t('Sobre você')}
           placeholder={t(
             'Conte a sua experiência. Deixe uma linha em branco para separar parágrafos.',
           )}
-          placeholderTextColor={fixed.gray}
           value={draft.about}
           onChangeText={(about) => set({ about })}
           multiline
-          style={[styles.input, styles.multiline]}
         />
-      </Labeled>
+      </FormSection>
 
-      <Text accessibilityRole="header" style={styles.heading}>
-        Instagram
-      </Text>
-      {!instagramAvailable ? (
-        <Text style={styles.muted}>
-          {t('A conexão com o Instagram ainda não foi configurada.')}
-        </Text>
-      ) : profile.instagramConnected ? (
-        <>
-          <Text style={styles.bold}>@{profile.instagram}</Text>
-          <Button
-            variant="outline"
-            label={t('Atualizar fotos')}
-            loading={instagramBusy}
-            onPress={() => void refresh()}
-          />
-          <Button variant="link" label={t('Desconectar')} onPress={disconnect} />
-        </>
-      ) : (
-        <>
-          <Text style={styles.muted}>
-            {t(
-              'Conecte a conta profissional do Instagram para mostrar suas fotos mais recentes no perfil.',
-            )}
+      <FormSection title="Instagram">
+        {!instagramAvailable ? (
+          <Text style={{ color: theme.muted }}>
+            {t('A conexão com o Instagram ainda não foi configurada.')}
           </Text>
-          <Button
-            variant="outline"
-            label={t('Conectar Instagram')}
-            loading={instagramBusy}
-            onPress={() => void connect()}
-          />
-        </>
-      )}
-
-      <Text accessibilityRole="header" style={styles.heading}>
-        {t('Galeria')}
-      </Text>
-      <View style={styles.wrap}>
-        {draft.gallery.map((photo) => (
-          <Pressable
-            key={photo}
-            accessibilityRole="button"
-            accessibilityLabel={t('Remover foto')}
-            onPress={() => removeGallery(photo)}
-          >
-            <Image
-              accessibilityIgnoresInvertColors
-              source={{ uri: photo }}
-              contentFit="cover"
-              style={styles.thumb}
+        ) : profile.instagramConnected ? (
+          <>
+            <Text style={[styles.bold, { color: theme.text }]}>@{profile.instagram}</Text>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={t('Atualizar fotos')}
+              accessibilityState={{ disabled: instagramBusy, busy: instagramBusy }}
+              disabled={instagramBusy}
+              onPress={() => void refresh()}
+              style={[styles.pill, styles.brandPill, instagramBusy && styles.off]}
+            >
+              <Text style={styles.brandPillLabel}>{t('Atualizar fotos')}</Text>
+            </Pressable>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={t('Desconectar')}
+              accessibilityState={{ disabled: instagramBusy }}
+              disabled={instagramBusy}
+              onPress={disconnect}
+              style={[styles.pill, styles.dangerPill, instagramBusy && styles.off]}
+            >
+              <Text style={styles.dangerLabel}>{t('Desconectar')}</Text>
+            </Pressable>
+          </>
+        ) : (
+          <>
+            <Text style={{ color: theme.muted }}>
+              {t(
+                'Conecte a conta profissional do Instagram para mostrar suas fotos mais recentes no perfil.',
+              )}
+            </Text>
+            <InstagramButton
+              label={t('Conectar Instagram')}
+              busy={instagramBusy}
+              onPress={() => void connect()}
             />
-          </Pressable>
-        ))}
-      </View>
-      <Button
-        variant="outline"
-        label={t('Adicionar fotos')}
-        loading={uploading === 'gallery'}
-        onPress={() => void addGallery()}
-      />
-      <Text style={styles.muted}>{t('Toque numa foto para removê-la.')}</Text>
+          </>
+        )}
+      </FormSection>
 
-      <Text accessibilityRole="header" style={styles.heading}>
-        {t('Localização')}
-      </Text>
-      <Text style={styles.muted}>{t('Onde você atende? Pode escolher os dois.')}</Text>
-      {SERVICE_PLACES.map(({ key, label }) => (
-        <View key={key} style={styles.between}>
-          <Text style={styles.bold}>{label}</Text>
-          <Switch
-            accessibilityLabel={label}
-            value={hasPlace(key)}
-            onValueChange={() => togglePlace(key)}
-            trackColor={{ true: fixed.brand }}
-          />
+      <FormSection
+        title={t('Galeria')}
+        right={
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={t('Adicionar fotos')}
+            accessibilityState={{ busy: uploading === 'gallery' }}
+            disabled={uploading === 'gallery'}
+            onPress={() => void addGallery()}
+            hitSlop={8}
+          >
+            {uploading === 'gallery' ? (
+              <ActivityIndicator color={theme.primary} />
+            ) : (
+              <Text style={{ color: theme.primary, fontSize: 16 }}>+ {t('Adicionar fotos')}</Text>
+            )}
+          </Pressable>
+        }
+      >
+        {draft.gallery.length ? (
+          <View style={styles.gallery}>
+            {draft.gallery.map((photo) => (
+              <View key={photo} style={{ width: photoSize, height: photoSize }}>
+                <Image
+                  accessibilityIgnoresInvertColors
+                  source={{ uri: photo }}
+                  contentFit="cover"
+                  style={styles.thumb}
+                />
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel={t('Remover foto')}
+                  hitSlop={6}
+                  onPress={() => removeGallery(photo)}
+                  style={styles.remove}
+                >
+                  <MaterialIcons name="close" size={16} color={fixed.white} />
+                </Pressable>
+              </View>
+            ))}
+          </View>
+        ) : (
+          <Text style={{ color: theme.muted }}>
+            {t('Mostre o seu trabalho: as fotos aparecem na galeria do seu perfil.')}
+          </Text>
+        )}
+      </FormSection>
+
+      <FormSection title={t('Localização')}>
+        <Text style={{ color: theme.muted }}>{t('Onde você atende? Pode escolher os dois.')}</Text>
+        <View
+          style={styles.modes}
+          accessibilityRole="radiogroup"
+          accessibilityLabel={t('Onde você atende?')}
+        >
+          {SERVICE_PLACES.map(({ key, label }) => {
+            const on = hasPlace(key);
+            return (
+              <Pressable
+                key={key}
+                accessibilityRole="button"
+                accessibilityLabel={label}
+                accessibilityState={{ selected: on }}
+                onPress={() => togglePlace(key)}
+                style={[
+                  styles.mode,
+                  { borderColor: on ? theme.primary : theme.muted },
+                  on && { backgroundColor: theme.primaryLight },
+                ]}
+              >
+                <Text style={{ color: on ? theme.primary : theme.text, fontWeight: '500' }}>
+                  {label}
+                </Text>
+              </Pressable>
+            );
+          })}
         </View>
-      ))}
-      {needsAddress && draft.serviceMode ? (
-        <>
-          <Labeled label={t('Endereço')} error={addressError || undefined}>
-            <TextInput
-              accessibilityLabel={t('Endereço')}
+        {needsAddress && draft.serviceMode ? (
+          <>
+            <FormField
+              label={t('Endereço')}
               placeholder={t('Rua, número, bairro e cidade')}
-              placeholderTextColor={fixed.gray}
               value={draft.address}
               onChangeText={(address) => {
                 set({ address, addressConfirmed: false, position: NO_POSITION });
                 setAddressError('');
               }}
-              style={styles.input}
+              error={addressError || undefined}
             />
-          </Labeled>
-          {draft.addressConfirmed ? (
-            <Text style={styles.ok}>✓ {t('Endereço confirmado.')}</Text>
-          ) : (
-            <Button
-              variant="outline"
-              label={t('Confirmar endereço')}
-              loading={checkingAddress}
-              onPress={() => void confirmAddress()}
-              disabled={draft.address.trim().length < 5}
-            />
-          )}
-        </>
-      ) : null}
+            {draft.addressConfirmed ? (
+              <Text
+                style={[styles.ok, { color: theme.name === 'pro' ? fixed.white : fixed.success }]}
+              >
+                ✓ {t('Endereço confirmado.')}
+              </Text>
+            ) : (
+              <Button
+                variant="outline"
+                label={t('Confirmar endereço')}
+                loading={checkingAddress}
+                onPress={() => void confirmAddress()}
+                disabled={draft.address.trim().length < 5}
+              />
+            )}
+          </>
+        ) : null}
+      </FormSection>
 
       <ServicesEditor
         services={draft.services}
@@ -595,79 +643,116 @@ function Form({ profile, signup }: { profile: Professional; signup: boolean }) {
 
       {!signup ? (
         <View style={styles.between}>
-          <Text style={[styles.bold, styles.flex]}>{t('Mostrar meu perfil para os clientes')}</Text>
+          <Text style={[styles.bold, styles.flex, { color: theme.text }]}>
+            {t('Mostrar meu perfil para os clientes')}
+          </Text>
           <Switch
             accessibilityLabel={t('Mostrar meu perfil para os clientes')}
             value={draft.visible}
             onValueChange={(visible) => set({ visible })}
-            trackColor={{ true: fixed.brand }}
+            trackColor={{ true: fixed.accent }}
           />
         </View>
       ) : null}
 
-      <Button
-        label={signup ? t('Enviar cadastro') : t('Salvar')}
-        onPress={() => void save()}
-        loading={saving}
-      />
-      <Button variant="outline" label={t('Sair')} onPress={() => void signOut()} />
+      <View style={styles.submit}>
+        <Button
+          label={signup ? t('Enviar cadastro') : t('Salvar')}
+          onPress={() => void save()}
+          loading={saving}
+        />
+      </View>
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={t('Sair')}
+        onPress={() => void signOut()}
+        style={[styles.pill, styles.dangerPill]}
+      >
+        <Text style={styles.dangerLabel}>{t('Sair')}</Text>
+      </Pressable>
     </Screen>
   );
 }
 
-function Labeled({
+// "Conectar Instagram": the colors of Instagram (the site has a gradient; here the pink of its middle, flat)
+function InstagramButton({
   label,
-  error,
-  children,
+  busy,
+  onPress,
 }: {
   label: string;
-  error?: string;
-  children: React.ReactNode;
+  busy: boolean;
+  onPress: () => void;
 }) {
   return (
-    <View style={styles.field}>
-      <Text style={styles.label}>{label}</Text>
-      {children}
-      {error ? (
-        <Text accessibilityRole="alert" style={styles.error}>
-          {error}
-        </Text>
-      ) : null}
-    </View>
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      accessibilityState={{ disabled: busy, busy }}
+      disabled={busy}
+      onPress={onPress}
+      style={[styles.pill, styles.instagram, busy && styles.off]}
+    >
+      <MaterialIcons name="photo-camera" size={22} color={fixed.white} />
+      <Text style={styles.instagramLabel}>{label}</Text>
+    </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
-  title: { fontSize: 24, fontWeight: '700', color: fixed.ink },
-  heading: { fontSize: 20, fontWeight: '700', color: fixed.ink, marginTop: 8 },
-  subheading: { fontSize: 16, fontWeight: '700', color: fixed.ink },
-  field: { gap: 6 },
-  label: { fontWeight: '600', color: fixed.ink },
-  input: {
-    minHeight: 46,
-    paddingHorizontal: 12,
-    borderWidth: 1,
-    borderColor: fixed.border,
-    borderRadius: 12,
-    fontSize: 16,
-    color: fixed.ink,
-  },
-  multiline: { minHeight: 110, textAlignVertical: 'top', paddingTop: 12 },
-  muted: { color: fixed.gray },
-  bold: { fontWeight: '700', color: fixed.ink },
+  title: { fontSize: 24, fontWeight: '700' },
+  subheading: { fontSize: 16, fontWeight: '700', marginTop: 8 },
+  bold: { fontWeight: '700' },
   flex: { flex: 1 },
   between: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 12 },
-  error: { color: fixed.dangerStrong, fontSize: 13 },
-  ok: { color: fixed.success, fontWeight: '600' },
+  ok: { fontWeight: '600' },
+  // What is missing to send or publish: a see-through dark box, like the one that floats on the site
   notice: {
-    backgroundColor: fixed.warningBg,
-    color: fixed.warning,
-    padding: 12,
+    padding: 14,
     borderRadius: 12,
     overflow: 'hidden',
+    backgroundColor: 'rgba(55, 69, 85, 0.9)',
+    color: fixed.white,
   },
-  preview: { width: 140, height: 140, borderRadius: 14, backgroundColor: fixed.surface },
+  photoRow: { flexDirection: 'row', alignItems: 'center', gap: 20 },
+  preview: { width: 128, height: 128, borderRadius: 64 },
   empty: { alignItems: 'center', justifyContent: 'center' },
-  wrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  thumb: { width: 88, height: 88, borderRadius: 10, backgroundColor: fixed.surface },
+  photoButton: { flex: 1 },
+  gallery: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
+  thumb: { flex: 1, borderRadius: 12, backgroundColor: fixed.surface },
+  remove: {
+    position: 'absolute',
+    top: 6,
+    right: 6,
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+  },
+  modes: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  mode: {
+    paddingHorizontal: 20,
+    minHeight: 44,
+    justifyContent: 'center',
+    borderRadius: radius.pill,
+    borderWidth: 1.5,
+  },
+  pill: {
+    minHeight: 52,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+    borderRadius: radius.pill,
+  },
+  brandPill: { borderWidth: 1.5, borderColor: fixed.brand, backgroundColor: fixed.white },
+  brandPillLabel: { fontSize: 16, color: fixed.brand },
+  dangerPill: { borderWidth: 1.5, borderColor: fixed.dangerStrong, backgroundColor: fixed.white },
+  dangerLabel: { fontSize: 16, color: fixed.dangerStrong },
+  instagram: { backgroundColor: fixed.instagram.pink },
+  instagramLabel: { fontSize: 16, fontWeight: '700', color: fixed.white },
+  off: { opacity: 0.5 },
+  submit: { marginTop: 8 },
 });

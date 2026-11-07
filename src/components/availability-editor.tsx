@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { StyleSheet, Switch, View } from 'react-native';
 import { Text, TextInput } from './text';
 import { t } from '../i18n';
 import { Availability, DateRange } from '../models/professional';
-import { fixed } from '../theme/colors';
+import { fixed, Theme } from '../theme/colors';
+import { useTheme } from '../theme/theme';
 import { addBlockedRange, invalidDayKeys, rangeLabel } from '../utils/profile-form';
 import { PendingRange } from '../utils/range-picker';
 import { toDateKey } from '../utils/slots';
@@ -21,6 +22,11 @@ export const maskTime = (text: string) => {
   return digits.length > 2 ? `${digits.slice(0, 2)}:${digits.slice(2)}` : digits;
 };
 
+const useStyles = () => {
+  const theme = useTheme();
+  return useMemo(() => makeStyles(theme), [theme]);
+};
+
 // The days and hours the professional works, and the periods blocked for holidays and days off
 export function AvailabilityEditor({
   availability,
@@ -29,6 +35,7 @@ export function AvailabilityEditor({
   availability: Availability;
   onChange: (availability: Availability) => void;
 }) {
+  const styles = useStyles();
   const [pending, setPending] = useState<PendingRange>({ start: null, end: null });
   const invalid = invalidDayKeys(availability, KEYS);
 
@@ -162,27 +169,29 @@ export function AvailabilityEditor({
   );
 }
 
-const styles = StyleSheet.create({
-  wrap: { gap: 10 },
-  heading: { fontSize: 20, fontWeight: '700', color: fixed.ink },
-  subheading: { fontSize: 16, fontWeight: '700', color: fixed.ink, marginTop: 8 },
-  label: { fontWeight: '600', color: fixed.ink },
-  chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  day: { gap: 6, paddingVertical: 6, borderBottomWidth: 1, borderBottomColor: fixed.borderSoft },
-  dayHead: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  times: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  time: {
-    minWidth: 84,
-    minHeight: 42,
-    paddingHorizontal: 12,
-    borderWidth: 1,
-    borderColor: fixed.border,
-    borderRadius: 10,
-    fontSize: 16,
-    textAlign: 'center',
-    color: fixed.ink,
-  },
-  bold: { fontWeight: '700', color: fixed.ink },
-  muted: { color: fixed.gray },
-  error: { color: fixed.dangerStrong },
-});
+const makeStyles = (theme: Theme) =>
+  StyleSheet.create({
+    wrap: { gap: 10 },
+    heading: { fontSize: 18, fontWeight: '700', color: theme.text },
+    subheading: { fontSize: 16, fontWeight: '700', color: theme.text, marginTop: 8 },
+    label: { fontWeight: '600', color: theme.text },
+    chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+    day: { gap: 6, paddingVertical: 6, borderBottomWidth: 1, borderBottomColor: theme.line },
+    dayHead: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+    times: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+    time: {
+      minWidth: 84,
+      minHeight: 44,
+      paddingHorizontal: 12,
+      borderWidth: 1.5,
+      borderColor: 'transparent',
+      borderRadius: 14,
+      backgroundColor: theme.field,
+      fontSize: 16,
+      textAlign: 'center',
+      color: fixed.ink,
+    },
+    bold: { fontWeight: '700', color: theme.text },
+    muted: { color: theme.muted },
+    error: { color: theme.errorFg },
+  });

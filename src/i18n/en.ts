@@ -482,7 +482,6 @@ export const en: Record<string, string> = {
   'Todos os bairros do Rio de Janeiro': 'All neighborhoods of Rio de Janeiro',
   'Toque no dia que quer bloquear. Para um período, toque também no último dia.':
     'Tap the day you want to block. For a period, also tap the last day.',
-  'Toque numa foto para removê-la.': 'Tap a photo to remove it.',
   Total: 'Total',
   'Trocar foto': 'Change photo',
   'Usar minha localização': 'Use my location',
@@ -515,4 +514,7 @@ export const en: Record<string, string> = {
   'Entrar com e-mail': 'Continue with email',
   'Voltar ao login': 'Back to sign in',
   'O endereço não existe ou foi movido.': 'The address does not exist or was moved.',
+  'Mostre o seu trabalho: as fotos aparecem na galeria do seu perfil.':
+    'Show your work: the photos appear in the gallery of your profile.',
+  'Onde você atende?': 'Where do you work?',
 };
