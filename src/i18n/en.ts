@@ -85,7 +85,6 @@ export const en: Record<string, string> = {
   Cabelo: 'Hair',
   'Cada arquivo pode ter até 10 MB.': 'Each file can be up to 10 MB.',
   Cadastrar: 'Sign up',
-  'Cadastrar com Google': 'Sign up with Google',
   'Cadastre-se': 'Sign up',
   'Cadastro de profissional': 'Professional sign up',
   'Cadastro enviado!': 'Registration sent!',
@@ -173,7 +172,6 @@ export const en: Record<string, string> = {
   'Endereço confirmado.': 'Address confirmed.',
   'Endereço copiado': 'Address copied',
   Entrar: 'Sign in',
-  'Entrar com Google': 'Sign in with Google',
   'Entrar sem conta': 'Continue without an account',
   'Entre na sua conta para agendar.': 'Sign in to book.',
   'Entre na sua conta para ver os seus agendamentos.': 'Sign in to see your bookings.',
@@ -289,8 +287,6 @@ export const en: Record<string, string> = {
   'Não foi possível concluir. Tente novamente.': 'It could not be completed. Please try again.',
   'Não foi possível conectar ao Instagram. Tente novamente.':
     'Could not connect to Instagram. Please try again.',
-  'Não foi possível entrar com o Google. Tente novamente.':
-    'We could not sign you in with Google. Please try again.',
   'Não foi possível enviar a avaliação. Tente novamente.':
     'The review could not be sent. Please try again.',
   'Não foi possível enviar a foto. Use uma imagem e tente novamente.':
@@ -354,7 +350,6 @@ export const en: Record<string, string> = {
   'Ordenar por': 'Sort by',
   'Os horários apagados coincidem com outro agendamento seu.':
     'The dimmed times overlap another booking of yours.',
-  ou: 'or',
   'Outros preços, por dia e horário': 'Other prices, by day and time',
   Pagamento: 'Payment',
   'Pagar agora': 'Pay now',

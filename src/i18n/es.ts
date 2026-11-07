@@ -86,7 +86,6 @@ export const es: Record<string, string> = {
   Cabelo: 'Cabello',
   'Cada arquivo pode ter até 10 MB.': 'Cada archivo puede pesar hasta 10 MB.',
   Cadastrar: 'Registrarse',
-  'Cadastrar com Google': 'Registrarse con Google',
   'Cadastre-se': 'Regístrate',
   'Cadastro de profissional': 'Registro de profesional',
   'Cadastro enviado!': '¡Registro enviado!',
@@ -173,7 +172,6 @@ export const es: Record<string, string> = {
   'Endereço confirmado.': 'Dirección confirmada.',
   'Endereço copiado': 'Dirección copiada',
   Entrar: 'Iniciar sesión',
-  'Entrar com Google': 'Iniciar sesión con Google',
   'Entrar sem conta': 'Continuar sin cuenta',
   'Entre na sua conta para agendar.': 'Inicia sesión para reservar.',
   'Entre na sua conta para ver os seus agendamentos.': 'Inicia sesión para ver tus reservas.',
@@ -292,8 +290,6 @@ export const es: Record<string, string> = {
   'Não foi possível concluir. Tente novamente.': 'No se pudo completar. Inténtalo de nuevo.',
   'Não foi possível conectar ao Instagram. Tente novamente.':
     'No se pudo conectar con Instagram. Inténtalo de nuevo.',
-  'Não foi possível entrar com o Google. Tente novamente.':
-    'No se pudo iniciar sesión con Google. Inténtalo de nuevo.',
   'Não foi possível enviar a avaliação. Tente novamente.':
     'No se pudo enviar la reseña. Inténtalo de nuevo.',
   'Não foi possível enviar a foto. Use uma imagem e tente novamente.':
@@ -359,7 +355,6 @@ export const es: Record<string, string> = {
   'Ordenar por': 'Ordenar por',
   'Os horários apagados coincidem com outro agendamento seu.':
     'Los horarios atenuados coinciden con otra reserva tuya.',
-  ou: 'o',
   'Outros preços, por dia e horário': 'Otros precios, por día y horario',
   Pagamento: 'Pago',
   'Pagar agora': 'Pagar ahora',
