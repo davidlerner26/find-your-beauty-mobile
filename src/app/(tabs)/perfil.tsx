@@ -1,8 +1,10 @@
+import { MaterialIcons } from '@expo/vector-icons';
+import { Image } from 'expo-image';
 import * as Location from 'expo-location';
 import { useRouter } from 'expo-router';
 import { Link } from '../../components/link';
 import { useEffect, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import { Text } from '../../components/text';
 import { Button } from '../../components/button';
 import { Guard } from '../../components/guard';
@@ -15,6 +17,7 @@ import { t } from '../../i18n';
 import { UserProfile } from '../../models/user';
 import { users } from '../../services/users';
 import { fixed } from '../../theme/colors';
+import { useTheme } from '../../theme/theme';
 import { hasErrors, ProfileValues, validateProfile } from '../../utils/auth-forms';
 import { formatCpf } from '../../utils/cpf';
 import { localizeAddress } from '../../utils/address';
@@ -33,6 +36,7 @@ export default function ProfileScreen() {
 const EMPTY: ProfileValues = { firstName: '', lastName: '', phone: '', cpf: '' };
 
 function Profile() {
+  const theme = useTheme();
   const auth = useAuth();
   const { signOut, updateName } = useAuthActions();
   const toast = useToast();
@@ -140,7 +144,7 @@ function Profile() {
         <Text accessibilityRole="header" style={styles.title}>
           {t('Perfil')}
         </Text>
-        <View style={styles.visitor}>
+        <View style={[styles.visitor, { backgroundColor: theme.primaryLight }]}>
           <Text style={styles.visitorText}>{t('Você não está logado.')}</Text>
           <View style={styles.visitorButton}>
             <Button label={t('Entrar')} onPress={() => router.push(PATHS.login as never)} />
@@ -162,97 +166,140 @@ function Profile() {
       ]
     : [];
 
+  const user = auth.user;
+  const initial = (user.displayName || user.email || '?')[0].toUpperCase();
+
   return (
     <Screen edges={['top']}>
       <Text accessibilityRole="header" style={styles.title}>
         {t('Perfil')}
       </Text>
-      <View style={styles.who}>
-        <View style={styles.avatar}>
-          <Text style={styles.letter}>
-            {(auth.user.displayName || auth.user.email || '?')[0].toUpperCase()}
-          </Text>
-        </View>
-        <View>
-          <Text style={styles.name}>{auth.user.displayName}</Text>
-          <Text style={styles.muted}>{auth.user.email}</Text>
+      <View style={[styles.who, { backgroundColor: theme.primaryLight }]}>
+        {user.photoURL ? (
+          <Image
+            accessibilityIgnoresInvertColors
+            source={{ uri: user.photoURL }}
+            contentFit="cover"
+            style={styles.avatar}
+          />
+        ) : (
+          <View style={[styles.avatar, { backgroundColor: theme.primary }]}>
+            <Text style={[styles.letter, { color: theme.onPrimary }]}>{initial}</Text>
+          </View>
+        )}
+        <View style={styles.flex}>
+          <Text style={styles.name}>{user.displayName || t('Sem nome')}</Text>
+          <Text style={styles.muted}>{user.email}</Text>
         </View>
       </View>
 
-      <Text accessibilityRole="header" style={styles.heading}>
-        {t('Meus dados')}
-      </Text>
-      {editing ? (
-        <>
-          <TextField
-            label={t('Nome')}
-            value={values.firstName}
-            onChangeText={set('firstName')}
-            error={errors.firstName}
-            autoComplete="given-name"
-          />
-          <TextField
-            label={t('Sobrenome')}
-            value={values.lastName}
-            onChangeText={set('lastName')}
-            error={errors.lastName}
-            autoComplete="family-name"
-          />
-          <TextField
-            label={t('Celular')}
-            value={values.phone}
-            onChangeText={(value) => set('phone')(formatPhone(value))}
-            error={errors.phone}
-            keyboardType="phone-pad"
-          />
-          <TextField
-            label="CPF"
-            value={values.cpf}
-            onChangeText={(value) => set('cpf')(formatCpf(value))}
-            error={errors.cpf}
-            keyboardType="number-pad"
-          />
-          <TextField
-            label={t('Endereço')}
-            value={address}
-            onChangeText={(value) => {
-              setAddress(value);
-              setAddressError('');
-            }}
-            error={addressError}
-            placeholder={t('Rua, número, bairro e cidade')}
-          />
-          {saveError ? (
-            <Text accessibilityRole="alert" style={styles.error}>
-              {saveError}
-            </Text>
+      <View style={styles.details}>
+        <View style={styles.detailsHead}>
+          <Text accessibilityRole="header" style={styles.heading}>
+            {t('Meus dados')}
+          </Text>
+          {!editing ? (
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={t('Editar meus dados')}
+              onPress={() => edit(profile)}
+              style={[styles.edit, { backgroundColor: theme.primaryLight }]}
+            >
+              <MaterialIcons name="edit" size={20} color={theme.primary} />
+            </Pressable>
           ) : null}
-          <Button label={t('Salvar')} onPress={() => void save()} loading={saving} />
-          <Button variant="link" label={t('Cancelar')} onPress={() => setEditing(false)} />
-        </>
-      ) : profile ? (
-        <>
-          {rows.map(([label, value]) => (
-            <View key={label} style={styles.between}>
-              <Text style={styles.muted}>{label}</Text>
-              <Text style={styles.value}>{value || '—'}</Text>
+        </View>
+        {editing ? (
+          <View style={styles.form}>
+            <TextField
+              label={t('Nome')}
+              value={values.firstName}
+              onChangeText={set('firstName')}
+              error={errors.firstName}
+              autoComplete="given-name"
+            />
+            <TextField
+              label={t('Sobrenome')}
+              value={values.lastName}
+              onChangeText={set('lastName')}
+              error={errors.lastName}
+              autoComplete="family-name"
+            />
+            <TextField
+              label={t('Celular')}
+              value={values.phone}
+              onChangeText={(value) => set('phone')(formatPhone(value))}
+              error={errors.phone}
+              keyboardType="phone-pad"
+            />
+            <TextField
+              label="CPF"
+              value={values.cpf}
+              onChangeText={(value) => set('cpf')(formatCpf(value))}
+              error={errors.cpf}
+              keyboardType="number-pad"
+            />
+            <TextField
+              label={t('Endereço')}
+              value={address}
+              onChangeText={(value) => {
+                setAddress(value);
+                setAddressError('');
+              }}
+              error={addressError}
+              placeholder={t('Rua, número, bairro e cidade')}
+            />
+            {saveError ? (
+              <Text accessibilityRole="alert" style={[styles.error, { color: theme.errorFg }]}>
+                {saveError}
+              </Text>
+            ) : null}
+            <View style={styles.formActions}>
+              <View style={styles.flex}>
+                <Button variant="outline" label={t('Cancelar')} onPress={() => setEditing(false)} />
+              </View>
+              <View style={styles.flex}>
+                <Button label={t('Salvar')} onPress={() => void save()} loading={saving} />
+              </View>
             </View>
-          ))}
-          <Button variant="outline" label={t('Editar')} onPress={() => edit(profile)} />
-        </>
-      ) : (
-        <>
-          <Text style={styles.muted}>{t('Seus dados ainda não foram salvos.')}</Text>
-          <Button label={t('Preencher meus dados')} onPress={() => edit(null)} />
-        </>
-      )}
+          </View>
+        ) : profile ? (
+          <View style={styles.rows}>
+            {rows.map(([label, value]) => (
+              <View key={label} style={styles.between}>
+                <Text style={styles.muted}>{label}</Text>
+                <Text style={styles.value}>{value || '-'}</Text>
+              </View>
+            ))}
+          </View>
+        ) : (
+          <View style={styles.rows}>
+            <Text style={styles.muted}>{t('Seus dados ainda não foram salvos.')}</Text>
+            <Button label={t('Preencher meus dados')} onPress={() => edit(null)} />
+          </View>
+        )}
+      </View>
+
+      <View style={styles.status}>
+        <View style={styles.dot} />
+        <Text style={{ color: theme.primary }}>{t('Você está logado')}</Text>
+      </View>
 
       {auth.isAdmin ? (
-        <Link href={PATHS.admin as never} accessibilityRole="link" style={styles.link}>
-          {t('Administração')}
-        </Link>
+        <Button
+          variant="outline"
+          label={t('Administração')}
+          onPress={() => router.push(PATHS.admin as never)}
+        />
       ) : null}
-      <Button variant="outline" label={t('Sair')} onPress={() => void signOut()} />
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={t('Sair')}
+        onPress={() => void signOut()}
+        style={styles.signOut}
+      >
+        <Text style={styles.signOutText}>{t('Sair')}</Text>
+      </Pressable>
       <Legal />
     </Screen>
   );
@@ -272,33 +319,62 @@ function Legal() {
 }
 
 const styles = StyleSheet.create({
+  flex: { flex: 1 },
   title: { fontSize: 24, fontWeight: '700', color: fixed.ink },
   visitor: {
     alignItems: 'center',
     gap: 16,
     padding: 24,
     borderRadius: 16,
-    backgroundColor: '#e8edf3',
   },
   visitorText: { fontSize: 16, color: fixed.ink },
   visitorButton: { width: '100%' },
   heading: { fontSize: 18, fontWeight: '700', color: fixed.ink },
-  who: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  who: { flexDirection: 'row', alignItems: 'center', gap: 20, padding: 24, borderRadius: 16 },
   avatar: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: fixed.brand,
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+  },
+  letter: { fontSize: 28, fontWeight: '600' },
+  name: { fontSize: 19, fontWeight: '700', color: fixed.ink, marginBottom: 4 },
+  muted: { color: fixed.gray },
+  value: { color: fixed.ink, fontWeight: '600', flexShrink: 1, textAlign: 'right' },
+  details: { gap: 16 },
+  detailsHead: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  edit: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  letter: { color: fixed.white, fontSize: 22, fontWeight: '700' },
-  name: { fontSize: 18, fontWeight: '700', color: fixed.ink },
-  muted: { color: fixed.gray },
-  bold: { fontWeight: '700', color: fixed.ink },
-  value: { color: fixed.ink, fontWeight: '600', flexShrink: 1, textAlign: 'right' },
-  between: { flexDirection: 'row', justifyContent: 'space-between', gap: 12 },
-  link: { color: fixed.accentText, fontWeight: '600', paddingVertical: 8 },
-  error: { color: fixed.dangerStrong },
+  rows: { gap: 16 },
+  between: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 16,
+    paddingBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: fixed.borderSoft,
+  },
+  form: { gap: 12 },
+  formActions: { flexDirection: 'row', gap: 12, marginTop: 4 },
+  error: { fontSize: 14 },
+  status: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  dot: { width: 10, height: 10, borderRadius: 5, backgroundColor: fixed.success },
+  signOut: {
+    minHeight: 56,
+    borderRadius: 999,
+    borderWidth: 1.5,
+    borderColor: fixed.dangerStrong,
+    backgroundColor: fixed.white,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  signOutText: { color: fixed.dangerStrong, fontSize: 17 },
   legal: { gap: 4, marginTop: 8 },
 });

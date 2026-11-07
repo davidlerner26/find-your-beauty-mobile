@@ -94,6 +94,12 @@ export const es: Record<string, string> = {
   'Cadastro: {{when}}': 'Registro: {{when}}',
   Cancelado: 'Cancelada',
   'Cancelado pelo profissional': 'Cancelada por el profesional',
+  Avaliar: 'Valorar',
+  'Você não tem agendamentos.': 'No tienes reservas.',
+  'Encontre um profissional': 'Encuentra un profesional',
+  'Você está logado': 'Has iniciado sesión',
+  'Editar meus dados': 'Editar mis datos',
+  'Sem nome': 'Sin nombre',
   Cancelar: 'Cancelar',
   'Cancelar agendamento': 'Cancelar reserva',
   'Cancelar o agendamento com {{name}}?': '¿Cancelar la reserva con {{name}}?',
@@ -197,7 +203,9 @@ export const es: Record<string, string> = {
   'Escolher foto': 'Elegir foto',
   'escolher o endereço na lista de sugestões': 'elegir la dirección en la lista de sugerencias',
   Escova: 'Cepillado',
-  'Escreva uma mensagem': 'Escribe un mensaje',
+  'Envie uma mensagem para {{name}}.': 'Envía un mensaje a {{name}}.',
+  'Enviando arquivo...': 'Enviando archivo...',
+  'Digite uma mensagem': 'Escribe un mensaje',
   'Esqueceu a senha?': '¿Olvidaste tu contraseña?',
   'Esta conta do Google ainda não está cadastrada. Faça o cadastro de profissional primeiro.':
     'Esta cuenta de Google aún no está registrada. Primero regístrate como profesional.',
@@ -488,12 +496,12 @@ export const es: Record<string, string> = {
   visitante: 'visitante',
   visualização: 'visualización',
   visualizações: 'visualizaciones',
-  'Você ainda não tem conversas.': 'Aún no tienes conversaciones.',
+  'Você ainda não tem conversas. Abra o perfil de um profissional para começar uma.':
+    'Aún no tienes conversaciones. Abre el perfil de un profesional para empezar una.',
+  'Você ainda não recebeu mensagens.': 'Aún no has recibido mensajes.',
   'Você já tem um agendamento neste horário. Escolha outro horário.':
     'Ya tienes una reserva en este horario. Elige otro horario.',
   'Você não está logado.': 'No has iniciado sesión.',
-  'Você não tem agendamentos. Escolha um profissional e agende um serviço.':
-    'No tienes reservas. Elige un profesional y reserva un servicio.',
   'Você não tem notificações.': 'No tienes notificaciones.',
   'Você poderá avaliar depois de concluir um agendamento.':
     'Podrás dejar una reseña después de completar una reserva.',

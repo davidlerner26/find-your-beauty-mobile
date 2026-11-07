@@ -93,6 +93,12 @@ export const en: Record<string, string> = {
   'Cadastro: {{when}}': 'Signed up: {{when}}',
   Cancelado: 'Cancelled',
   'Cancelado pelo profissional': 'Cancelled by the professional',
+  Avaliar: 'Rate',
+  'Você não tem agendamentos.': 'You have no bookings.',
+  'Encontre um profissional': 'Find a professional',
+  'Você está logado': 'You are signed in',
+  'Editar meus dados': 'Edit my data',
+  'Sem nome': 'No name',
   Cancelar: 'Cancel',
   'Cancelar agendamento': 'Cancel booking',
   'Cancelar o agendamento com {{name}}?': 'Cancel the booking with {{name}}?',
@@ -197,7 +203,9 @@ export const en: Record<string, string> = {
   'Escolher foto': 'Choose photo',
   'escolher o endereço na lista de sugestões': 'choose the address from the suggestions',
   Escova: 'Blow-dry',
-  'Escreva uma mensagem': 'Write a message',
+  'Envie uma mensagem para {{name}}.': 'Send a message to {{name}}.',
+  'Enviando arquivo...': 'Sending file...',
+  'Digite uma mensagem': 'Type a message',
   'Esqueceu a senha?': 'Forgot your password?',
   'Esta conta do Google ainda não está cadastrada. Faça o cadastro de profissional primeiro.':
     'This Google account is not registered yet. Sign up as a professional first.',
@@ -481,12 +489,12 @@ export const en: Record<string, string> = {
   visitante: 'visitor',
   visualização: 'view',
   visualizações: 'views',
-  'Você ainda não tem conversas.': 'You have no conversations yet.',
+  'Você ainda não tem conversas. Abra o perfil de um profissional para começar uma.':
+    'You have no conversations yet. Open the profile of a professional to start one.',
+  'Você ainda não recebeu mensagens.': 'You have not received messages yet.',
   'Você já tem um agendamento neste horário. Escolha outro horário.':
     'You already have a booking at this time. Choose another time.',
   'Você não está logado.': 'You are not signed in.',
-  'Você não tem agendamentos. Escolha um profissional e agende um serviço.':
-    'You have no bookings. Pick a professional and book a service.',
   'Você não tem notificações.': 'You have no notifications.',
   'Você poderá avaliar depois de concluir um agendamento.':
     'You can leave a review after completing a booking.',

@@ -47,6 +47,12 @@ export type Theme = {
   field: string;
   // The color of an error written on the background
   errorFg: string;
+  // Messages: the background of the chat and the bubbles (theirs and mine) with the color of their letters
+  chatBg: string;
+  bubble: string;
+  onBubble: string;
+  bubbleMine: string;
+  onBubbleMine: string;
 };
 
 export const clientTheme: Theme = {
@@ -60,6 +66,11 @@ export const clientTheme: Theme = {
   line: fixed.borderSoft,
   field: fixed.surface,
   errorFg: fixed.danger,
+  chatBg: '#f7fafb',
+  bubble: fixed.brand,
+  onBubble: fixed.white,
+  bubbleMine: '#e8edf3',
+  onBubbleMine: fixed.ink,
 };
 
 // The professional area: the blue becomes the background and the letters turn white
@@ -74,4 +85,9 @@ export const proTheme: Theme = {
   line: 'rgba(255, 255, 255, 0.22)',
   field: fixed.white,
   errorFg: '#ffc9cb',
+  chatBg: 'transparent',
+  bubble: 'rgba(255, 255, 255, 0.16)',
+  onBubble: fixed.white,
+  bubbleMine: fixed.white,
+  onBubbleMine: fixed.brand,
 };

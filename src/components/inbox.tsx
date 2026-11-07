@@ -13,6 +13,7 @@ import { Notification } from '../models/message';
 import { loadConversationTexts } from '../services/messages';
 import { markNotificationAsRead } from '../services/notifications';
 import { fixed } from '../theme/colors';
+import { useTheme } from '../theme/theme';
 import { formatRelative } from '../utils/format-date';
 import { filterConversations, Row } from '../utils/inbox-search';
 import { focusPosition } from '../utils/labels';
@@ -21,12 +22,13 @@ import { PATHS } from '../utils/paths';
 import { Spinner } from './spinner';
 import { Visitor } from './visitor';
 
-const ICONS = { calendar: 'event', payment: 'payments', offer: 'local-offer' } as const;
+const ICONS = { calendar: 'calendar-today', payment: 'attach-money', offer: 'sell' } as const;
 
 // Messages and notifications of the signed in user. The professional area shows the clients instead of the
 // professionals, and its screens live under /pro.
 export function Inbox({ pro = false }: { pro?: boolean }) {
   const router = useRouter();
+  const theme = useTheme();
   const auth = useAuth();
   const { conversations } = useMessages();
   const notifications = useNotifications();
@@ -108,10 +110,14 @@ export function Inbox({ pro = false }: { pro?: boolean }) {
             onPress={() => setTab(name)}
             style={styles.stripTab}
           >
-            <Text style={[styles.stripText, tab === name && styles.stripOn]}>
+            <Text
+              style={[styles.stripText, tab === name && [styles.stripOn, { color: theme.primary }]]}
+            >
               {name === 'mensagens' ? t('Mensagens') : t('Notificações')}
             </Text>
-            {tab === name ? <View style={styles.stripDot} /> : null}
+            {tab === name ? (
+              <View style={[styles.stripDot, { backgroundColor: theme.primary }]} />
+            ) : null}
           </Pressable>
         ))}
       </View>
@@ -130,27 +136,34 @@ export function Inbox({ pro = false }: { pro?: boolean }) {
 
       {!auth.user ? null : tab === 'mensagens' ? (
         <>
-          <TextInput
-            accessibilityLabel={
-              pro ? t('Buscar mensagens ou cliente') : t('Buscar mensagens ou profissional')
-            }
-            placeholder={
-              pro ? t('Buscar mensagens ou cliente') : t('Buscar mensagens ou profissional')
-            }
-            placeholderTextColor={fixed.gray}
-            value={search}
-            onChangeText={onSearch}
-            style={styles.search}
-          />
+          <View style={styles.search}>
+            <MaterialIcons name="search" size={24} color={theme.primary} />
+            <TextInput
+              accessibilityLabel={
+                pro ? t('Buscar mensagens ou cliente') : t('Buscar mensagens ou profissional')
+              }
+              placeholder={
+                pro ? t('Buscar mensagens ou cliente') : t('Buscar mensagens ou profissional')
+              }
+              placeholderTextColor={fixed.gray}
+              value={search}
+              onChangeText={onSearch}
+              style={styles.searchField}
+            />
+          </View>
           <FlatList
             contentContainerStyle={styles.list}
             data={shown}
             keyExtractor={(row) => row.id}
             ListEmptyComponent={
-              <Text style={styles.muted}>
+              <Text style={[styles.muted, styles.empty]}>
                 {search.trim()
                   ? t('Nenhuma conversa encontrada.')
-                  : t('Você ainda não tem conversas.')}
+                  : pro
+                    ? t('Você ainda não recebeu mensagens.')
+                    : t(
+                        'Você ainda não tem conversas. Abra o perfil de um profissional para começar uma.',
+                      )}
               </Text>
             }
             renderItem={({ item }) => (
@@ -158,7 +171,7 @@ export function Inbox({ pro = false }: { pro?: boolean }) {
                 accessibilityRole="button"
                 accessibilityLabel={item.title}
                 onPress={() => router.push(item.href as never)}
-                style={styles.row}
+                style={[styles.row, styles.divided]}
               >
                 {item.image ? (
                   <Image
@@ -169,21 +182,19 @@ export function Inbox({ pro = false }: { pro?: boolean }) {
                     style={styles.avatar}
                   />
                 ) : (
-                  <View style={styles.avatar}>
-                    <Text style={styles.letter}>{item.title[0]}</Text>
+                  <View style={[styles.avatar, { backgroundColor: theme.primaryLight }]}>
+                    <Text style={[styles.letter, { color: theme.primary }]}>{item.title[0]}</Text>
                   </View>
                 )}
                 <View style={styles.flex}>
-                  <View style={styles.between}>
-                    <Text style={styles.name}>{item.title}</Text>
-                    <Text style={styles.muted}>{formatRelative(item.lastMessageAt)}</Text>
-                  </View>
-                  <View style={styles.between}>
-                    <Text numberOfLines={1} style={[styles.muted, styles.flex]}>
-                      {item.lastMessage}
-                    </Text>
-                    {item.unread ? <Text style={styles.badge}>{item.unread}</Text> : null}
-                  </View>
+                  <Text style={styles.name}>{item.title}</Text>
+                  <Text numberOfLines={1} style={styles.muted}>
+                    {item.lastMessage}
+                  </Text>
+                </View>
+                <View style={styles.meta}>
+                  <Text style={styles.small}>{formatRelative(item.lastMessageAt)}</Text>
+                  {item.unread ? <Text style={styles.badge}>{item.unread}</Text> : null}
                 </View>
               </Pressable>
             )}
@@ -212,22 +223,26 @@ export function Inbox({ pro = false }: { pro?: boolean }) {
                 accessibilityRole="button"
                 accessibilityLabel={item.text.map((part) => part.text).join('')}
                 onPress={() => open(item)}
-                style={styles.row}
+                style={[styles.row, styles.divided]}
               >
-                <View style={styles.icon}>
-                  <MaterialIcons name={ICONS[item.icon] ?? 'event'} size={22} color={fixed.brand} />
+                <View style={[styles.icon, { backgroundColor: theme.primaryLight }]}>
+                  <MaterialIcons
+                    name={ICONS[item.icon] ?? 'calendar-today'}
+                    size={22}
+                    color={theme.primary}
+                  />
                 </View>
-                <View style={styles.flex}>
-                  <Text style={styles.body}>
-                    {item.text.map((part, n) => (
-                      <Text key={n} style={part.bold ? styles.bold : undefined}>
-                        {part.text}
-                      </Text>
-                    ))}
-                  </Text>
-                  <Text style={styles.muted}>{formatRelative(item.createdAt)}</Text>
+                <Text style={[styles.body, styles.flex]}>
+                  {item.text.map((part, n) => (
+                    <Text key={n} style={part.bold ? styles.bold : undefined}>
+                      {part.text}
+                    </Text>
+                  ))}
+                </Text>
+                <View style={styles.meta}>
+                  <Text style={styles.small}>{formatRelative(item.createdAt)}</Text>
+                  {item.unread ? <View style={styles.dot} /> : null}
                 </View>
-                {item.unread ? <View style={styles.dot} /> : null}
               </Pressable>
             )
           }
@@ -238,44 +253,30 @@ export function Inbox({ pro = false }: { pro?: boolean }) {
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, gap: 12 },
-  visitorBox: { paddingHorizontal: 24 },
-  list: { paddingHorizontal: 24, paddingBottom: 24 },
+  screen: { flex: 1 },
+  visitorBox: { paddingHorizontal: 24, paddingTop: 24 },
+  list: { paddingHorizontal: 24, paddingBottom: 48 },
   strip: { flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: fixed.borderSoft },
   stripTab: { flex: 1, alignItems: 'center', paddingTop: 20, paddingBottom: 16 },
   stripText: { color: fixed.gray, fontSize: 16 },
-  stripOn: { color: fixed.brand, fontWeight: '600' },
-  stripDot: {
-    position: 'absolute',
-    bottom: 4,
-    width: 5,
-    height: 5,
-    borderRadius: 3,
-    backgroundColor: fixed.brand,
-  },
+  stripOn: { fontWeight: '600' },
+  stripDot: { position: 'absolute', bottom: 4, width: 5, height: 5, borderRadius: 3 },
   flex: { flex: 1 },
-  title: { fontSize: 24, fontWeight: '700', color: fixed.ink },
-  tabs: { flexDirection: 'row', gap: 8 },
-  tab: {
-    paddingHorizontal: 16,
-    minHeight: 40,
-    justifyContent: 'center',
-    borderRadius: 999,
-    borderWidth: 1,
-    borderColor: fixed.border,
-  },
-  tabOn: { backgroundColor: fixed.brand, borderColor: fixed.brand },
-  tabText: { color: fixed.ink, fontWeight: '600' },
   search: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    height: 56,
     marginHorizontal: 24,
-    minHeight: 44,
-    paddingHorizontal: 14,
+    marginTop: 24,
+    marginBottom: 16,
+    paddingHorizontal: 20,
     borderRadius: 999,
     backgroundColor: fixed.surface,
-    fontSize: 16,
-    color: fixed.ink,
   },
-  row: { flexDirection: 'row', gap: 12, paddingVertical: 10, alignItems: 'center' },
+  searchField: { flex: 1, fontSize: 16, color: fixed.ink },
+  row: { flexDirection: 'row', gap: 16, paddingVertical: 16, alignItems: 'center' },
+  divided: { borderBottomWidth: 1, borderBottomColor: fixed.borderSoft },
   avatar: {
     width: 52,
     height: 52,
@@ -283,33 +284,35 @@ const styles = StyleSheet.create({
     backgroundColor: fixed.surface,
     alignItems: 'center',
     justifyContent: 'center',
+    overflow: 'hidden',
   },
-  letter: { fontWeight: '700', color: fixed.brand, fontSize: 18 },
-  between: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 8 },
-  name: { fontSize: 16, fontWeight: '700', color: fixed.ink },
+  letter: { fontWeight: '600', fontSize: 18 },
+  name: { fontSize: 18, fontWeight: '700', color: fixed.ink, marginBottom: 4 },
   muted: { color: fixed.gray },
+  small: { color: fixed.gray, fontSize: 13 },
+  meta: { alignItems: 'flex-end', alignSelf: 'flex-start', gap: 8, paddingTop: 2 },
+  empty: { textAlign: 'center', paddingVertical: 32 },
   badge: {
-    minWidth: 22,
-    height: 22,
-    borderRadius: 11,
+    minWidth: 20,
+    height: 20,
+    borderRadius: 10,
+    paddingHorizontal: 5,
     backgroundColor: fixed.accent,
     color: fixed.white,
     textAlign: 'center',
-    lineHeight: 22,
+    lineHeight: 20,
     fontSize: 12,
-    fontWeight: '700',
     overflow: 'hidden',
   },
-  heading: { fontSize: 16, fontWeight: '700', color: fixed.ink, marginTop: 8 },
+  heading: { fontSize: 18, fontWeight: '700', color: fixed.ink, marginTop: 24, marginBottom: 8 },
   icon: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: fixed.surface,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
     alignItems: 'center',
     justifyContent: 'center',
   },
   body: { color: fixed.ink },
   bold: { fontWeight: '700' },
-  dot: { width: 10, height: 10, borderRadius: 5, backgroundColor: fixed.accent },
+  dot: { width: 9, height: 9, borderRadius: 5, backgroundColor: fixed.accent },
 });

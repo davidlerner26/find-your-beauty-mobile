@@ -33,7 +33,8 @@ import {
   sendAsProfessional,
   uploadChatFile,
 } from '../services/messages';
-import { fixed } from '../theme/colors';
+import { fixed, radius } from '../theme/colors';
+import { useTheme } from '../theme/theme';
 import { formatClock } from '../utils/format-date';
 import { focusPosition } from '../utils/labels';
 import { log } from '../utils/log';
@@ -45,6 +46,7 @@ const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
 // `id` is the professional id for clients and the conversation id in the professional area
 export function Chat({ id, pro = false }: { id: string; pro?: boolean }) {
+  const theme = useTheme();
   const auth = useAuth();
   const toast = useToast();
   const { conversations } = useMessages();
@@ -176,35 +178,43 @@ export function Chat({ id, pro = false }: { id: string; pro?: boolean }) {
   // A visitor has no conversations: signs in first
   if (auth.ready && !user) return <Redirect href={PATHS.login as never} />;
 
+  const avatar = (size: 'big' | 'small') =>
+    peer?.image ? (
+      <Image
+        accessibilityIgnoresInvertColors
+        source={{ uri: peer.image }}
+        contentFit="cover"
+        contentPosition={focusPosition(peer.position)}
+        style={size === 'big' ? styles.avatar : styles.avatarSmall}
+      />
+    ) : (
+      <View
+        style={[
+          size === 'big' ? styles.avatar : styles.avatarSmall,
+          { backgroundColor: theme.primaryLight },
+        ]}
+      >
+        <Text style={[styles.avatarLetter, { color: theme.primary }]}>{peer?.name[0]}</Text>
+      </View>
+    );
+
   return (
-    <SafeAreaView style={styles.screen}>
+    <SafeAreaView style={[styles.screen, { backgroundColor: theme.background }]}>
       <KeyboardAvoidingView
         style={styles.flex}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
-        <View style={styles.header}>
+        <View style={[styles.header, { borderBottomColor: theme.line }]}>
           <BackButton />
           {peer ? (
             <>
-              {peer.image ? (
-                <Image
-                  accessibilityIgnoresInvertColors
-                  source={{ uri: peer.image }}
-                  contentFit="cover"
-                  contentPosition={focusPosition(peer.position)}
-                  style={styles.avatar}
-                />
-              ) : (
-                <View style={styles.avatar}>
-                  <Text style={styles.avatarLetter}>{peer.name[0]}</Text>
-                </View>
-              )}
+              {avatar('big')}
               {!pro && professional ? (
                 <Link href={PATHS.professional(professional.id) as never} accessibilityRole="link">
-                  <Text style={styles.peer}>{peer.name}</Text>
+                  <Text style={[styles.peer, { color: theme.text }]}>{peer.name}</Text>
                 </Link>
               ) : (
-                <Text style={styles.peer}>{peer.name}</Text>
+                <Text style={[styles.peer, { color: theme.text }]}>{peer.name}</Text>
               )}
             </>
           ) : null}
@@ -217,55 +227,72 @@ export function Chat({ id, pro = false }: { id: string; pro?: boolean }) {
             data={[...messages].reverse()}
             inverted
             keyExtractor={(message) => message.id}
+            style={{ backgroundColor: theme.chatBg }}
             contentContainerStyle={styles.list}
             ListEmptyComponent={
-              <Text style={styles.empty}>{t('Envie uma mensagem para começar a conversa.')}</Text>
+              <Text style={[styles.empty, { color: theme.muted }]}>
+                {peer
+                  ? t('Envie uma mensagem para {{name}}.', { name: peer.name })
+                  : t('Envie uma mensagem para começar a conversa.')}
+              </Text>
             }
-            renderItem={({ item }) => (
-              <View style={[styles.bubble, mine(item) ? styles.mine : styles.theirs]}>
-                {item.image ? (
-                  <Pressable
-                    accessibilityRole="imagebutton"
-                    accessibilityLabel={t('Foto')}
-                    onPress={() => void Linking.openURL(item.image!)}
-                  >
-                    <Image
-                      accessibilityIgnoresInvertColors
-                      source={{ uri: item.image }}
-                      contentFit="cover"
-                      style={styles.photo}
-                    />
-                  </Pressable>
-                ) : null}
-                {item.file ? (
-                  <Pressable
-                    accessibilityRole="link"
-                    accessibilityLabel={item.file.name}
-                    onPress={() => void Linking.openURL(item.file!.url)}
-                    style={styles.file}
-                  >
-                    <MaterialIcons
-                      name="attach-file"
-                      size={18}
-                      color={mine(item) ? fixed.white : fixed.ink}
-                    />
-                    <Text style={[styles.text, mine(item) && styles.textMine]}>
-                      {item.file.name}
+            renderItem={({ item }) => {
+              const own = mine(item);
+              const ink = own ? theme.onBubbleMine : theme.onBubble;
+              return (
+                <View style={[styles.row, own && styles.rowMine]}>
+                  {!own ? avatar('small') : null}
+                  <View style={[styles.stack, own && styles.stackMine]}>
+                    <View
+                      style={[
+                        styles.bubble,
+                        { backgroundColor: own ? theme.bubbleMine : theme.bubble },
+                        item.image && styles.bubbleImage,
+                      ]}
+                    >
+                      {item.image ? (
+                        <Pressable
+                          accessibilityRole="imagebutton"
+                          accessibilityLabel={t('Foto')}
+                          onPress={() => void Linking.openURL(item.image!)}
+                        >
+                          <Image
+                            accessibilityIgnoresInvertColors
+                            source={{ uri: item.image }}
+                            contentFit="cover"
+                            style={styles.photo}
+                          />
+                        </Pressable>
+                      ) : null}
+                      {item.file ? (
+                        <Pressable
+                          accessibilityRole="link"
+                          accessibilityLabel={item.file.name}
+                          onPress={() => void Linking.openURL(item.file!.url)}
+                          style={styles.file}
+                        >
+                          <MaterialIcons name="attach-file" size={18} color={ink} />
+                          <Text style={[styles.fileName, { color: ink }]}>{item.file.name}</Text>
+                        </Pressable>
+                      ) : null}
+                      {item.text ? (
+                        <Text style={[styles.text, { color: ink }]}>{item.text}</Text>
+                      ) : null}
+                    </View>
+                    <Text style={[styles.time, { color: theme.muted }]}>
+                      {formatClock(item.createdAt)}
                     </Text>
-                  </Pressable>
-                ) : null}
-                {item.text ? (
-                  <Text style={[styles.text, mine(item) && styles.textMine]}>{item.text}</Text>
-                ) : null}
-                <Text style={[styles.time, mine(item) && styles.timeMine]}>
-                  {formatClock(item.createdAt)}
-                </Text>
-              </View>
-            )}
+                  </View>
+                </View>
+              );
+            }}
           />
         )}
 
-        <View style={styles.composer}>
+        {uploading ? (
+          <Text style={[styles.note, { color: theme.muted }]}>{t('Enviando arquivo...')}</Text>
+        ) : null}
+        <View style={[styles.composer, { borderTopColor: theme.line }]}>
           <Pressable
             accessibilityRole="button"
             accessibilityLabel={t('Anexar')}
@@ -274,25 +301,29 @@ export function Chat({ id, pro = false }: { id: string; pro?: boolean }) {
             hitSlop={6}
             style={{ opacity: uploading ? 0.4 : 1 }}
           >
-            <MaterialIcons name="attach-file" size={26} color={fixed.gray} />
+            <MaterialIcons name="attach-file" size={26} color={theme.primary} />
           </Pressable>
           <TextInput
             accessibilityLabel={t('Mensagem')}
-            placeholder={t('Escreva uma mensagem')}
+            placeholder={t('Digite uma mensagem')}
             placeholderTextColor={fixed.gray}
             value={draft}
             onChangeText={setDraft}
             multiline
-            style={styles.input}
+            style={[styles.input, { backgroundColor: theme.field }]}
           />
           <Pressable
             accessibilityRole="button"
             accessibilityLabel={t('Enviar')}
             disabled={!draft.trim()}
             onPress={send}
-            style={[styles.send, !draft.trim() && { opacity: 0.4 }]}
+            style={[
+              styles.send,
+              { backgroundColor: theme.primary },
+              !draft.trim() && { opacity: 0.4 },
+            ]}
           >
-            <MaterialIcons name="send" size={20} color={fixed.white} />
+            <MaterialIcons name="send" size={22} color={theme.onPrimary} />
           </Pressable>
         </View>
       </KeyboardAvoidingView>
@@ -301,16 +332,15 @@ export function Chat({ id, pro = false }: { id: string; pro?: boolean }) {
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: fixed.white },
+  screen: { flex: 1 },
   flex: { flex: 1 },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
-    paddingHorizontal: 8,
-    paddingBottom: 8,
+    gap: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
     borderBottomWidth: 1,
-    borderBottomColor: fixed.borderSoft,
   },
   avatar: {
     width: 40,
@@ -319,44 +349,57 @@ const styles = StyleSheet.create({
     backgroundColor: fixed.surface,
     alignItems: 'center',
     justifyContent: 'center',
+    overflow: 'hidden',
   },
-  avatarLetter: { fontWeight: '700', color: fixed.brand },
-  peer: { fontSize: 17, fontWeight: '700', color: fixed.ink },
-  list: { padding: 12, gap: 8 },
-  empty: { color: fixed.gray, textAlign: 'center', padding: 24, transform: [{ scaleY: -1 }] },
-  bubble: { maxWidth: '80%', borderRadius: 16, padding: 10, gap: 4 },
-  mine: { alignSelf: 'flex-end', backgroundColor: fixed.brand },
-  theirs: { alignSelf: 'flex-start', backgroundColor: fixed.surface },
-  text: { color: fixed.ink, fontSize: 16 },
-  textMine: { color: fixed.white },
-  time: { color: fixed.gray, fontSize: 11, alignSelf: 'flex-end' },
-  timeMine: { color: fixed.white },
-  photo: { width: 220, height: 220, borderRadius: 10 },
+  avatarSmall: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: fixed.surface,
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+  },
+  avatarLetter: { fontWeight: '600' },
+  peer: { fontSize: 17, fontWeight: '700' },
+  list: { padding: 16, paddingVertical: 24, gap: 20 },
+  empty: { textAlign: 'center', padding: 24, transform: [{ scaleY: -1 }] },
+  row: { flexDirection: 'row', alignItems: 'flex-end', gap: 12 },
+  rowMine: { justifyContent: 'flex-end' },
+  stack: { maxWidth: '70%', gap: 6 },
+  stackMine: { alignItems: 'flex-end' },
+  bubble: { paddingVertical: 14, paddingHorizontal: 18, borderRadius: radius.card, gap: 6 },
+  bubbleImage: { padding: 8 },
+  text: { fontSize: 16 },
+  time: { fontSize: 12 },
+  photo: { width: 160, height: 160, borderRadius: 8 },
   file: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  fileName: { textDecorationLine: 'underline' },
+  note: { paddingHorizontal: 16, paddingTop: 8, fontSize: 14 },
   composer: {
     flexDirection: 'row',
     alignItems: 'flex-end',
-    gap: 8,
-    padding: 8,
+    gap: 12,
+    paddingHorizontal: 16,
+    paddingTop: 12,
+    paddingBottom: 12,
     borderTopWidth: 1,
-    borderTopColor: fixed.borderSoft,
   },
   input: {
     flex: 1,
     maxHeight: 120,
-    minHeight: 40,
-    borderRadius: 20,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    backgroundColor: fixed.surface,
+    minHeight: 48,
+    borderRadius: 24,
+    paddingHorizontal: 20,
+    paddingTop: 14,
+    paddingBottom: 14,
     fontSize: 16,
     color: fixed.ink,
   },
   send: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: fixed.brand,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
     alignItems: 'center',
     justifyContent: 'center',
   },

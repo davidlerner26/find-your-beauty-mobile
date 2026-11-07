@@ -1,9 +1,8 @@
-import { MaterialIcons } from '@expo/vector-icons';
 import * as Clipboard from 'expo-clipboard';
-import { Link } from '../../components/link';
-import { Alert, Pressable, StyleSheet, View } from 'react-native';
+import { useRouter } from 'expo-router';
+import { Alert, StyleSheet } from 'react-native';
 import { Text } from '../../components/text';
-import { isOpen } from '../../../shared/domain';
+import { BookingCard } from '../../components/booking-card';
 import { Guard } from '../../components/guard';
 import { Visitor } from '../../components/visitor';
 import { Screen } from '../../components/screen';
@@ -16,17 +15,8 @@ import { t } from '../../i18n';
 import { Booking } from '../../models/booking';
 import { cancelBooking } from '../../services/bookings';
 import { fixed } from '../../theme/colors';
-import {
-  bookingAddress,
-  bookingDateLabel,
-  isAtHome,
-  statusLabel,
-} from '../../utils/booking-labels';
-import { catalogLabel } from '../../utils/catalog';
-import { formatClock } from '../../utils/format-date';
-import { localizeAddress } from '../../utils/address';
+import { useTheme } from '../../theme/theme';
 import { log } from '../../utils/log';
-import { formatPrice } from '../../utils/money';
 import { PATHS } from '../../utils/paths';
 import { upcomingAndHistory } from '../../utils/booking-lists';
 
@@ -39,6 +29,8 @@ export default function AgendaScreen() {
 }
 
 function Agenda() {
+  const router = useRouter();
+  const theme = useTheme();
   const auth = useAuth();
   const { mine, mineLoading } = useBookings();
   const professionals = useProfessionals();
@@ -77,64 +69,20 @@ function Agenda() {
       ],
     );
 
-  const renderBooking = (booking: Booking) => {
-    const professional = professionals.byId(booking.professionalId);
-    const address = bookingAddress(booking, professional);
-    return (
-      <View key={booking.id} style={styles.card}>
-        <View style={styles.between}>
-          <Link href={PATHS.professional(booking.professionalId) as never} accessibilityRole="link">
-            <Text style={styles.name}>{booking.professionalName}</Text>
-          </Link>
-          <Text style={[styles.status, statusStyle(booking)]}>{statusLabel(booking.status)}</Text>
-        </View>
-        <Text style={styles.when}>
-          {bookingDateLabel(booking)} · {formatClock(booking.startsAt)}
-        </Text>
-        {isAtHome(booking, professional) ? (
-          <Text style={styles.muted}>{t('Atendimento a domicílio')}</Text>
-        ) : address ? (
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel={t('Copiar endereço')}
-            onPress={() =>
-              Clipboard.setStringAsync(address).then(() => toast.show(t('Endereço copiado'), 2000))
-            }
-            style={styles.address}
-          >
-            <Text style={[styles.muted, { flexShrink: 1 }]}>{localizeAddress(address)}</Text>
-            <MaterialIcons name="content-copy" size={16} color={fixed.gray} />
-          </Pressable>
-        ) : null}
-        {booking.services.map((service) => (
-          <View key={service.id} style={styles.between}>
-            <Text style={styles.muted}>{catalogLabel(service.name)}</Text>
-            <Text style={styles.muted}>{formatPrice(service.price)}</Text>
-          </View>
-        ))}
-        <View style={styles.between}>
-          <Text style={styles.bold}>{t('Total')}</Text>
-          <Text style={styles.bold}>{formatPrice(booking.total)}</Text>
-        </View>
-        {isOpen(booking.status) ? (
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel={t('Cancelar agendamento')}
-            onPress={() => cancel(booking)}
-            style={styles.cancel}
-          >
-            <Text style={styles.cancelText}>{t('Cancelar agendamento')}</Text>
-          </Pressable>
-        ) : null}
-      </View>
-    );
-  };
+  const renderBooking = (booking: Booking) => (
+    <BookingCard
+      key={booking.id}
+      booking={booking}
+      professional={professionals.byId(booking.professionalId)}
+      onCancel={cancel}
+      onCopyAddress={(address) =>
+        Clipboard.setStringAsync(address).then(() => toast.show(t('Endereço copiado'), 2000))
+      }
+    />
+  );
 
   return (
     <Screen edges={['top']}>
-      <Text accessibilityRole="header" style={styles.title}>
-        {t('Agenda')}
-      </Text>
       {mineLoading ? (
         <Spinner small />
       ) : (
@@ -146,7 +94,15 @@ function Agenda() {
             upcoming.map(renderBooking)
           ) : (
             <Text style={styles.muted}>
-              {t('Você não tem agendamentos. Escolha um profissional e agende um serviço.')}
+              {t('Você não tem agendamentos.')}{' '}
+              <Text
+                accessibilityRole="link"
+                style={{ color: theme.primary }}
+                onPress={() => router.push(PATHS.explore as never)}
+              >
+                {t('Encontre um profissional')}
+              </Text>
+              .
             </Text>
           )}
           {history.length ? (
@@ -163,32 +119,7 @@ function Agenda() {
   );
 }
 
-const statusStyle = (booking: Booking) =>
-  booking.status === 'confirmed' || booking.status === 'completed'
-    ? { color: fixed.success }
-    : booking.status === 'pending'
-      ? { color: fixed.warning }
-      : { color: fixed.dangerStrong };
-
 const styles = StyleSheet.create({
-  title: { fontSize: 24, fontWeight: '700', color: fixed.ink },
-  heading: { fontSize: 20, fontWeight: '700', color: fixed.ink },
+  heading: { fontSize: 18, fontWeight: '700', color: fixed.ink, marginTop: 8 },
   muted: { color: fixed.gray },
-  bold: { fontWeight: '700', color: fixed.ink },
-  link: { color: fixed.accentText, fontWeight: '600', paddingVertical: 8 },
-  card: {
-    gap: 6,
-    padding: 14,
-    borderWidth: 1,
-    borderColor: fixed.borderSoft,
-    borderRadius: 14,
-    backgroundColor: fixed.white,
-  },
-  between: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 8 },
-  name: { fontSize: 17, fontWeight: '700', color: fixed.ink },
-  when: { fontWeight: '600', color: fixed.ink },
-  status: { fontWeight: '700', fontSize: 13 },
-  address: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  cancel: { alignSelf: 'flex-start', paddingVertical: 8 },
-  cancelText: { color: fixed.dangerStrong, fontWeight: '600' },
 });
