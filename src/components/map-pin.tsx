@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Marker } from 'react-native-maps';
+import { Callout, Marker } from 'react-native-maps';
 import { fixed } from '../theme/colors';
 
 const HEAD = 36;
@@ -21,6 +21,7 @@ export function MapPin({
 }) {
   // A custom view is drawn into an image that the map keeps: it has to be watched again when the color changes,
   // and can be left alone after a moment (the state is adjusted while rendering, not in an effect)
+  const marker = useRef<React.ElementRef<typeof Marker>>(null);
   const [watching, setWatching] = useState(true);
   const [drawn, setDrawn] = useState(selected);
   if (drawn !== selected) {
@@ -34,12 +35,20 @@ export function MapPin({
 
   return (
     <Marker
+      ref={marker}
       coordinate={{ latitude: lat, longitude: lng }}
       anchor={{ x: 0.5, y: 1 }}
       tracksViewChanges={watching}
       zIndex={selected ? 1 : 0}
-      onPress={onPress}
+      // The map selects a marker that is tapped and opens its balloon (empty here): the screen keeps the selection
+      onPress={() => {
+        marker.current?.hideCallout();
+        onPress();
+      }}
     >
+      <Callout tooltip>
+        <View />
+      </Callout>
       <View style={styles.box}>
         <View style={[styles.drop, { backgroundColor: selected ? fixed.accent : fixed.brand }]} />
         <View style={styles.dot} />
