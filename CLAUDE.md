@@ -9,12 +9,13 @@ notes (Expo changes a lot: check the docs of the installed SDK before using an A
 
 - **Language.** Code, comments, commit messages and `docs/architecture.md` in English. The user speaks Portuguese:
   answer in Portuguese. Texts in the UI are written in Portuguese and translated (see "Texts" in the architecture
-  doc). Never write "a cliente" / "as clientes" in pt/es texts: use a neutral or masculine form.
+  doc). Never write "a cliente" / "as clientes" in pt/es texts: use a neutral or masculine form. The same goes
+  for "profissional" ("avisado", not "avisada") and for "Bem-vindo" (not "Bem-vinda").
 - **Commits.** Commit every change at the end of the work, with a short English message ending with the line
   `Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>` (in the first commit command, never added afterwards).
   Before each commit, summarize the files touched and what was done. Do not push.
 - **Ask before** deploying anything, running an EAS build or submitting to a store, changing the Meta/Google
-  consoles, or doing anything outward facing. The backend (rules, Functions) lives in the site's repo: this repo
+  consoles, or doing anything outward facing. An approval covers that one action, not the next one. The backend (rules, Functions) lives in the site's repo: this repo
   never changes it.
 - **Phases.** The work is done in phases (see the plan in the architecture doc). At the end of a phase, stop,
   report what was done and what failed, and ask before starting the next one.
