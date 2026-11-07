@@ -8,6 +8,7 @@ import { t } from '../i18n';
 import { Review } from '../models/professional';
 import { completedBookingId, listReviews, removeReview, saveReview } from '../services/reviews';
 import { fixed } from '../theme/colors';
+import { useTheme } from '../theme/theme';
 import { formatRelative } from '../utils/format-date';
 import { log } from '../utils/log';
 import { Button } from './button';
@@ -20,9 +21,9 @@ function Stars({ value, onChange }: { value: number; onChange?: (stars: number) 
       {STARS.map((star) => {
         const icon = (
           <MaterialIcons
-            name={star <= value ? 'star' : 'star-border'}
-            size={onChange ? 32 : 16}
-            color={fixed.accent}
+            name="star"
+            size={onChange ? 32 : 18}
+            color={star <= value ? fixed.accent : fixed.border}
           />
         );
         return onChange ? (
@@ -50,6 +51,7 @@ function Stars({ value, onChange }: { value: number; onChange?: (stars: number) 
 export function ReviewsSection({ professionalId }: { professionalId: string }) {
   const auth = useAuth();
   const toast = useToast();
+  const theme = useTheme();
   const [reviews, setReviews] = useState<Review[]>([]);
   // The booking that lets this client review (null: none completed yet)
   const [bookingId, setBookingId] = useState<string | null>(null);
@@ -167,31 +169,47 @@ export function ReviewsSection({ professionalId }: { professionalId: string }) {
       {reviews.length ? (
         reviews.map((review) => (
           <View key={review.id} style={styles.review}>
-            <View style={styles.avatar}>
-              <Text style={styles.avatarLetter}>{review.author[0]}</Text>
+            <View style={[styles.avatar, { backgroundColor: theme.primaryLight }]}>
+              <Text style={[styles.avatarLetter, { color: theme.primary }]}>
+                {review.author[0]}
+              </Text>
             </View>
             <View style={styles.reviewBody}>
               <View style={styles.reviewHead}>
-                <Text style={styles.bold}>{review.author}</Text>
+                <Text style={styles.author}>{review.author}</Text>
                 <Text style={styles.muted}>{formatRelative(review.createdAt)}</Text>
               </View>
-              <Stars value={review.stars} />
-              {review.text ? <Text style={styles.muted}>{review.text}</Text> : null}
-              {review.id === uid ? (
-                <View style={styles.actions}>
-                  <Button
-                    variant="link"
-                    label={t('Editar')}
-                    onPress={() => {
-                      setStars(review.stars);
-                      setText(review.text);
-                      setMessage('');
-                      setEditing(true);
-                    }}
-                  />
-                  <Button variant="link" label={t('Excluir')} onPress={remove} />
+              <View style={styles.reviewMain}>
+                <View style={styles.reviewContent}>
+                  <Stars value={review.stars} />
+                  {review.text ? <Text style={styles.muted}>{review.text}</Text> : null}
                 </View>
-              ) : null}
+                {review.id === uid ? (
+                  <View style={styles.actions}>
+                    <Pressable
+                      accessibilityRole="button"
+                      accessibilityLabel={t('Editar')}
+                      onPress={() => {
+                        setStars(review.stars);
+                        setText(review.text);
+                        setMessage('');
+                        setEditing(true);
+                      }}
+                      style={[styles.action, { backgroundColor: theme.primaryLight }]}
+                    >
+                      <MaterialIcons name="edit" size={18} color={theme.primary} />
+                    </Pressable>
+                    <Pressable
+                      accessibilityRole="button"
+                      accessibilityLabel={t('Excluir')}
+                      onPress={remove}
+                      style={[styles.action, { backgroundColor: fixed.dangerBg }]}
+                    >
+                      <MaterialIcons name="delete" size={18} color={fixed.danger} />
+                    </Pressable>
+                  </View>
+                ) : null}
+              </View>
             </View>
           </View>
         ))
@@ -203,32 +221,46 @@ export function ReviewsSection({ professionalId }: { professionalId: string }) {
 }
 
 const styles = StyleSheet.create({
-  section: { gap: 12 },
+  section: { gap: 24 },
   heading: { fontSize: 20, fontWeight: '700', color: fixed.ink },
-  form: { gap: 10, padding: 14, borderWidth: 1, borderColor: fixed.borderSoft, borderRadius: 14 },
+  form: { gap: 12, padding: 16, borderWidth: 1, borderColor: fixed.borderSoft, borderRadius: 12 },
   input: {
     minHeight: 80,
     borderWidth: 1,
     borderColor: fixed.border,
-    borderRadius: 12,
+    borderRadius: 8,
     padding: 12,
     textAlignVertical: 'top',
     color: fixed.ink,
   },
-  stars: { flexDirection: 'row', gap: 2 },
+  stars: { flexDirection: 'row', gap: 2, marginTop: 4, marginBottom: 6 },
   bold: { fontWeight: '700', color: fixed.ink },
+  author: { fontSize: 17, fontWeight: '700', color: fixed.ink },
   muted: { color: fixed.gray },
-  review: { flexDirection: 'row', gap: 12 },
-  reviewBody: { flex: 1, gap: 2 },
-  reviewHead: { flexDirection: 'row', justifyContent: 'space-between' },
+  review: { flexDirection: 'row', gap: 16 },
+  reviewBody: { flex: 1 },
+  reviewHead: { flexDirection: 'row', justifyContent: 'space-between', gap: 16 },
+  reviewMain: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+  reviewContent: { flex: 1 },
   avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: fixed.surface,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  avatarLetter: { fontWeight: '700', color: fixed.brand },
-  actions: { flexDirection: 'row' },
+  avatarLetter: { fontWeight: '600' },
+  actions: { flexDirection: 'row', gap: 4 },
+  action: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });
