@@ -94,7 +94,7 @@ and a Spanish entry with the same placeholders, and an entry nobody uses fails t
 3. Client, transactions (done, except cards and real payments): booking, simulated payment, agenda, inbox and chat, notifications, profile. Cards and Stripe need a development build.
 4. Professional area (done): sign up in 2 steps, agenda (accept, decline, cancel), messages, profile editor, Instagram connection.
 5. Admin (done): the list of sign ups waiting for approval and the review of a professional (approve or deny).
-6. Polish: push notifications, accessibility pass, EAS build config.
+6. Polish (done, except push): icons and splash from the site's mark, permission texts, EAS build profiles, an accessibility audit. Push notifications are a proposal below.
 
 At the end of each phase the work stops until the next one is approved.
 
@@ -105,3 +105,23 @@ At the end of each phase the work stops until the next one is approved.
 | Pure logic, reducers, models, the shared copy | `src/**/*.spec.ts` | `npm test` (jest-expo) |
 
 The tests run in Portuguese (`jest.setup.ts` mocks the device locale).
+
+## Builds and what is still open
+
+`eas.json` has three profiles: `development` (a development client, needed for Stripe and Google sign in), `preview`
+(internal) and `production` (`EXPO_PUBLIC_APP_ENV=prod`, which selects the production Firebase project and turns
+`features.checkout` off). The `EXPO_PUBLIC_FIREBASE_*` variables of production are set in EAS, never in the repo. Nothing
+here is built or submitted without asking.
+
+Open, each one needs an account, a console or a change outside this repo:
+
+- **Identifier.** `br.com.findyourbeauty.app` (iOS and Android) is a proposal; it cannot be changed after the first store
+  upload.
+- **Google sign in.** OAuth client ids (iOS, Android, web) in the Google/Firebase console, and a development build.
+- **Android map.** `react-native-maps` on Android needs a Google Maps key for the app (`android.config.googleMaps.apiKey`);
+  the key of the site is restricted to web referrers.
+- **Stripe.** `@stripe/stripe-react-native` and saved cards, in a development build, behind `features.checkout`.
+- **Instagram.** The redirect address in the Meta app (see above).
+- **Push notifications (proposal).** `expo-notifications` to get a token, stored in `users/{uid}` (or `professionals/{id}/private`),
+  and a Cloud Function (in the site's repo) that sends a push where it already writes `users/{uid}/notifications`. It needs
+  a change in the backend, so it waits for a decision.

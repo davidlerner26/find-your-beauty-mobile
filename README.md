@@ -31,3 +31,9 @@ needs `EXPO_PUBLIC_APP_ENV=prod` and the `EXPO_PUBLIC_FIREBASE_*` variables (see
 | `npm run lint` / `npm run format:check` | ESLint (Expo, accessibility) / Prettier                |
 | `npm run typecheck`                     | TypeScript                                             |
 | `npm run sync:shared` / `check:shared`  | Copy `shared/domain.ts` from the site / check the copy |
+
+## Builds
+
+`eas.json` has the profiles `development`, `preview` and `production`. Builds, stores and the production Firebase
+variables are described in [docs/architecture.md](docs/architecture.md#builds-and-what-is-still-open). Do not run them
+without asking.
