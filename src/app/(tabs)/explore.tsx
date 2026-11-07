@@ -9,10 +9,11 @@ import {
   useWindowDimensions,
   View,
 } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
+import MapView from 'react-native-maps';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Chip } from '../../components/chip';
 import { ExploreCard } from '../../components/explore-card';
+import { MapPin } from '../../components/map-pin';
 import { NearbySheet } from '../../components/nearby-sheet';
 import { useUserLocation } from '../../contexts/location';
 import { useProfessionals } from '../../contexts/professionals';
@@ -163,11 +164,11 @@ export default function Explore() {
         accessibilityLabel={t('Mapa de profissionais de beleza')}
       >
         {cards.map((card, index) => (
-          <Marker
+          <MapPin
             key={card.id}
-            coordinate={{ latitude: card.position.lat, longitude: card.position.lng }}
-            title={card.name}
-            pinColor={card.id === selectedId ? fixed.accent : fixed.brand}
+            lat={card.position.lat}
+            lng={card.position.lng}
+            selected={card.id === selectedId}
             onPress={() => select(index)}
           />
         ))}
