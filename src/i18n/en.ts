@@ -517,4 +517,5 @@ export const en: Record<string, string> = {
   'Mostre o seu trabalho: as fotos aparecem na galeria do seu perfil.':
     'Show your work: the photos appear in the gallery of your profile.',
   'Onde você atende?': 'Where do you work?',
+  'Sem celular': 'No phone',
 };

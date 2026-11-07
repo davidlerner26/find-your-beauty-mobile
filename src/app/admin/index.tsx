@@ -1,9 +1,8 @@
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
-import { Alert, Pressable, StyleSheet, View } from 'react-native';
+import { Alert, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { Text } from '../../components/text';
-import { BackButton } from '../../components/back-button';
-import { Button } from '../../components/button';
+import { AdminCard, AdminTop, AnswerButton } from '../../components/admin-kit';
 import { Screen } from '../../components/screen';
 import { Spinner } from '../../components/spinner';
 import { t } from '../../i18n';
@@ -12,13 +11,15 @@ import {
   pendingProfessionals,
   rejectProfessional,
 } from '../../services/admin';
-import { fixed } from '../../theme/colors';
+import { fixed, radius } from '../../theme/colors';
+import { useTheme } from '../../theme/theme';
 import { PendingProfessional } from '../../utils/admin-list';
 import { formatRelative } from '../../utils/format-date';
 import { log } from '../../utils/log';
 
 export default function Admin() {
   const router = useRouter();
+  const theme = useTheme();
   const [list, setList] = useState<PendingProfessional[] | null>(null);
   const [error, setError] = useState('');
   // Id of the professional being answered
@@ -63,81 +64,78 @@ export default function Admin() {
     ]);
 
   return (
-    <Screen>
-      <BackButton />
-      <Text accessibilityRole="header" style={styles.title}>
-        {t('Administração')}
-      </Text>
-      <Text accessibilityRole="header" style={styles.heading}>
-        {t('Aguardando aprovação')}
-      </Text>
-      {error ? (
-        <Text accessibilityRole="alert" style={styles.error}>
-          {error}
-        </Text>
-      ) : null}
-      {list === null ? (
-        <Spinner small />
-      ) : list.length ? (
-        list.map((professional) => (
-          <View key={professional.id} style={styles.card}>
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel={professional.name}
-              onPress={() => router.push(`/admin/profissionais/${professional.id}` as never)}
-              style={styles.info}
-            >
-              <Text style={styles.name}>{professional.name}</Text>
-              <Text style={styles.muted}>{professional.email}</Text>
-              <Text style={styles.muted}>{professional.phone}</Text>
-              <Text style={styles.muted}>
-                {t('Cadastro: {{when}}', { when: formatRelative(professional.createdAt) })}
-              </Text>
-              <Text style={styles.link}>{t('Ver perfil completo')}</Text>
-            </Pressable>
-            <View style={styles.actions}>
-              <View style={styles.flex}>
-                <Button
+    <Screen scroll={false} padded={false} edges={['top']}>
+      <AdminTop title={t('Administração')} />
+      <ScrollView contentContainerStyle={styles.content}>
+        {list?.length ? (
+          <Text accessibilityRole="header" style={[styles.heading, { color: theme.muted }]}>
+            {t('Aguardando aprovação')}
+          </Text>
+        ) : null}
+        {error ? (
+          <Text accessibilityRole="alert" style={styles.error}>
+            {error}
+          </Text>
+        ) : null}
+        {list === null ? (
+          <Spinner small />
+        ) : list.length ? (
+          list.map((professional) => (
+            <AdminCard key={professional.id}>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={professional.name}
+                onPress={() => router.push(`/admin/profissionais/${professional.id}` as never)}
+                style={styles.info}
+              >
+                <Text style={[styles.name, { color: theme.text }]}>{professional.name}</Text>
+                <Text style={{ color: theme.muted }}>{professional.email}</Text>
+                <Text style={{ color: theme.muted }}>{professional.phone || t('Sem celular')}</Text>
+                <Text style={{ color: theme.muted }}>
+                  {t('Cadastro: {{when}}', { when: formatRelative(professional.createdAt) })}
+                </Text>
+                <Text style={[styles.link, { color: theme.primary }]}>
+                  {t('Ver perfil completo')}
+                </Text>
+              </Pressable>
+              <View style={styles.actions}>
+                <AnswerButton
+                  kind="approve"
+                  icon
                   label={t('Aprovar')}
                   onPress={() => void run(professional, true)}
-                  loading={working === professional.id}
                   disabled={working !== null}
                 />
-              </View>
-              <View style={styles.flex}>
-                <Button
-                  variant="outline"
+                <AnswerButton
+                  kind="deny"
+                  icon
                   label={t('Negar')}
                   onPress={() => deny(professional)}
                   disabled={working !== null}
                 />
               </View>
-            </View>
-          </View>
-        ))
-      ) : (
-        <Text style={styles.muted}>{t('Nenhum cadastro aguardando aprovação.')}</Text>
-      )}
+            </AdminCard>
+          ))
+        ) : (
+          <Text style={{ color: theme.muted }}>{t('Nenhum cadastro aguardando aprovação.')}</Text>
+        )}
+      </ScrollView>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  title: { fontSize: 26, fontWeight: '700', color: fixed.ink },
-  heading: { fontSize: 20, fontWeight: '700', color: fixed.ink },
-  card: {
-    gap: 10,
-    padding: 14,
-    borderWidth: 1,
-    borderColor: fixed.borderSoft,
-    borderRadius: 14,
-    backgroundColor: fixed.white,
-  },
+  content: { padding: 24, gap: 16 },
+  heading: { fontSize: 18, fontWeight: '500' },
   info: { gap: 2 },
-  name: { fontSize: 17, fontWeight: '700', color: fixed.ink },
-  muted: { color: fixed.gray },
-  link: { color: fixed.accentText, fontWeight: '600', marginTop: 4 },
-  actions: { flexDirection: 'row', gap: 8 },
-  flex: { flex: 1 },
-  error: { color: fixed.dangerStrong },
+  name: { fontSize: 18, fontWeight: '700', marginBottom: 2 },
+  link: { fontWeight: '600', marginTop: 8 },
+  actions: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  error: {
+    padding: 12,
+    borderRadius: radius.card,
+    overflow: 'hidden',
+    backgroundColor: fixed.dangerBg,
+    color: fixed.danger,
+  },
 });

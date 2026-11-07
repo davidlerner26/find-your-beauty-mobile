@@ -524,4 +524,5 @@ export const es: Record<string, string> = {
   'Mostre o seu trabalho: as fotos aparecem na galeria do seu perfil.':
     'Muestra tu trabajo: las fotos aparecen en la galería de tu perfil.',
   'Onde você atende?': '¿Dónde atiendes?',
+  'Sem celular': 'Sin celular',
 };
