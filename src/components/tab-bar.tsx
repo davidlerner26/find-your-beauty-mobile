@@ -1,10 +1,7 @@
 import { Tabs } from 'expo-router';
 import { ComponentProps } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
-import { environment } from '../config/environment';
-import { t } from '../i18n';
 import { fixed } from '../theme/colors';
-import { Text } from './text';
 
 type TabBarProps = Parameters<NonNullable<ComponentProps<typeof Tabs>['tabBar']>>[0];
 
@@ -13,17 +10,12 @@ const INACTIVE = '#aab2c0';
 const HEIGHT = 80;
 
 // The bottom bar of the site: only icons, the selected one in the blue of the brand with a dot under it, and a
-// dot of the accent color on what has news. The test environment has its banner right above it.
+// dot of the accent color on what has news.
 export function TabBar({ state, descriptors, navigateToTab, insets }: TabBarProps) {
   const { bottom } = insets;
 
   return (
     <View>
-      {environment.name === 'dev' ? (
-        <Text style={styles.banner} pointerEvents="none">
-          {t('Ambiente de teste')}
-        </Text>
-      ) : null}
       <View style={[styles.bar, { height: HEIGHT + bottom, paddingBottom: bottom }]}>
         {state.routes.map((route, index) => {
           const { options } = descriptors[route.key];
@@ -79,20 +71,4 @@ const styles = StyleSheet.create({
     borderColor: fixed.white,
   },
   dot: { width: 5, height: 5, borderRadius: 3, backgroundColor: 'transparent' },
-  banner: {
-    position: 'absolute',
-    left: 0,
-    top: -22,
-    paddingHorizontal: 10,
-    paddingVertical: 2,
-    borderTopRightRadius: 8,
-    backgroundColor: '#ee8b2e',
-    color: fixed.white,
-    fontSize: 11,
-    fontWeight: '700',
-    letterSpacing: 0.5,
-    textTransform: 'uppercase',
-    overflow: 'hidden',
-    zIndex: 5,
-  },
 });

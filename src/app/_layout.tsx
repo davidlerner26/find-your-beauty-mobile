@@ -13,6 +13,7 @@ import { MessagesProvider } from '../contexts/messages';
 import { NotificationsProvider } from '../contexts/notifications';
 import { ProfessionalsProvider } from '../contexts/professionals';
 import { ToastProvider } from '../contexts/toast';
+import { TestBanner } from '../components/test-banner';
 import { FONTS } from '../theme/fonts';
 import { ThemeProvider } from '../theme/theme';
 
@@ -40,6 +41,7 @@ export default function RootLayout() {
                       <CheckoutDraftProvider>
                         <StatusBar style="dark" />
                         <Stack screenOptions={{ headerShown: false }} />
+                        <TestBanner />
                       </CheckoutDraftProvider>
                     </NotificationsProvider>
                   </MessagesProvider>

@@ -47,7 +47,8 @@ English or Spanish, `utils/locale.ts`).
 `TextInput`) and `components/link.tsx`, never with the ones of `react-native` / `expo-router`, because a custom font is one
 file per weight and the components pick it from `fontWeight` (`theme/fonts.ts`). The root layout holds the splash until the
 font is loaded. The bottom bar (`components/tab-bar.tsx`) is the one of the site: only icons, a dot under the selected one, a
-dot of the accent color for news, and the "Ambiente de teste" banner above it in the test environment. The screens of a
+dot of the accent color for news. The "Ambiente de teste" banner (`components/test-banner.tsx`, in the root layout) sits in the
+middle of the top of every screen in the test environment. The screens of a
 visitor use `components/visitor.tsx`. The sign in, sign up and password screens use `components/auth-kit.tsx`
 (`AuthScreen`, `AuthField`): the pill fields, the switch between client and professional and the blue theme of the
 professional area (`ThemeProvider pro`), as on the site. The sides of a screen are 24 px (`1.5rem` of the site) and the buttons are 56 px tall.
