@@ -3,9 +3,9 @@ import { useState } from 'react';
 import { FlatList, Pressable, StyleSheet, View } from 'react-native';
 import { Text, TextInput } from '../components/text';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { BackButton } from '../components/back-button';
 import { Chip } from '../components/chip';
 import { FilterSheet } from '../components/filter-sheet';
+import { TopBar } from '../components/top-bar';
 import { SearchResultCard } from '../components/search-result-card';
 import { useUserLocation } from '../contexts/location';
 import { t } from '../i18n';
@@ -114,28 +114,27 @@ function Search() {
 
   return (
     <SafeAreaView style={styles.screen}>
-      <View style={styles.top}>
-        <BackButton />
-        <Text accessibilityRole="header" style={styles.title} pointerEvents="none">
-          {t('Buscar')}
-        </Text>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel={
-            search.activeFilterCount
-              ? t('Filtros ({{count}})', { count: search.activeFilterCount })
-              : t('Filtros')
-          }
-          onPress={() => setSheet(true)}
-          hitSlop={8}
-          style={styles.filter}
-        >
-          <MaterialIcons name="filter-list" size={28} color={theme.primary} />
-          {search.activeFilterCount ? (
-            <Text style={styles.count}>{search.activeFilterCount}</Text>
-          ) : null}
-        </Pressable>
-      </View>
+      <TopBar
+        title={t('Buscar')}
+        right={
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={
+              search.activeFilterCount
+                ? t('Filtros ({{count}})', { count: search.activeFilterCount })
+                : t('Filtros')
+            }
+            onPress={() => setSheet(true)}
+            hitSlop={8}
+            style={styles.filter}
+          >
+            <MaterialIcons name="filter-list" size={28} color={theme.primary} />
+            {search.activeFilterCount ? (
+              <Text style={styles.count}>{search.activeFilterCount}</Text>
+            ) : null}
+          </Pressable>
+        }
+      />
 
       <View style={styles.searchWrap}>
         <View style={[styles.input, { backgroundColor: fixed.surface }]}>
@@ -209,24 +208,6 @@ function Search() {
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: fixed.white },
-  top: {
-    height: 72,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: fixed.divider,
-  },
-  title: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    textAlign: 'center',
-    fontSize: 20,
-    fontWeight: '700',
-    color: fixed.ink,
-  },
   searchWrap: { paddingHorizontal: 24, paddingTop: 24 },
   input: {
     flexDirection: 'row',

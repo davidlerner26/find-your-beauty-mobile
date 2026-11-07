@@ -123,6 +123,7 @@ export const en: Record<string, string> = {
     'Tell us about your experience. Leave a blank line to separate paragraphs.',
   'Conte como foi (opcional)': 'Tell us how it went (optional)',
   'Continuar como visitante': 'Continue as a visitor',
+  com: 'with',
   'Conversar com {{name}}': 'Chat with {{name}}',
   'Copiar endereço': 'Copy address',
   'Corte feminino': "Women's haircut",

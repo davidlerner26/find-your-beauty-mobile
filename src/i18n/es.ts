@@ -124,6 +124,7 @@ export const es: Record<string, string> = {
     'Cuenta tu experiencia. Deja una línea en blanco para separar párrafos.',
   'Conte como foi (opcional)': 'Cuéntanos cómo fue (opcional)',
   'Continuar como visitante': 'Continuar como visitante',
+  com: 'con',
   'Conversar com {{name}}': 'Conversar con {{name}}',
   'Copiar endereço': 'Copiar dirección',
   'Corte feminino': 'Corte de cabello de mujer',
