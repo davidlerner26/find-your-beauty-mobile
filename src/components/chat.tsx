@@ -2,7 +2,8 @@ import { MaterialIcons } from '@expo/vector-icons';
 import * as DocumentPicker from 'expo-document-picker';
 import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
-import { Link, Redirect } from 'expo-router';
+import { Redirect } from 'expo-router';
+import { Link } from './link';
 import { useEffect, useMemo, useState } from 'react';
 import {
   ActionSheetIOS,
@@ -12,10 +13,9 @@ import {
   Platform,
   Pressable,
   StyleSheet,
-  Text,
-  TextInput,
   View,
 } from 'react-native';
+import { Text, TextInput } from './text';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../contexts/auth';
 import { useMessages } from '../contexts/messages';

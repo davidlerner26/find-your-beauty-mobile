@@ -1,6 +1,8 @@
-import { Link, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
+import { Link } from '../components/link';
 import { useEffect, useState } from 'react';
-import { StyleSheet, Text } from 'react-native';
+import { StyleSheet } from 'react-native';
+import { Text } from '../components/text';
 import { BackButton } from '../components/back-button';
 import { Button } from '../components/button';
 import { Screen } from '../components/screen';

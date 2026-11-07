@@ -3,6 +3,7 @@ import { Tabs } from 'expo-router';
 import { useBookings } from '../../../contexts/bookings';
 import { useMessages } from '../../../contexts/messages';
 import { useNotifications } from '../../../contexts/notifications';
+import { TabBar } from '../../../components/tab-bar';
 import { t } from '../../../i18n';
 import { fixed } from '../../../theme/colors';
 
@@ -24,6 +25,7 @@ export default function ProTabsLayout() {
 
   return (
     <Tabs
+      tabBar={(props) => <TabBar {...props} />}
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: fixed.brand,

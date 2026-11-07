@@ -1,5 +1,6 @@
-import { Link } from 'expo-router';
-import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Link } from '../../../components/link';
+import { Alert, Pressable, StyleSheet, View } from 'react-native';
+import { Text } from '../../../components/text';
 import { Guard } from '../../../components/guard';
 import { Screen } from '../../../components/screen';
 import { useAuth } from '../../../contexts/auth';
@@ -183,7 +184,7 @@ const statusColor = (booking: Booking) =>
       : { color: fixed.dangerStrong };
 
 const styles = StyleSheet.create({
-  title: { fontSize: 26, fontWeight: '700', color: fixed.ink },
+  title: { fontSize: 24, fontWeight: '700', color: fixed.ink },
   heading: { fontSize: 20, fontWeight: '700', color: fixed.ink },
   notice: {
     backgroundColor: fixed.warningBg,

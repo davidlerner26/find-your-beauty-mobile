@@ -1,16 +1,17 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import * as Clipboard from 'expo-clipboard';
-import { Link, useLocalSearchParams, useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { Link } from '../../../components/link';
 import { useEffect, useMemo, useState } from 'react';
 import {
   Linking,
   Pressable,
   ScrollView,
   StyleSheet,
-  Text,
   useWindowDimensions,
   View,
 } from 'react-native';
+import { Text } from '../../../components/text';
 import { Image } from 'expo-image';
 import { Button } from '../../../components/button';
 import { HeartButton } from '../../../components/heart-button';

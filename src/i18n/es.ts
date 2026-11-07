@@ -48,6 +48,7 @@ export const es: Record<string, string> = {
   'Alguma observação para o profissional? (opcional)':
     '¿Alguna observación para el profesional? (opcional)',
   'Alterações salvas': 'Cambios guardados',
+  'Ambiente de teste': 'Entorno de pruebas',
   'Ambiente de teste: o pagamento é simulado e nada é cobrado.':
     'Entorno de prueba: el pago es simulado y no se cobra nada.',
   Anexar: 'Adjuntar',
@@ -166,9 +167,9 @@ export const es: Record<string, string> = {
   'Entrar como profissional': 'Iniciar sesión como profesional',
   'Entrar sem conta': 'Continuar sin cuenta',
   'Entre na sua conta para agendar.': 'Inicia sesión para reservar.',
-  'Entre na sua conta para conversar com os profissionais.':
-    'Inicia sesión para conversar con los profesionales.',
   'Entre na sua conta para ver os seus agendamentos.': 'Inicia sesión para ver tus reservas.',
+  'Entre na sua conta para ver suas mensagens.': 'Inicia sesión para ver tus mensajes.',
+  'Entre na sua conta para ver suas notificações.': 'Inicia sesión para ver tus notificaciones.',
   'Entre para agendar e conversar com os profissionais.':
     'Inicia sesión para reservar y conversar con los profesionales.',
   'Entre para ver os seus agendamentos e cuidar do seu perfil.':

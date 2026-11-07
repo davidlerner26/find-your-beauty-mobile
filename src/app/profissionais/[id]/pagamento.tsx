@@ -1,7 +1,8 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { Text } from '../../../components/text';
 import { BackButton } from '../../../components/back-button';
 import { Button } from '../../../components/button';
 import { Guard } from '../../../components/guard';

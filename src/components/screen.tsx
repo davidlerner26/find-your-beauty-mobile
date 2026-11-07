@@ -23,12 +23,12 @@ export function Screen({ children, scroll = true, padded = true, edges }: Props)
         {scroll ? (
           <ScrollView
             keyboardShouldPersistTaps="handled"
-            contentContainerStyle={{ padding: padded ? 16 : 0, gap: 16, flexGrow: 1 }}
+            contentContainerStyle={{ padding: padded ? 24 : 0, gap: 16, flexGrow: 1 }}
           >
             {children}
           </ScrollView>
         ) : (
-          <View style={{ flex: 1, padding: padded ? 16 : 0 }}>{children}</View>
+          <View style={{ flex: 1, padding: padded ? 24 : 0 }}>{children}</View>
         )}
       </KeyboardAvoidingView>
     </SafeAreaView>

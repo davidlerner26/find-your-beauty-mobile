@@ -1,7 +1,9 @@
-import { Link, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
+import { Link } from './link';
 import * as Location from 'expo-location';
 import { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { Text } from './text';
 import { BackButton } from './back-button';
 import { Button } from './button';
 import { Guard } from './guard';

@@ -1,5 +1,6 @@
-import { Link } from 'expo-router';
-import { StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import { Link } from './link';
+import { StyleSheet, useWindowDimensions, View } from 'react-native';
+import { Text } from './text';
 import { t } from '../i18n';
 import { fixed } from '../theme/colors';
 import { catalogText } from '../utils/catalog';

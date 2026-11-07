@@ -1,6 +1,7 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import { useState } from 'react';
-import { FlatList, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { FlatList, Pressable, StyleSheet, View } from 'react-native';
+import { Text, TextInput } from '../components/text';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { BackButton } from '../components/back-button';
 import { Chip } from '../components/chip';

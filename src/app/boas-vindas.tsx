@@ -1,7 +1,9 @@
 import { Image } from 'expo-image';
-import { Link, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
+import { Link } from '../components/link';
 import { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { Text } from '../components/text';
 import { Button } from '../components/button';
 import { Screen } from '../components/screen';
 import { t } from '../i18n';

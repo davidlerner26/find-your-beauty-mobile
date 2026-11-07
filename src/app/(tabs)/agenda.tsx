@@ -1,9 +1,11 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import * as Clipboard from 'expo-clipboard';
-import { Link } from 'expo-router';
-import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Link } from '../../components/link';
+import { Alert, Pressable, StyleSheet, View } from 'react-native';
+import { Text } from '../../components/text';
 import { isOpen } from '../../../shared/domain';
 import { Guard } from '../../components/guard';
+import { Visitor } from '../../components/visitor';
 import { Screen } from '../../components/screen';
 import { Spinner } from '../../components/spinner';
 import { useAuth } from '../../contexts/auth';
@@ -45,14 +47,10 @@ function Agenda() {
   if (auth.ready && !auth.user) {
     return (
       <Screen edges={['top']}>
-        <Text accessibilityRole="header" style={styles.title}>
-          {t('Agenda')}
-        </Text>
-        <Text style={styles.bold}>{t('Você não está logado.')}</Text>
-        <Text style={styles.muted}>{t('Entre na sua conta para ver os seus agendamentos.')}</Text>
-        <Link href={PATHS.login as never} accessibilityRole="link" style={styles.link}>
-          {t('Entrar')}
-        </Link>
+        <Visitor
+          title={t('Você não está logado.')}
+          message={t('Entre na sua conta para ver os seus agendamentos.')}
+        />
       </Screen>
     );
   }
@@ -173,7 +171,7 @@ const statusStyle = (booking: Booking) =>
       : { color: fixed.dangerStrong };
 
 const styles = StyleSheet.create({
-  title: { fontSize: 26, fontWeight: '700', color: fixed.ink },
+  title: { fontSize: 24, fontWeight: '700', color: fixed.ink },
   heading: { fontSize: 20, fontWeight: '700', color: fixed.ink },
   muted: { color: fixed.gray },
   bold: { fontWeight: '700', color: fixed.ink },

@@ -1,5 +1,6 @@
 import { MaterialIcons } from '@expo/vector-icons';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { Text } from './text';
 import { t } from '../i18n';
 import { fixed } from '../theme/colors';
 import { reviewsLabel } from '../utils/labels';

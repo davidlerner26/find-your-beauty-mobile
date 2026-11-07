@@ -2,7 +2,8 @@ import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
 import { useEffect, useRef, useState } from 'react';
-import { Alert, Pressable, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
+import { Alert, Pressable, StyleSheet, Switch, View } from 'react-native';
+import { Text, TextInput } from './text';
 import { useAuth, useAuthActions } from '../contexts/auth';
 import { useProfessionals } from '../contexts/professionals';
 import { useToast } from '../contexts/toast';
@@ -637,7 +638,7 @@ function Labeled({
 }
 
 const styles = StyleSheet.create({
-  title: { fontSize: 26, fontWeight: '700', color: fixed.ink },
+  title: { fontSize: 24, fontWeight: '700', color: fixed.ink },
   heading: { fontSize: 20, fontWeight: '700', color: fixed.ink, marginTop: 8 },
   subheading: { fontSize: 16, fontWeight: '700', color: fixed.ink },
   field: { gap: 6 },

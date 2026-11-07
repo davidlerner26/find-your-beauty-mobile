@@ -1,8 +1,10 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
-import { Link, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
+import { Link } from '../../components/link';
 import { useMemo, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { Text } from '../../components/text';
 import { Chip } from '../../components/chip';
 import { ProfessionalCard } from '../../components/professional-card';
 import { Screen } from '../../components/screen';
@@ -213,7 +215,7 @@ export default function Home() {
 const styles = StyleSheet.create({
   logo: { width: 176, height: 32 },
   hero: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  title: { fontSize: 26, fontWeight: '700', color: fixed.ink },
+  title: { fontSize: 24, fontWeight: '700', color: fixed.ink },
   muted: { color: fixed.gray },
   searchButton: {
     width: 48,

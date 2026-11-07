@@ -2,7 +2,8 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { FlatList, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { FlatList, Pressable, StyleSheet, View } from 'react-native';
+import { Text, TextInput } from './text';
 import { useAuth } from '../contexts/auth';
 import { useMessages } from '../contexts/messages';
 import { useNotifications } from '../contexts/notifications';
@@ -18,6 +19,7 @@ import { focusPosition } from '../utils/labels';
 import { log } from '../utils/log';
 import { PATHS } from '../utils/paths';
 import { Spinner } from './spinner';
+import { Visitor } from './visitor';
 
 const ICONS = { calendar: 'event', payment: 'payments', offer: 'local-offer' } as const;
 
@@ -96,10 +98,7 @@ export function Inbox({ pro = false }: { pro?: boolean }) {
 
   return (
     <View style={styles.screen}>
-      <Text accessibilityRole="header" style={styles.title}>
-        {t('Mensagens')}
-      </Text>
-      <View style={styles.tabs}>
+      <View style={styles.strip}>
         {(['mensagens', 'notificacoes'] as const).map((name) => (
           <Pressable
             key={name}
@@ -107,16 +106,29 @@ export function Inbox({ pro = false }: { pro?: boolean }) {
             accessibilityState={{ selected: tab === name }}
             accessibilityLabel={name === 'mensagens' ? t('Mensagens') : t('Notificações')}
             onPress={() => setTab(name)}
-            style={[styles.tab, tab === name && styles.tabOn]}
+            style={styles.stripTab}
           >
-            <Text style={[styles.tabText, tab === name && { color: fixed.white }]}>
+            <Text style={[styles.stripText, tab === name && styles.stripOn]}>
               {name === 'mensagens' ? t('Mensagens') : t('Notificações')}
             </Text>
+            {tab === name ? <View style={styles.stripDot} /> : null}
           </Pressable>
         ))}
       </View>
 
-      {tab === 'mensagens' ? (
+      {!auth.user ? (
+        <View style={styles.visitorBox}>
+          <Visitor
+            message={
+              tab === 'mensagens'
+                ? t('Entre na sua conta para ver suas mensagens.')
+                : t('Entre na sua conta para ver suas notificações.')
+            }
+          />
+        </View>
+      ) : null}
+
+      {!auth.user ? null : tab === 'mensagens' ? (
         <>
           <TextInput
             accessibilityLabel={
@@ -131,6 +143,7 @@ export function Inbox({ pro = false }: { pro?: boolean }) {
             style={styles.search}
           />
           <FlatList
+            contentContainerStyle={styles.list}
             data={shown}
             keyExtractor={(row) => row.id}
             ListEmptyComponent={
@@ -180,6 +193,7 @@ export function Inbox({ pro = false }: { pro?: boolean }) {
         <Spinner />
       ) : (
         <FlatList
+          contentContainerStyle={styles.list}
           data={[
             ...(unreadNotifications.length ? [{ header: t('Novas') }] : []),
             ...unreadNotifications,
@@ -224,9 +238,23 @@ export function Inbox({ pro = false }: { pro?: boolean }) {
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, padding: 16, gap: 12 },
+  screen: { flex: 1, gap: 12 },
+  visitorBox: { paddingHorizontal: 24 },
+  list: { paddingHorizontal: 24, paddingBottom: 24 },
+  strip: { flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: fixed.borderSoft },
+  stripTab: { flex: 1, alignItems: 'center', paddingTop: 20, paddingBottom: 16 },
+  stripText: { color: fixed.gray, fontSize: 16 },
+  stripOn: { color: fixed.brand, fontWeight: '600' },
+  stripDot: {
+    position: 'absolute',
+    bottom: 4,
+    width: 5,
+    height: 5,
+    borderRadius: 3,
+    backgroundColor: fixed.brand,
+  },
   flex: { flex: 1 },
-  title: { fontSize: 26, fontWeight: '700', color: fixed.ink },
+  title: { fontSize: 24, fontWeight: '700', color: fixed.ink },
   tabs: { flexDirection: 'row', gap: 8 },
   tab: {
     paddingHorizontal: 16,
@@ -239,6 +267,7 @@ const styles = StyleSheet.create({
   tabOn: { backgroundColor: fixed.brand, borderColor: fixed.brand },
   tabText: { color: fixed.ink, fontWeight: '600' },
   search: {
+    marginHorizontal: 24,
     minHeight: 44,
     paddingHorizontal: 14,
     borderRadius: 999,

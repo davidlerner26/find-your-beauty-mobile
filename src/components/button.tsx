@@ -1,4 +1,5 @@
-import { ActivityIndicator, Pressable, StyleSheet, Text } from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet } from 'react-native';
+import { Text } from './text';
 import { fixed, radius } from '../theme/colors';
 import { useTheme } from '../theme/theme';
 
@@ -44,13 +45,13 @@ export function Button({ label, onPress, variant = 'solid', disabled, loading }:
 
 const styles = StyleSheet.create({
   base: {
-    minHeight: 50,
+    minHeight: 56,
     borderRadius: radius.pill,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 24,
   },
   link: { minHeight: 36, paddingHorizontal: 8 },
-  label: { fontSize: 16, fontWeight: '600' },
+  label: { fontSize: 17, fontWeight: '600' },
   linkLabel: { fontSize: 14, fontWeight: '500' },
 });

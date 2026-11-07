@@ -1,6 +1,7 @@
-import { Link } from 'expo-router';
+import { Link } from '../../components/link';
 import { useEffect } from 'react';
-import { StyleSheet, Text } from 'react-native';
+import { StyleSheet } from 'react-native';
+import { Text } from '../../components/text';
 import { Guard } from '../../components/guard';
 import { ProProfileForm } from '../../components/pro-profile-form';
 import { Screen } from '../../components/screen';

@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import { Pressable, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { Text } from './text';
 import { t } from '../i18n';
 import { formatDuration, Service } from '../models/professional';
 import { fixed } from '../theme/colors';

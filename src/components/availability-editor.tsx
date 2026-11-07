@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { StyleSheet, Switch, Text, TextInput, View } from 'react-native';
+import { StyleSheet, Switch, View } from 'react-native';
+import { Text, TextInput } from './text';
 import { t } from '../i18n';
 import { Availability, DateRange } from '../models/professional';
 import { fixed } from '../theme/colors';

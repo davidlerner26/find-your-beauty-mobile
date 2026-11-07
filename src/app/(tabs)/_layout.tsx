@@ -3,6 +3,7 @@ import { Redirect, Tabs } from 'expo-router';
 import { useAuth } from '../../contexts/auth';
 import { useMessages } from '../../contexts/messages';
 import { useNotifications } from '../../contexts/notifications';
+import { TabBar } from '../../components/tab-bar';
 import { t } from '../../i18n';
 import { fixed } from '../../theme/colors';
 import { PATHS } from '../../utils/paths';
@@ -27,6 +28,7 @@ export default function TabsLayout() {
 
   return (
     <Tabs
+      tabBar={(props) => <TabBar {...props} />}
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: fixed.brand,

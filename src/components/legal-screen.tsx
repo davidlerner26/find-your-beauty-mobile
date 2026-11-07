@@ -1,6 +1,7 @@
 import * as WebBrowser from 'expo-web-browser';
 import { useCallback, useEffect } from 'react';
-import { StyleSheet, Text } from 'react-native';
+import { StyleSheet } from 'react-native';
+import { Text } from './text';
 import { environment } from '../config/environment';
 import { t } from '../i18n';
 import { fixed } from '../theme/colors';

@@ -47,6 +47,7 @@ export const en: Record<string, string> = {
   'Algo deu errado. Tente novamente.': 'Something went wrong. Please try again.',
   'Alguma observação para o profissional? (opcional)': 'Any notes for the professional? (optional)',
   'Alterações salvas': 'Changes saved',
+  'Ambiente de teste': 'Test environment',
   'Ambiente de teste: o pagamento é simulado e nada é cobrado.':
     'Test environment: the payment is simulated and nothing is charged.',
   Anexar: 'Attach',
@@ -166,9 +167,9 @@ export const en: Record<string, string> = {
   'Entrar como profissional': 'Sign in as a professional',
   'Entrar sem conta': 'Continue without an account',
   'Entre na sua conta para agendar.': 'Sign in to book.',
-  'Entre na sua conta para conversar com os profissionais.':
-    'Sign in to chat with the professionals.',
   'Entre na sua conta para ver os seus agendamentos.': 'Sign in to see your bookings.',
+  'Entre na sua conta para ver suas mensagens.': 'Sign in to see your messages.',
+  'Entre na sua conta para ver suas notificações.': 'Sign in to see your notifications.',
   'Entre para agendar e conversar com os profissionais.':
     'Sign in to book and chat with the professionals.',
   'Entre para ver os seus agendamentos e cuidar do seu perfil.':

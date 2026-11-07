@@ -43,6 +43,13 @@ the site with their tests (`utils/`, `models/`). `guardRedirect` holds the rules
 site): `t('Texto')`. A text without translation is shown as written. The language is the device's (`pt` unless it is
 English or Spanish, `utils/locale.ts`).
 
+**Look of the site.** The font is Mulish like the site: every screen draws its text with `components/text.tsx` (`Text`,
+`TextInput`) and `components/link.tsx`, never with the ones of `react-native` / `expo-router`, because a custom font is one
+file per weight and the components pick it from `fontWeight` (`theme/fonts.ts`). The root layout holds the splash until the
+font is loaded. The bottom bar (`components/tab-bar.tsx`) is the one of the site: only icons, a dot under the selected one, a
+dot of the accent color for news, and the "Ambiente de teste" banner above it in the test environment. The screens of a
+visitor use `components/visitor.tsx`. The sides of a screen are 24 px (`1.5rem` of the site) and the buttons are 56 px tall.
+
 **Styles.** `theme/colors.ts` has the tokens of `src/styles.scss` of the site. The professional area wraps its
 screens in `<ThemeProvider pro>`, which swaps `primary`, `text`, `muted`... like `body.pro-theme`.
 

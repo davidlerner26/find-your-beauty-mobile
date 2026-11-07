@@ -1,6 +1,7 @@
 import { Redirect, useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
-import { StyleSheet, Text, TextInput, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { Text, TextInput } from '../components/text';
 import { BackButton } from '../components/back-button';
 import { Button } from '../components/button';
 import { Screen } from '../components/screen';

@@ -1,5 +1,6 @@
-import { Link } from 'expo-router';
-import { StyleSheet, Text } from 'react-native';
+import { Link } from '../components/link';
+import { StyleSheet } from 'react-native';
+import { Text } from '../components/text';
 import { Screen } from '../components/screen';
 import { t } from '../i18n';
 import { fixed } from '../theme/colors';

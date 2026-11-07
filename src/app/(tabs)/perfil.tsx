@@ -1,7 +1,9 @@
 import * as Location from 'expo-location';
-import { Link } from 'expo-router';
+import { useRouter } from 'expo-router';
+import { Link } from '../../components/link';
 import { useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { Text } from '../../components/text';
 import { Button } from '../../components/button';
 import { Guard } from '../../components/guard';
 import { Screen } from '../../components/screen';
@@ -34,6 +36,7 @@ function Profile() {
   const auth = useAuth();
   const { signOut, updateName } = useAuthActions();
   const toast = useToast();
+  const router = useRouter();
   const uid = auth.user?.uid;
   // The `users/{uid}` document of the signed in user (undefined while loading, null when there is none)
   const [loaded, setLoaded] = useState<{
@@ -137,13 +140,12 @@ function Profile() {
         <Text accessibilityRole="header" style={styles.title}>
           {t('Perfil')}
         </Text>
-        <Text style={styles.bold}>{t('Você não está logado.')}</Text>
-        <Link href={PATHS.login as never} accessibilityRole="link" style={styles.link}>
-          {t('Entrar')}
-        </Link>
-        <Link href={PATHS.signup as never} accessibilityRole="link" style={styles.link}>
-          {t('Cadastre-se')}
-        </Link>
+        <View style={styles.visitor}>
+          <Text style={styles.visitorText}>{t('Você não está logado.')}</Text>
+          <View style={styles.visitorButton}>
+            <Button label={t('Entrar')} onPress={() => router.push(PATHS.login as never)} />
+          </View>
+        </View>
         <Legal />
       </Screen>
     );
@@ -270,7 +272,16 @@ function Legal() {
 }
 
 const styles = StyleSheet.create({
-  title: { fontSize: 26, fontWeight: '700', color: fixed.ink },
+  title: { fontSize: 24, fontWeight: '700', color: fixed.ink },
+  visitor: {
+    alignItems: 'center',
+    gap: 16,
+    padding: 24,
+    borderRadius: 16,
+    backgroundColor: '#e8edf3',
+  },
+  visitorText: { fontSize: 16, color: fixed.ink },
+  visitorButton: { width: '100%' },
   heading: { fontSize: 18, fontWeight: '700', color: fixed.ink },
   who: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   avatar: {

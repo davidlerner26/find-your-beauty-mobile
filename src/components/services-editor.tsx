@@ -1,5 +1,6 @@
 import { Image } from 'expo-image';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
+import { Text, TextInput } from './text';
 import { t } from '../i18n';
 import { ServiceCategory } from '../models/professional';
 import { fixed } from '../theme/colors';

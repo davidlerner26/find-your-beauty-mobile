@@ -33,6 +33,7 @@ notes (Expo changes a lot: check the docs of the installed SDK before using an A
 - Install packages with `npx expo install` (it picks the version that matches the SDK).
 - Interactive elements need an `accessibilityRole` and a label (the `react-native-a11y` rules are errors).
 - Colors come from `src/theme/colors.ts` (the tokens of the site), never a hex written in a component.
+- Text and links: `Text`, `TextInput` from `src/components/text` and `Link` from `src/components/link` (the font of the site), not the ones of `react-native` / `expo-router`.
 - Texts: `t('Texto em português')` from `src/i18n`; add the English and Spanish translations to `en.ts` / `es.ts`.
 
 ## Gotchas

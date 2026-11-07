@@ -1,6 +1,7 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import { useState } from 'react';
-import { Pressable, StyleSheet, Text, TextInput, TextInputProps, View } from 'react-native';
+import { Pressable, StyleSheet, TextInputProps, View } from 'react-native';
+import { Text, TextInput } from './text';
 import { t } from '../i18n';
 import { fixed } from '../theme/colors';
 import { useTheme } from '../theme/theme';
