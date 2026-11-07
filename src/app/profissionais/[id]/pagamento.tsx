@@ -1,19 +1,20 @@
-import { MaterialIcons } from '@expo/vector-icons';
 import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Text } from '../../../components/text';
-import { BackButton } from '../../../components/back-button';
 import { Button } from '../../../components/button';
 import { Guard } from '../../../components/guard';
 import { Screen } from '../../../components/screen';
+import { TopBar } from '../../../components/top-bar';
 import { useAuth } from '../../../contexts/auth';
 import { useCheckoutDraft } from '../../../contexts/checkout-draft';
 import { useToast } from '../../../contexts/toast';
 import { t } from '../../../i18n';
 import { formatDuration } from '../../../models/professional';
 import { createBooking } from '../../../services/bookings';
-import { fixed } from '../../../theme/colors';
+import { fixed, radius } from '../../../theme/colors';
+import { useTheme } from '../../../theme/theme';
 import { bookingErrorMessage } from '../../../utils/booking-request';
 import { catalogLabel } from '../../../utils/catalog';
 import { checkoutEnabled } from '../../../utils/features';
@@ -42,6 +43,8 @@ function Checkout() {
   const auth = useAuth();
   const toast = useToast();
   const draft = useCheckoutDraft();
+  const theme = useTheme();
+  const insets = useSafeAreaInsets();
   const [paying, setPaying] = useState(false);
   const [error, setError] = useState('');
   const request = draft.request;
@@ -75,96 +78,162 @@ function Checkout() {
   };
 
   return (
-    <Screen>
-      <BackButton />
-      <Text accessibilityRole="header" style={styles.title}>
-        {t('Pagamento')}
-      </Text>
+    <Screen scroll={false} padded={false} edges={['top']}>
+      <TopBar title={t('Pagamento')} />
+      <ScrollView contentContainerStyle={styles.content}>
+        {/* The summary as a ticket: a light card with a tear-off cut at the sides before the total */}
+        <View
+          accessibilityLabel={t('Resumo do agendamento')}
+          style={[styles.ticket, { backgroundColor: theme.primaryLight }]}
+        >
+          <View style={styles.facts}>
+            <Fact
+              label={t('Data')}
+              value={request.startsAt.toLocaleDateString(INTL_LOCALE, {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric',
+              })}
+            />
+            <Fact label={t('Horário')} value={formatClock(request.startsAt)} />
+            <Fact label={t('Profissional')} value={request.professionalName} />
+            <Fact label={t('Duração')} value={formatDuration(request.durationMinutes)} />
+          </View>
 
-      <View style={styles.card} accessibilityLabel={t('Resumo do agendamento')}>
-        <Line
-          label={t('Data')}
-          value={request.startsAt.toLocaleDateString(INTL_LOCALE, {
-            day: 'numeric',
-            month: 'long',
-            year: 'numeric',
-          })}
-        />
-        <Line label={t('Horário')} value={formatClock(request.startsAt)} />
-        <Line label={t('Profissional')} value={request.professionalName} />
-        <Line label={t('Duração')} value={formatDuration(request.durationMinutes)} />
-        <Text accessibilityRole="header" style={styles.bold}>
-          {t('Serviços')}
-        </Text>
-        {request.services.map((service) => (
-          <Line
-            key={service.id}
-            label={catalogLabel(service.name)}
-            value={formatPrice(service.price)}
-          />
-        ))}
-        <View style={styles.total}>
-          <Text style={styles.bold}>{t('Total')}</Text>
-          <Text style={styles.totalValue}>{formatPrice(request.total)}</Text>
-        </View>
-      </View>
+          <View style={[styles.rule, { borderTopColor: theme.line }]} />
 
-      <View style={styles.card}>
-        <View style={styles.cardRow}>
-          <MaterialIcons name="credit-card" size={24} color={fixed.brand} />
-          <View>
-            <Text style={styles.bold}>{holder}</Text>
-            <Text style={styles.muted}>{t('Cartão de teste •••• 4242')}</Text>
+          <Text accessibilityRole="header" style={styles.servicesTitle}>
+            {t('Serviços')}
+          </Text>
+          <View style={styles.lines}>
+            {request.services.map((service) => (
+              <View key={service.id} style={styles.line}>
+                <Text style={[styles.lineName, { color: theme.text }]}>
+                  {catalogLabel(service.name)}
+                </Text>
+                <Text style={[styles.price, { color: theme.primary }]}>
+                  {formatPrice(service.price)}
+                </Text>
+              </View>
+            ))}
+          </View>
+
+          <View style={[styles.dashed, { borderTopColor: theme.lineStrong }]}>
+            <View style={[styles.notch, styles.notchLeft, { backgroundColor: theme.background }]} />
+            <View
+              style={[styles.notch, styles.notchRight, { backgroundColor: theme.background }]}
+            />
+          </View>
+
+          <View style={styles.total}>
+            <Text style={styles.bold}>{t('Total')}</Text>
+            <Text style={[styles.bold, { color: theme.primary }]}>
+              {formatPrice(request.total)}
+            </Text>
+          </View>
+
+          <View
+            style={[
+              styles.method,
+              { borderColor: theme.primary, backgroundColor: theme.primaryLight },
+            ]}
+          >
+            <View style={styles.brand}>
+              <View style={[styles.dot, { backgroundColor: theme.primary }]} />
+              <View style={[styles.dot, styles.dotBack, { backgroundColor: fixed.accent }]} />
+            </View>
+            <View style={styles.methodText}>
+              <Text numberOfLines={1} style={styles.bold}>
+                {holder}
+              </Text>
+              <Text style={[styles.note, { color: theme.muted }]}>
+                {t('Cartão de teste •••• 4242')}
+              </Text>
+            </View>
           </View>
         </View>
-      </View>
 
-      <Text style={styles.muted}>
-        {t('Ambiente de teste: o pagamento é simulado e nada é cobrado.')}
-      </Text>
-      {error ? (
-        <Text accessibilityRole="alert" style={styles.error}>
-          {error}
+        <Text style={[styles.note, styles.center, { color: theme.muted }]}>
+          {t('Ambiente de teste: o pagamento é simulado e nada é cobrado.')}
         </Text>
-      ) : null}
-      <Button
-        label={paying ? t('Processando...') : t('Pagar agora')}
-        onPress={() => void pay()}
-        loading={paying}
-      />
+        {error ? (
+          <Text accessibilityRole="alert" style={[styles.center, { color: theme.errorFg }]}>
+            {error}
+          </Text>
+        ) : null}
+      </ScrollView>
+
+      <View style={[styles.bar, { paddingBottom: 16 + insets.bottom }]}>
+        <Button
+          label={paying ? t('Processando...') : t('Pagar agora')}
+          onPress={() => void pay()}
+          loading={paying}
+        />
+      </View>
     </Screen>
   );
 }
 
-const Line = ({ label, value }: { label: string; value: string }) => (
-  <View style={styles.line}>
-    <Text style={styles.muted}>{label}</Text>
-    <Text style={styles.value}>{value}</Text>
-  </View>
-);
+// One of the four facts at the top of the ticket
+function Fact({ label, value }: { label: string; value: string }) {
+  const theme = useTheme();
+  return (
+    <View style={styles.fact}>
+      <Text style={{ color: theme.text }}>{label}</Text>
+      <Text style={[styles.bold, { color: theme.primary }]}>{value}</Text>
+    </View>
+  );
+}
+
+const NOTCH = 24;
 
 const styles = StyleSheet.create({
-  title: { fontSize: 26, fontWeight: '700', color: fixed.ink },
-  card: {
-    gap: 8,
-    padding: 14,
-    borderWidth: 1,
-    borderColor: fixed.borderSoft,
-    borderRadius: 14,
-    backgroundColor: fixed.white,
+  content: { padding: 24, gap: 16, flexGrow: 1 },
+  ticket: { padding: 24, borderRadius: 20 },
+  facts: { flexDirection: 'row', flexWrap: 'wrap', rowGap: 20, columnGap: 16 },
+  fact: { width: '47%', gap: 4 },
+  rule: { marginVertical: 20, borderTopWidth: 1 },
+  servicesTitle: { marginBottom: 16, textAlign: 'center' },
+  lines: { gap: 16 },
+  line: { flexDirection: 'row', justifyContent: 'space-between', gap: 16 },
+  lineName: { flex: 1, fontWeight: '700' },
+  price: { fontWeight: '700' },
+  // The dashed line with a half circle cut out of each side (circles in the color of the page, centered on the edge)
+  dashed: { marginVertical: 24, borderTopWidth: 1.5, borderStyle: 'dashed' },
+  notch: {
+    position: 'absolute',
+    top: -NOTCH / 2,
+    width: NOTCH,
+    height: NOTCH,
+    borderRadius: NOTCH / 2,
   },
-  cardRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  line: { flexDirection: 'row', justifyContent: 'space-between', gap: 12 },
-  value: { color: fixed.ink, fontWeight: '600', flexShrink: 1, textAlign: 'right' },
-  bold: { fontWeight: '700', color: fixed.ink },
-  muted: { color: fixed.gray },
-  total: {
+  notchLeft: { left: -36 },
+  notchRight: { right: -36 },
+  total: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 24 },
+  bold: { fontWeight: '700' },
+  method: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    borderTopWidth: 1,
-    borderTopColor: fixed.borderSoft,
-    paddingTop: 8,
+    alignItems: 'center',
+    gap: 16,
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    borderWidth: 1.5,
+    borderRadius: radius.pill,
   },
-  totalValue: { fontSize: 18, fontWeight: '700', color: fixed.ink },
-  error: { color: fixed.dangerStrong },
+  methodText: { flex: 1, gap: 2 },
+  brand: { flexDirection: 'row' },
+  dot: { width: 24, height: 24, borderRadius: 12 },
+  dotBack: { marginLeft: -9 },
+  note: { fontSize: 14 },
+  center: { textAlign: 'center' },
+  bar: {
+    paddingTop: 16,
+    paddingHorizontal: 24,
+    backgroundColor: fixed.white,
+    shadowColor: '#000',
+    shadowOpacity: 0.08,
+    shadowRadius: 18,
+    shadowOffset: { width: 0, height: -6 },
+    elevation: 12,
+  },
 });
