@@ -7,6 +7,7 @@ export function Chip({
   label,
   active,
   large,
+  small,
   soft,
   disabled,
   onPress,
@@ -15,6 +16,8 @@ export function Chip({
   active?: boolean;
   // The big chips of "Categorias" on the home
   large?: boolean;
+  // The chips of the services under the categories of the map
+  small?: boolean;
   // A chip without border, in the light color of the theme (the popular searches)
   soft?: boolean;
   disabled?: boolean;
@@ -37,12 +40,15 @@ export function Chip({
       style={[
         styles.chip,
         large && styles.large,
+        small && styles.small,
         soft && styles.soft,
         { backgroundColor: look.backgroundColor, borderColor: look.borderColor },
         disabled && { opacity: 0.45 },
       ]}
     >
-      <Text style={{ color: look.color, fontWeight: '500' }}>{label}</Text>
+      <Text style={{ color: look.color, fontWeight: '500', fontSize: small ? 14 : undefined }}>
+        {label}
+      </Text>
     </Pressable>
   );
 }
@@ -56,5 +62,6 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
   },
   large: { paddingHorizontal: 32, minHeight: 56 },
+  small: { paddingHorizontal: 16, minHeight: 36 },
   soft: { paddingHorizontal: 28, minHeight: 46 },
 });

@@ -489,4 +489,11 @@ export const en: Record<string, string> = {
   Voltar: 'Back',
   'Voltar para o início': 'Back to the start',
   'Voltar para o login': 'Back to sign in',
+  Fechar: 'Close',
+  Lista: 'List',
+  'Abrir o perfil': 'Open the profile',
+  'Mostrar no mapa': 'Show on the map',
+  'Nenhum profissional encontrado.': 'No professionals found.',
+  'Não foi possível obter a sua localização. Permita o acesso nos ajustes.':
+    'We could not get your location. Allow access in the settings.',
 };

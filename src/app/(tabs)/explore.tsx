@@ -1,50 +1,131 @@
 import { MaterialIcons } from '@expo/vector-icons';
-import { Image } from 'expo-image';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useMemo, useRef, useState } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
-import { Text } from '../../components/text';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  FlatList,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  useWindowDimensions,
+  View,
+} from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Chip } from '../../components/chip';
-import { Rating } from '../../components/rating';
+import { ExploreCard } from '../../components/explore-card';
+import { NearbySheet } from '../../components/nearby-sheet';
 import { useUserLocation } from '../../contexts/location';
 import { useProfessionals } from '../../contexts/professionals';
+import { useToast } from '../../contexts/toast';
 import { t } from '../../i18n';
+import { SERVICE_NAMES, ServiceCategory } from '../../models/professional';
 import { fixed } from '../../theme/colors';
 import { catalogLabel } from '../../utils/catalog';
-import { focusPosition } from '../../utils/labels';
-import { ServiceCategory, shortLocationLabel } from '../../models/professional';
-import { mapProfessionals } from '../../utils/map-filter';
+import { mapProfessionals, mapServiceTags, nearestFirst } from '../../utils/map-filter';
 import { PATHS } from '../../utils/paths';
+import { toCard } from '../../utils/search-filter';
 
-// The center of Rio de Janeiro, where the professionals are
-const RIO = { latitude: -22.9068, longitude: -43.1729, latitudeDelta: 0.25, longitudeDelta: 0.25 };
-const CATEGORIES: ServiceCategory[] = ['Maquiagem', 'Cabelo'];
+// Where the professionals are: Rio de Janeiro
+const RIO = { latitude: -22.9845, longitude: -43.205, latitudeDelta: 0.12, longitudeDelta: 0.12 };
+const CATEGORIES = Object.keys(SERVICE_NAMES) as ServiceCategory[];
+const GAP = 16;
+const SIDES = 24;
+
+// The width of a card of the carousel: min(24rem, screen - 5rem), like the site
+const cardWidth = (screen: number) => Math.min(384, screen - 80);
 
 export default function Explore() {
   const router = useRouter();
+  const toast = useToast();
+  const { width: screen } = useWindowDimensions();
   const params = useLocalSearchParams<{ service?: string; categories?: string }>();
   const { published } = useProfessionals();
   const location = useUserLocation();
   const map = useRef<MapView>(null);
+  const carousel = useRef<FlatList>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  // Coming from a service of the home: its categories start selected
-  const fromHome = params.categories
-    ?.split(',')
-    .filter((name) => CATEGORIES.includes(name as ServiceCategory));
-  const [categories, setCategories] = useState<string[]>(
-    fromHome?.length ? fromHome : [...CATEGORIES],
-  );
-  const service = params.service || null;
+  const [listOpen, setListOpen] = useState(false);
+  const [categories, setCategories] = useState<string[]>([...CATEGORIES]);
+  const [services, setServices] = useState<string[]>([]);
+  // The user asked for "my location" and the position has not arrived yet
+  const locating = useRef(false);
+  const centered = useRef(false);
+  const width = cardWidth(screen);
 
-  const shown = useMemo(
-    () => mapProfessionals(published, categories, service),
-    [published, categories, service],
-  );
-  const selected = shown.find((professional) => professional.id === selectedId) ?? null;
+  // Coming from a service of the home: its categories (or its own) start selected, and so does its chip.
+  // Adjusted while rendering (not in an effect) when the params change.
+  const fromHome = `${params.service ?? ''}|${params.categories ?? ''}`;
+  const [seenHome, setSeenHome] = useState('|');
+  if (fromHome !== seenHome) {
+    setSeenHome(fromHome);
+    if (params.service) {
+      const chosen = (params.categories ?? '')
+        .split(',')
+        .filter((name) => CATEGORIES.includes(name as ServiceCategory));
+      const own = CATEGORIES.find((key) => SERVICE_NAMES[key].includes(params.service as string));
+      if (chosen.length) setCategories(chosen);
+      else if (own) setCategories([own]);
+      setServices([params.service]);
+      setSelectedId(null);
+    }
+  }
 
-  const toggleCategory = (name: string) =>
+  const serviceTags = useMemo(() => mapServiceTags(published, categories), [published, categories]);
+
+  // Closest first, on the map, in the carousel and in the list
+  const cards = useMemo(
+    () =>
+      nearestFirst(
+        mapProfessionals(
+          published,
+          // Every category selected is the same as none: nobody is left out
+          categories.length === CATEGORIES.length ? [] : categories,
+          services,
+        ).map((professional) => toCard(professional, location.position)),
+      ),
+    [published, categories, services, location.position],
+  );
+  const selectedIndex = cards.findIndex((card) => card.id === selectedId);
+
+  const goTo = useCallback((lat: number, lng: number, delta = 0.05) => {
+    map.current?.animateToRegion(
+      { latitude: lat, longitude: lng, latitudeDelta: delta, longitudeDelta: delta },
+      400,
+    );
+  }, []);
+
+  // The map goes to the user as soon as the position is known (once: it must not take the map back later)
+  useEffect(() => {
+    const position = location.position;
+    if (!position) return;
+    if (locating.current) {
+      locating.current = false;
+      goTo(position.lat, position.lng);
+    } else if (!centered.current) {
+      goTo(position.lat, position.lng, 0.08);
+    }
+    centered.current = true;
+  }, [location.position, goTo]);
+
+  const select = (index: number) => {
+    const card = cards[index];
+    if (!card) return;
+    setSelectedId(card.id);
+    goTo(card.position.lat, card.position.lng, 0.03);
+    carousel.current?.scrollToIndex({ index, animated: true, viewPosition: 0.5 });
+  };
+
+  // The first tap selects the card; tapping the selected one (or any card of the list) opens the professional
+  const onCard = (index: number) =>
+    index === selectedIndex ? open(cards[index].id) : select(index);
+  const open = (id: string) => {
+    setListOpen(false);
+    router.push(PATHS.professional(id) as never);
+  };
+
+  const toggleCategory = (name: string) => {
+    setSelectedId(null);
+    // At least one stays selected
     setCategories((current) =>
       current.includes(name)
         ? current.length > 1
@@ -52,19 +133,21 @@ export default function Explore() {
           : current
         : [...current, name],
     );
-
-  const goToMe = async () => {
-    const found = location.position ?? (await location.request());
-    if (!found || !location.position) return;
-    map.current?.animateToRegion(
-      {
-        latitude: location.position.lat,
-        longitude: location.position.lng,
-        latitudeDelta: 0.05,
-        longitudeDelta: 0.05,
-      },
-      400,
+  };
+  const toggleService = (name: string) => {
+    setSelectedId(null);
+    setServices((current) =>
+      current.includes(name) ? current.filter((n) => n !== name) : [...current, name],
     );
+  };
+
+  const locateMe = async () => {
+    if (location.position) return goTo(location.position.lat, location.position.lng);
+    locating.current = true;
+    if (!(await location.request())) {
+      locating.current = false;
+      toast.show(t('Não foi possível obter a sua localização. Permita o acesso nos ajustes.'));
+    }
   };
 
   return (
@@ -74,25 +157,28 @@ export default function Explore() {
         style={styles.flex}
         initialRegion={RIO}
         showsUserLocation={location.permission === 'granted'}
+        showsPointsOfInterests={false}
+        toolbarEnabled={false}
         onPress={() => setSelectedId(null)}
         accessibilityLabel={t('Mapa de profissionais de beleza')}
       >
-        {shown.map((professional) => (
+        {cards.map((card, index) => (
           <Marker
-            key={professional.id}
-            coordinate={{
-              latitude: professional.position.lat,
-              longitude: professional.position.lng,
-            }}
-            title={professional.name}
-            pinColor={professional.id === selectedId ? fixed.accent : fixed.brand}
-            onPress={() => setSelectedId(professional.id)}
+            key={card.id}
+            coordinate={{ latitude: card.position.lat, longitude: card.position.lng }}
+            title={card.name}
+            pinColor={card.id === selectedId ? fixed.accent : fixed.brand}
+            onPress={() => select(index)}
           />
         ))}
       </MapView>
 
       <SafeAreaView edges={['top']} style={styles.top} pointerEvents="box-none">
-        <View style={styles.chips}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.chips}
+        >
           {CATEGORIES.map((category) => (
             <Chip
               key={category}
@@ -101,50 +187,81 @@ export default function Explore() {
               onPress={() => toggleCategory(category)}
             />
           ))}
-          {service ? (
-            <Chip
-              label={`${catalogLabel(service)} ✕`}
-              active
-              onPress={() => router.setParams({ service: '' })}
-            />
-          ) : null}
-        </View>
+        </ScrollView>
+        {serviceTags.length ? (
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.chips}
+          >
+            {serviceTags.map((name) => (
+              <Chip
+                key={name}
+                small
+                label={catalogLabel(name)}
+                active={services.includes(name)}
+                onPress={() => toggleService(name)}
+              />
+            ))}
+          </ScrollView>
+        ) : null}
       </SafeAreaView>
 
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel={t('Minha localização')}
-        onPress={() => void goToMe()}
-        style={[styles.locate, selected && { bottom: 160 }]}
-      >
-        <MaterialIcons name="my-location" size={22} color={fixed.brand} />
-      </Pressable>
+      <View style={styles.bottom} pointerEvents="box-none">
+        <View style={styles.buttons} pointerEvents="box-none">
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={t('Lista')}
+            onPress={() => setListOpen(true)}
+            style={styles.round}
+          >
+            <MaterialIcons name="format-list-bulleted" size={24} color={fixed.brand} />
+          </Pressable>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={t('Minha localização')}
+            onPress={() => void locateMe()}
+            style={styles.round}
+          >
+            <MaterialIcons name="my-location" size={24} color={fixed.brand} />
+          </Pressable>
+        </View>
+        <FlatList
+          ref={carousel}
+          data={cards}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          keyExtractor={(card) => card.id}
+          snapToInterval={width + GAP}
+          decelerationRate="fast"
+          contentContainerStyle={styles.cards}
+          ItemSeparatorComponent={() => <View style={{ width: GAP }} />}
+          getItemLayout={(_, index) => ({
+            length: width + GAP,
+            offset: SIDES + (width + GAP) * index,
+            index,
+          })}
+          renderItem={({ item, index }) => (
+            <ExploreCard
+              card={item}
+              width={width}
+              selected={item.id === selectedId}
+              onPress={() => onCard(index)}
+            />
+          )}
+        />
+      </View>
 
-      {selected ? (
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel={selected.name}
-          onPress={() => router.push(PATHS.professional(selected.id) as never)}
-          style={styles.card}
-        >
-          <Image
-            accessibilityIgnoresInvertColors
-            source={{ uri: selected.image }}
-            contentFit="cover"
-            contentPosition={focusPosition(selected.imagePosition)}
-            style={styles.cardImage}
-          />
-          <View style={styles.cardBody}>
-            <Text numberOfLines={1} style={styles.cardName}>
-              {selected.name}
-            </Text>
-            <Text numberOfLines={1} style={styles.muted}>
-              {shortLocationLabel(selected)}
-            </Text>
-            <Rating rating={selected.rating} count={selected.reviewsCount} />
-          </View>
-        </Pressable>
-      ) : null}
+      <NearbySheet
+        visible={listOpen}
+        cards={cards}
+        categories={CATEGORIES}
+        activeCategories={categories}
+        selectedId={selectedId}
+        onToggleCategory={toggleCategory}
+        onOpen={open}
+        onClose={() => setListOpen(false)}
+      />
     </View>
   );
 }
@@ -152,41 +269,21 @@ export default function Explore() {
 const styles = StyleSheet.create({
   flex: { flex: 1 },
   top: { position: 'absolute', top: 0, left: 0, right: 0 },
-  chips: { flexDirection: 'row', gap: 8, padding: 12, flexWrap: 'wrap' },
-  locate: {
-    position: 'absolute',
-    right: 16,
-    bottom: 24,
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+  chips: { gap: 12, paddingHorizontal: SIDES, paddingVertical: 6 },
+  bottom: { position: 'absolute', left: 0, right: 0, bottom: 16, gap: 12 },
+  buttons: { flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: SIDES },
+  cards: { paddingHorizontal: SIDES, paddingVertical: 4 },
+  round: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
     backgroundColor: fixed.white,
     alignItems: 'center',
     justifyContent: 'center',
     elevation: 4,
-    shadowColor: fixed.ink,
-    shadowOpacity: 0.15,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 2 },
+    shadowColor: '#000',
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
   },
-  card: {
-    position: 'absolute',
-    left: 16,
-    right: 16,
-    bottom: 24,
-    flexDirection: 'row',
-    gap: 12,
-    padding: 10,
-    borderRadius: 14,
-    backgroundColor: fixed.white,
-    elevation: 4,
-    shadowColor: fixed.ink,
-    shadowOpacity: 0.15,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 2 },
-  },
-  cardImage: { width: 72, height: 72, borderRadius: 10, backgroundColor: fixed.surface },
-  cardBody: { flex: 1, justifyContent: 'center', gap: 2 },
-  cardName: { fontSize: 16, fontWeight: '700', color: fixed.ink },
-  muted: { color: fixed.gray },
 });
