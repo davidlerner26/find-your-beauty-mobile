@@ -3,7 +3,7 @@ import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { Link } from '../../components/link';
 import { useMemo, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { FlatList, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { Text } from '../../components/text';
 import { Chip } from '../../components/chip';
 import { FeaturedCard, FEATURED_GAP, NearbyCard } from '../../components/home-cards';
@@ -156,17 +156,17 @@ export default function Home() {
           <Text accessibilityRole="header" style={styles.heading}>
             {t('Profissionais em destaque')}
           </Text>
-          <ScrollView
+          {/* A list, not a ScrollView: the photos of each card are a horizontal list too */}
+          <FlatList
             horizontal
+            data={featured}
+            keyExtractor={(card) => card.id}
+            renderItem={({ item }) => <FeaturedCard card={item} />}
             showsHorizontalScrollIndicator={false}
             // The cards go to the edges of the screen (the content has 24px on the sides)
             style={styles.bleed}
             contentContainerStyle={{ gap: FEATURED_GAP, paddingHorizontal: 24 }}
-          >
-            {featured.map((card) => (
-              <FeaturedCard key={card.id} card={card} />
-            ))}
-          </ScrollView>
+          />
         </View>
       ) : null}
 

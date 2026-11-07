@@ -7,15 +7,24 @@ export function Chip({
   label,
   active,
   large,
+  soft,
   onPress,
 }: {
   label: string;
   active?: boolean;
-  // The big chips of "Categorias" on the home: selected is the light color of the theme, like the site
+  // The big chips of "Categorias" on the home
   large?: boolean;
+  // A chip without border, in the light color of the theme (the popular searches)
+  soft?: boolean;
   onPress: () => void;
 }) {
   const theme = useTheme();
+  // Selected is the light color of the theme with a border and text in the main color, like the site
+  const look = soft
+    ? { backgroundColor: theme.primaryLight, borderColor: theme.primaryLight, color: theme.primary }
+    : active
+      ? { backgroundColor: theme.primaryLight, borderColor: theme.primary, color: theme.primary }
+      : { backgroundColor: fixed.white, borderColor: fixed.border, color: fixed.ink };
   return (
     <Pressable
       accessibilityRole="button"
@@ -25,32 +34,23 @@ export function Chip({
       style={[
         styles.chip,
         large && styles.large,
-        active && large
-          ? { backgroundColor: theme.primaryLight, borderColor: theme.primary }
-          : active
-            ? { backgroundColor: theme.primary, borderColor: theme.primary }
-            : { backgroundColor: fixed.white, borderColor: fixed.border },
+        soft && styles.soft,
+        { backgroundColor: look.backgroundColor, borderColor: look.borderColor },
       ]}
     >
-      <Text
-        style={{
-          color: active ? (large ? theme.primary : theme.onPrimary) : fixed.ink,
-          fontWeight: '500',
-        }}
-      >
-        {label}
-      </Text>
+      <Text style={{ color: look.color, fontWeight: '500' }}>{label}</Text>
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
   chip: {
-    paddingHorizontal: 16,
-    minHeight: 40,
+    paddingHorizontal: 22,
+    minHeight: 44,
     justifyContent: 'center',
     borderRadius: radius.pill,
-    borderWidth: 1,
+    borderWidth: 1.5,
   },
   large: { paddingHorizontal: 32, minHeight: 56 },
+  soft: { paddingHorizontal: 28, minHeight: 46 },
 });

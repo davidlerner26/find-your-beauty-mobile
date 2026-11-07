@@ -246,6 +246,7 @@ export const en: Record<string, string> = {
   'Junte-se a nós': 'Join us',
   'Ler mais': 'Read more',
   'Ler menos': 'Read less',
+  Limpar: 'Clear',
   'Limpar tudo': 'Clear all',
   'Link inválido': 'Invalid link',
   Localização: 'Location',
@@ -313,8 +314,8 @@ export const en: Record<string, string> = {
   'Nenhum cadastro aguardando aprovação.': 'No registrations waiting for approval.',
   'Nenhum período bloqueado. Use para férias e folgas.':
     'No blocked periods. Use it for vacations and days off.',
-  'Nenhum profissional encontrado. Tente outro nome ou serviço.':
-    'No professionals found. Try another name or service.',
+  'Nenhum profissional encontrado. Tente outra busca ou mude os filtros.':
+    'No professionals found. Try another search or change the filters.',
   'Nenhum serviço cadastrado.': 'No services registered.',
   'Nenhuma conversa encontrada.': 'No conversations found.',
   'Nenhuma foto.': 'No photos.',
@@ -324,7 +325,7 @@ export const en: Record<string, string> = {
   'No meu endereço': 'At my address',
   nome: 'first name',
   Nome: 'First name',
-  'Nome, serviço ou bairro': 'Name, service or neighborhood',
+  'Busque profissional ou serviço..': 'Search for a professional or service..',
   'Nossos serviços': 'Our services',
   Notificações: 'Notifications',
   'Nova senha': 'New password',

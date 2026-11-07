@@ -6,11 +6,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { BackButton } from '../components/back-button';
 import { Chip } from '../components/chip';
 import { FilterSheet } from '../components/filter-sheet';
-import { ProfessionalCard } from '../components/professional-card';
+import { SearchResultCard } from '../components/search-result-card';
 import { useUserLocation } from '../contexts/location';
 import { t } from '../i18n';
 import { SearchProvider, useSearch, useSearchDispatch } from '../stores/search';
 import { fixed } from '../theme/colors';
+import { useTheme } from '../theme/theme';
 import { catalogLabel } from '../utils/catalog';
 import { Card } from '../utils/search-filter';
 
@@ -26,6 +27,7 @@ function Search() {
   const search = useSearch();
   const dispatch = useSearchDispatch();
   const location = useUserLocation();
+  const theme = useTheme();
   const [sheet, setSheet] = useState(false);
   // The text of the box; the search runs as it changes, and is remembered when it is sent
   const [text, setText] = useState(search.term);
@@ -48,7 +50,7 @@ function Search() {
           {search.recents.length ? (
             <View style={styles.block}>
               <View style={styles.between}>
-                <Text accessibilityRole="header" style={styles.muted}>
+                <Text accessibilityRole="header" style={styles.recentsTitle}>
                   {t('Recentes')}
                 </Text>
                 <Pressable
@@ -56,18 +58,17 @@ function Search() {
                   accessibilityLabel={t('Limpar tudo')}
                   onPress={() => dispatch({ type: 'clearRecents' })}
                 >
-                  <Text style={styles.link}>{t('Limpar tudo')}</Text>
+                  <Text style={[styles.link, { color: theme.primary }]}>{t('Limpar tudo')}</Text>
                 </Pressable>
               </View>
               {search.recents.map((recent) => (
-                <View key={recent} style={styles.between}>
+                <View key={recent} style={[styles.between, styles.recentRow]}>
                   <Pressable
                     accessibilityRole="button"
                     accessibilityLabel={recent}
                     onPress={() => submit(recent)}
                     style={styles.recent}
                   >
-                    <MaterialIcons name="history" size={20} color={fixed.gray} />
                     <Text style={styles.recentText}>{recent}</Text>
                   </Pressable>
                   <Pressable
@@ -76,7 +77,7 @@ function Search() {
                     hitSlop={8}
                     onPress={() => dispatch({ type: 'removeRecent', recent })}
                   >
-                    <MaterialIcons name="close" size={20} color={fixed.gray} />
+                    <MaterialIcons name="close" size={18} color={fixed.gray} />
                   </Pressable>
                 </View>
               ))}
@@ -90,7 +91,7 @@ function Search() {
               </Text>
               <View style={styles.wrap}>
                 {search.popular.map((tag) => (
-                  <Chip key={tag} label={catalogLabel(tag)} onPress={() => submit(tag)} />
+                  <Chip soft key={tag} label={catalogLabel(tag)} onPress={() => submit(tag)} />
                 ))}
               </View>
             </View>
@@ -113,22 +114,11 @@ function Search() {
 
   return (
     <SafeAreaView style={styles.screen}>
-      <View style={styles.bar}>
+      <View style={styles.top}>
         <BackButton />
-        <View style={styles.input}>
-          <MaterialIcons name="search" size={22} color={fixed.gray} />
-          <TextInput
-            accessibilityLabel={t('Buscar')}
-            placeholder={t('Nome, serviço ou bairro')}
-            placeholderTextColor={fixed.gray}
-            value={text}
-            onChangeText={change}
-            onSubmitEditing={() => submit(text)}
-            returnKeyType="search"
-            autoCorrect={false}
-            style={styles.field}
-          />
-        </View>
+        <Text accessibilityRole="header" style={styles.title} pointerEvents="none">
+          {t('Buscar')}
+        </Text>
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={
@@ -137,13 +127,41 @@ function Search() {
               : t('Filtros')
           }
           onPress={() => setSheet(true)}
+          hitSlop={8}
           style={styles.filter}
         >
-          <MaterialIcons name="tune" size={22} color={fixed.white} />
+          <MaterialIcons name="filter-list" size={28} color={theme.primary} />
           {search.activeFilterCount ? (
             <Text style={styles.count}>{search.activeFilterCount}</Text>
           ) : null}
         </Pressable>
+      </View>
+
+      <View style={styles.searchWrap}>
+        <View style={[styles.input, { backgroundColor: fixed.surface }]}>
+          <MaterialIcons name="search" size={24} color={theme.primary} />
+          <TextInput
+            accessibilityLabel={t('Buscar')}
+            placeholder={t('Busque profissional ou serviço..')}
+            placeholderTextColor={fixed.gray}
+            value={text}
+            onChangeText={change}
+            onSubmitEditing={() => submit(text)}
+            returnKeyType="search"
+            autoCorrect={false}
+            style={styles.field}
+          />
+          {text ? (
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={t('Limpar')}
+              hitSlop={8}
+              onPress={() => change('')}
+            >
+              <MaterialIcons name="close" size={20} color={fixed.gray} />
+            </Pressable>
+          ) : null}
+        </View>
       </View>
 
       <FlatList
@@ -153,12 +171,12 @@ function Search() {
         ListEmptyComponent={
           search.searching ? (
             <Text style={[styles.muted, styles.empty]}>
-              {t('Nenhum profissional encontrado. Tente outro nome ou serviço.')}
+              {t('Nenhum profissional encontrado. Tente outra busca ou mude os filtros.')}
             </Text>
           ) : undefined
         }
-        renderItem={({ item }) => <ProfessionalCard card={item} showPrice />}
-        ItemSeparatorComponent={() => <View style={{ height: 20 }} />}
+        renderItem={({ item }) => <SearchResultCard card={item} />}
+        ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
         contentContainerStyle={styles.list}
         keyboardShouldPersistTaps="handled"
       />
@@ -191,35 +209,39 @@ function Search() {
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: fixed.white },
-  bar: {
+  top: {
+    height: 72,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    justifyContent: 'space-between',
     paddingHorizontal: 12,
-    paddingBottom: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: fixed.divider,
   },
+  title: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    textAlign: 'center',
+    fontSize: 20,
+    fontWeight: '700',
+    color: fixed.ink,
+  },
+  searchWrap: { paddingHorizontal: 24, paddingTop: 24 },
   input: {
-    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    paddingHorizontal: 12,
+    gap: 12,
+    height: 56,
+    paddingHorizontal: 20,
     borderRadius: 999,
-    backgroundColor: fixed.surface,
   },
-  field: { flex: 1, minHeight: 44, fontSize: 16, color: fixed.ink },
-  filter: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: fixed.brand,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+  field: { flex: 1, fontSize: 16, color: fixed.ink },
+  filter: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
   count: {
     position: 'absolute',
-    top: -2,
-    right: -2,
+    top: 0,
+    right: 0,
     minWidth: 18,
     height: 18,
     borderRadius: 9,
@@ -231,16 +253,18 @@ const styles = StyleSheet.create({
     lineHeight: 18,
     overflow: 'hidden',
   },
-  list: { padding: 16, paddingBottom: 48 },
+  list: { padding: 24, paddingBottom: 48 },
   header: { gap: 16, marginBottom: 12 },
-  block: { gap: 8 },
+  block: { gap: 4 },
   between: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  recent: { flexDirection: 'row', alignItems: 'center', gap: 8, flex: 1, minHeight: 36 },
+  recentsTitle: { color: fixed.gray, fontSize: 16 },
+  recentRow: { borderBottomWidth: 1, borderBottomColor: fixed.borderSoft },
+  recent: { flex: 1, paddingVertical: 17 },
   recentText: { color: fixed.ink, fontSize: 16 },
-  wrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  heading: { fontSize: 20, fontWeight: '700', color: fixed.ink },
+  wrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
+  heading: { fontSize: 18, fontWeight: '700', color: fixed.ink },
   muted: { color: fixed.gray },
-  link: { color: fixed.accentText, fontWeight: '600' },
+  link: { fontSize: 16 },
   empty: { textAlign: 'center', marginTop: 24 },
   locate: {
     position: 'absolute',

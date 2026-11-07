@@ -17,7 +17,7 @@ export function BackButton() {
       onPress={() => (router.canGoBack() ? router.back() : router.replace(PATHS.home as never))}
       style={styles.button}
     >
-      <MaterialIcons name="arrow-back" size={24} color={theme.text} />
+      <MaterialIcons name="chevron-left" size={32} color={theme.primary} />
     </Pressable>
   );
 }
