@@ -4,6 +4,7 @@ import { useTheme } from '../theme/theme';
 import { catalogText } from '../utils/catalog';
 import { PATHS } from '../utils/paths';
 import { Card } from '../utils/search-filter';
+import { CardSurface } from './card-surface';
 import { HeartButton } from './heart-button';
 import { Link } from './link';
 import { PhotoPager } from './photo-pager';
@@ -60,7 +61,7 @@ export function NearbyCard({ card }: { card: Card }) {
   const { width: screen } = useWindowDimensions();
   const photo = 144;
   return (
-    <View style={styles.nearby}>
+    <CardSurface>
       <View style={{ width: photo }}>
         <PhotoPager
           photos={card.photos}
@@ -76,7 +77,7 @@ export function NearbyCard({ card }: { card: Card }) {
       <View style={styles.nearbyInfo}>
         <Info card={card} />
       </View>
-    </View>
+    </CardSurface>
   );
 }
 
@@ -87,18 +88,6 @@ const styles = StyleSheet.create({
   name: { fontSize: 18, fontWeight: '700', color: fixed.ink },
   muted: { color: fixed.gray },
   rating: { marginTop: 8 },
-  nearby: {
-    flexDirection: 'row',
-    borderRadius: radius.card,
-    overflow: 'hidden',
-    backgroundColor: fixed.white,
-    // --shadow-card of the site
-    shadowColor: '#000',
-    shadowOpacity: 0.08,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 2,
-  },
   nearbyInfo: { flex: 1, padding: 16 },
   distance: {
     position: 'absolute',

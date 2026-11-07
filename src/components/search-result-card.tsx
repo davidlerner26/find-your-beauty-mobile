@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { t } from '../i18n';
-import { fixed, radius } from '../theme/colors';
+import { fixed } from '../theme/colors';
 import { useTheme } from '../theme/theme';
 import { catalogText } from '../utils/catalog';
 import { formatPrice } from '../utils/money';
 import { PATHS } from '../utils/paths';
 import { Card } from '../utils/search-filter';
+import { CardSurface } from './card-surface';
 import { HeartButton } from './heart-button';
 import { Link } from './link';
 import { PhotoPager } from './photo-pager';
@@ -22,7 +23,7 @@ export function SearchResultCard({ card }: { card: Card }) {
   const [height, setHeight] = useState(168);
 
   return (
-    <View style={styles.card}>
+    <CardSurface>
       <View style={styles.photo}>
         <PhotoPager
           photos={card.photos}
@@ -55,23 +56,11 @@ export function SearchResultCard({ card }: { card: Card }) {
           </View>
         </Link>
       </View>
-    </View>
+    </CardSurface>
   );
 }
 
 const styles = StyleSheet.create({
-  card: {
-    flexDirection: 'row',
-    borderRadius: radius.card,
-    overflow: 'hidden',
-    backgroundColor: fixed.white,
-    // --shadow-card of the site
-    shadowColor: '#000',
-    shadowOpacity: 0.08,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 2,
-  },
   photo: { position: 'absolute', left: 0, top: 0, width: PHOTO },
   infoBox: { marginLeft: PHOTO },
   info: { padding: 16, gap: 2 },
