@@ -42,6 +42,7 @@ export const es: Record<string, string> = {
   'Agendar serviço': 'Reservar servicio',
   Aguardando: 'Pendiente',
   'Aguardando aprovação': 'Esperando aprobación',
+  'Aguarde...': 'Espera...',
   'Ainda não há avaliações.': 'Aún no hay reseñas.',
   'Ainda não há profissionais para sugerir.': 'Aún no hay profesionales para sugerir.',
   'Algo deu errado. Tente novamente.': 'Algo salió mal. Inténtalo de nuevo.',
@@ -57,6 +58,7 @@ export const es: Record<string, string> = {
   'Aplicação de cílios': 'Aplicación de pestañas',
   Aprovado: 'Aprobado',
   Aprovar: 'Aprobar',
+  'Área do profissional': 'Área del profesional',
   Arquivo: 'Archivo',
   às: 'a',
   'As senhas não são iguais.': 'Las contraseñas no coinciden.',
@@ -75,6 +77,7 @@ export const es: Record<string, string> = {
   Avaliações: 'Reseñas',
   'Avalie este profissional': 'Califica a este profesional',
   Bairro: 'Barrio',
+  'Bem-vindo de volta': 'Bienvenido de nuevo',
   'Bloquear período': 'Bloquear período',
   Buscar: 'Buscar',
   'Buscar mensagens ou cliente': 'Buscar mensajes o clientes',
@@ -82,6 +85,7 @@ export const es: Record<string, string> = {
   'Buscas populares': 'Búsquedas populares',
   Cabelo: 'Cabello',
   'Cada arquivo pode ter até 10 MB.': 'Cada archivo puede pesar hasta 10 MB.',
+  Cadastrar: 'Registrarse',
   'Cadastre-se': 'Regístrate',
   'Cadastro de profissional': 'Registro de profesional',
   'Cadastro enviado!': '¡Registro enviado!',
@@ -117,12 +121,16 @@ export const es: Record<string, string> = {
   'Conte a sua experiência. Deixe uma linha em branco para separar parágrafos.':
     'Cuenta tu experiencia. Deja una línea en blanco para separar párrafos.',
   'Conte como foi (opcional)': 'Cuéntanos cómo fue (opcional)',
+  'Continuar como visitante': 'Continuar como visitante',
   Conversar: 'Conversar',
   'Conversar com {{name}}': 'Conversar con {{name}}',
   'Copiar endereço': 'Copiar dirección',
   'Corte feminino': 'Corte de cabello de mujer',
   'Corte masculino': 'Corte de cabello de hombre',
   'Criar conta': 'Crear cuenta',
+  'Crie a conta do profissional. No próximo passo você completa o perfil: foto, endereço e serviços.':
+    'Crea la cuenta del profesional. En el siguiente paso completas el perfil: foto, dirección y servicios.',
+  'Crie uma conta': 'Crea una cuenta',
   'Crie uma nova senha para {{email}}.': 'Crea una nueva contraseña para {{email}}.',
   'Cronograma capilar': 'Cronograma capilar',
   Dados: 'Datos',
@@ -136,9 +144,9 @@ export const es: Record<string, string> = {
   'Digite a senha.': 'Escribe la contraseña.',
   'Digite o celular completo, com DDD e 9 dígitos.':
     'Escribe el celular completo, con código de área y 9 dígitos.',
-  'Digite o e-mail da sua conta e enviaremos um link para criar uma nova senha.':
-    'Escribe el correo de tu cuenta y te enviaremos un enlace para crear una nueva contraseña.',
   'Digite o seu endereço.': 'Escribe tu dirección.',
+  'Digite seu e-mail abaixo e enviaremos um link para você criar uma nova senha.':
+    'Escribe tu correo abajo y te enviaremos un enlace para crear una nueva contraseña.',
   'Digite um CPF válido.': 'Escribe un CPF válido.',
   'Digite um e-mail válido.': 'Escribe un correo electrónico válido.',
   'Disponível em': 'Disponible el',
@@ -164,22 +172,21 @@ export const es: Record<string, string> = {
   'Endereço confirmado.': 'Dirección confirmada.',
   'Endereço copiado': 'Dirección copiada',
   Entrar: 'Iniciar sesión',
-  'Entrar como profissional': 'Iniciar sesión como profesional',
   'Entrar sem conta': 'Continuar sin cuenta',
   'Entre na sua conta para agendar.': 'Inicia sesión para reservar.',
   'Entre na sua conta para ver os seus agendamentos.': 'Inicia sesión para ver tus reservas.',
   'Entre na sua conta para ver suas mensagens.': 'Inicia sesión para ver tus mensajes.',
   'Entre na sua conta para ver suas notificações.': 'Inicia sesión para ver tus notificaciones.',
-  'Entre para agendar e conversar com os profissionais.':
-    'Inicia sesión para reservar y conversar con los profesionales.',
-  'Entre para ver os seus agendamentos e cuidar do seu perfil.':
-    'Inicia sesión para ver tus reservas y cuidar tu perfil.',
+  'Entre para gerenciar sua agenda e seus clientes.':
+    'Inicia sesión para gestionar tu agenda y tus clientes.',
   'Enviamos um código de 4 dígitos para {{email}}.': 'Enviamos un código de 4 dígitos a {{email}}.',
   'Enviamos um novo código.': 'Enviamos un nuevo código.',
+  'Enviando...': 'Enviando...',
   Enviar: 'Enviar',
   'Enviar avaliação': 'Enviar reseña',
   'Enviar cadastro': 'Enviar registro',
   'Enviar link': 'Enviar enlace',
+  'Enviar novamente': 'Enviar de nuevo',
   'Envie uma mensagem para começar a conversa.': 'Envía un mensaje para empezar la conversación.',
   'Escolha de 1 a 5 estrelas.': 'Elige de 1 a 5 estrellas.',
   'Escolha os dias, um horário de início antes do fim e um preço.':
@@ -189,7 +196,7 @@ export const es: Record<string, string> = {
   'escolher o endereço na lista de sugestões': 'elegir la dirección en la lista de sugerencias',
   Escova: 'Cepillado',
   'Escreva uma mensagem': 'Escribe un mensaje',
-  'Esqueci minha senha': 'Olvidé mi contraseña',
+  'Esqueceu a senha?': '¿Olvidaste tu contraseña?',
   'Esta conta do Google ainda não está cadastrada. Faça o cadastro de profissional primeiro.':
     'Esta cuenta de Google aún no está registrada. Primero regístrate como profesional.',
   'Esta conta do Google já é de cliente. Use outra conta para se cadastrar como profissional.':
@@ -241,6 +248,7 @@ export const es: Record<string, string> = {
   'Ler mais': 'Leer más',
   'Ler menos': 'Leer menos',
   'Limpar tudo': 'Borrar todo',
+  'Link inválido': 'Enlace no válido',
   Localização: 'Ubicación',
   'Login por e-mail não está ativado no Firebase.':
     'El inicio de sesión con correo no está activado en Firebase.',
@@ -375,6 +383,8 @@ export const es: Record<string, string> = {
   'Preço (R$)': 'Precio (R$)',
   'Preencha os dados abaixo. Depois do envio, o cadastro é analisado antes de entrar no ar.':
     'Completa los datos de abajo. Después del envío, el registro se revisa antes de publicarse.',
+  'Preencha todas as informações abaixo para criar sua conta.':
+    'Completa toda la información de abajo para crear tu cuenta.',
   'Preencha todos os campos obrigatórios dos serviços ou remova os que estiverem vazios.':
     'Completa todos los campos obligatorios de los servicios o quita los que estén vacíos.',
   'Preencher meus dados': 'Completar mis datos',
@@ -393,6 +403,8 @@ export const es: Record<string, string> = {
   Qualquer: 'Cualquiera',
   'Qualquer nota': 'Cualquier nota',
   Quarta: 'Miércoles',
+  'Que bom te ver de novo! Entre para usar o app.':
+    '¡Qué bueno verte de nuevo! Inicia sesión para usar la app.',
   Qui: 'Jue',
   Quinta: 'Jueves',
   'Realce sua beleza de acordo com o seu estilo de vida':
@@ -417,8 +429,8 @@ export const es: Record<string, string> = {
   Sair: 'Cerrar sesión',
   Salvar: 'Guardar',
   'Salvar nova senha': 'Guardar nueva contraseña',
-  'Se existir uma conta com este e-mail, enviamos um link para criar uma nova senha.':
-    'Si existe una cuenta con este correo, enviamos un enlace para crear una nueva contraseña.',
+  'Se o e-mail estiver cadastrado, você vai receber o link em instantes. Confira também o spam.':
+    'Si el correo está registrado, recibirás el enlace en unos instantes. Revisa también el spam.',
   Seg: 'Lun',
   Segunda: 'Lunes',
   Selecionado: 'Seleccionado',
@@ -426,6 +438,7 @@ export const es: Record<string, string> = {
   'Sem conexão. Verifique sua internet.': 'Sin conexión. Revisa tu internet.',
   'Sem foto': 'Sin foto',
   Senha: 'Contraseña',
+  'Senha alterada': 'Contraseña cambiada',
   'Senha alterada! Já pode entrar com a nova senha.':
     '¡Contraseña cambiada! Ya puedes iniciar sesión con la nueva contraseña.',
   serviço: 'servicio',
@@ -456,6 +469,7 @@ export const es: Record<string, string> = {
   Ter: 'Mar',
   Terça: 'Martes',
   'Termos de Uso': 'Términos de Uso',
+  'Tipo de conta': 'Tipo de cuenta',
   'Todos os bairros do Rio de Janeiro': 'Todos los barrios de Río de Janeiro',
   'Toque no dia que quer bloquear. Para um período, toque também no último dia.':
     'Toca el día que quieres bloquear. Para un período, toca también el último día.',

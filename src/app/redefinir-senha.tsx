@@ -1,24 +1,19 @@
 import { useLocalSearchParams } from 'expo-router';
-import { Link } from '../components/link';
 import { useEffect, useState } from 'react';
-import { StyleSheet } from 'react-native';
-import { Text } from '../components/text';
-import { BackButton } from '../components/back-button';
+import { StyleSheet, View } from 'react-native';
+import { AuthField, AuthScreen, FormError } from '../components/auth-kit';
 import { Button } from '../components/button';
-import { Screen } from '../components/screen';
+import { Link } from '../components/link';
 import { Spinner } from '../components/spinner';
-import { TextField } from '../components/text-field';
 import { useAuthActions } from '../contexts/auth';
 import { t } from '../i18n';
 import { fixed } from '../theme/colors';
-import { useTheme } from '../theme/theme';
 import { hasErrors, validateReset } from '../utils/auth-forms';
 import { PATHS } from '../utils/paths';
 import { authErrorMessage } from '../utils/validators';
 
 // Firebase opens this screen from the e-mail link with ?mode=resetPassword&oobCode=...
 export default function ResetPassword() {
-  const theme = useTheme();
   const { mode, oobCode } = useLocalSearchParams<{ mode?: string; oobCode?: string }>();
   const { verifyResetCode, confirmPasswordReset } = useAuthActions();
   // A link without what Firebase puts in it is wrong before anything is asked
@@ -65,71 +60,69 @@ export default function ResetPassword() {
 
   if (state === 'loading') return <Spinner />;
 
+  if (state === 'invalid') {
+    return (
+      <AuthScreen
+        title={t('Link inválido')}
+        subtitle={formError || t('Este link não é válido. Peça um novo link de redefinição.')}
+        free={false}
+      >
+        <Link href={'/esqueci-senha' as never} accessibilityRole="link" style={styles.link}>
+          {t('Pedir um novo link')}
+        </Link>
+      </AuthScreen>
+    );
+  }
+
+  if (state === 'done') {
+    return (
+      <AuthScreen
+        title={t('Senha alterada')}
+        subtitle={t('Senha alterada! Já pode entrar com a nova senha.')}
+        free={false}
+      >
+        <Link href={PATHS.login as never} accessibilityRole="link" style={styles.link}>
+          {t('Ir para o login')}
+        </Link>
+      </AuthScreen>
+    );
+  }
+
   return (
-    <Screen>
-      <BackButton />
-      <Text accessibilityRole="header" style={[styles.title, { color: theme.text }]}>
-        {t('Nova senha')}
-      </Text>
-      {state === 'invalid' ? (
-        <>
-          <Text accessibilityRole="alert" style={styles.error}>
-            {formError || t('Este link não é válido. Peça um novo link de redefinição.')}
-          </Text>
-          <Link href={'/esqueci-senha' as never} style={styles.link} accessibilityRole="link">
-            {t('Pedir um novo link')}
-          </Link>
-        </>
-      ) : state === 'done' ? (
-        <>
-          <Text style={{ color: theme.text }}>
-            {t('Senha alterada! Já pode entrar com a nova senha.')}
-          </Text>
-          <Link href={PATHS.login as never} style={styles.link} accessibilityRole="link">
-            {t('Ir para o login')}
-          </Link>
-        </>
-      ) : (
-        <>
-          <Text style={{ color: theme.muted }}>
-            {t('Crie uma nova senha para {{email}}.', { email })}
-          </Text>
-          <TextField
-            label={t('Nova senha')}
-            value={password}
-            onChangeText={setPassword}
-            error={errors.password}
-            secret
-            autoCapitalize="none"
-            autoComplete="new-password"
-          />
-          <TextField
-            label={t('Confirme a nova senha')}
-            value={confirmation}
-            onChangeText={setConfirmation}
-            error={errors.confirmation}
-            secret
-            autoCapitalize="none"
-            autoComplete="new-password"
-          />
-          {formError ? (
-            <Text accessibilityRole="alert" style={styles.error}>
-              {formError}
-            </Text>
-          ) : null}
-          <Button
-            label={t('Salvar nova senha')}
-            onPress={() => void submit()}
-            loading={submitting}
-          />
-        </>
-      )}
-    </Screen>
+    <AuthScreen
+      title={t('Nova senha')}
+      subtitle={t('Crie uma nova senha para {{email}}.', { email })}
+      free={false}
+    >
+      <AuthField
+        icon="lock"
+        placeholder={t('Nova senha')}
+        value={password}
+        onChangeText={setPassword}
+        error={errors.password}
+        secret
+        autoCapitalize="none"
+        autoComplete="new-password"
+      />
+      <AuthField
+        icon="lock"
+        placeholder={t('Confirme a nova senha')}
+        value={confirmation}
+        onChangeText={setConfirmation}
+        error={errors.confirmation}
+        secret
+        autoCapitalize="none"
+        autoComplete="new-password"
+      />
+      {formError ? <FormError>{formError}</FormError> : null}
+      <View style={styles.submit}>
+        <Button label={t('Salvar nova senha')} onPress={() => void submit()} loading={submitting} />
+      </View>
+    </AuthScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  title: { fontSize: 28, fontWeight: '700' },
-  error: { color: fixed.dangerStrong },
-  link: { color: fixed.accentText, textAlign: 'center', fontWeight: '600', padding: 8 },
+  submit: { marginTop: 8 },
+  link: { color: fixed.brand, fontWeight: '600', fontSize: 16, textAlign: 'center', padding: 4 },
 });

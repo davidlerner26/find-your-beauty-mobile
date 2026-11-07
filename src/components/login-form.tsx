@@ -1,27 +1,35 @@
 import { useRouter } from 'expo-router';
-import { Link } from './link';
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Text } from './text';
-import { BackButton } from './back-button';
-import { Button } from './button';
-import { Guard } from './guard';
-import { Screen } from './screen';
-import { TextField } from './text-field';
 import { useAuthActions } from '../contexts/auth';
 import { t } from '../i18n';
-import { fixed } from '../theme/colors';
 import { useTheme } from '../theme/theme';
 import { hasErrors, validateLogin } from '../utils/auth-forms';
 import { errorCode } from '../utils/error-code';
 import { PATHS } from '../utils/paths';
 import { authErrorMessage } from '../utils/validators';
+import { AuthField, AuthScreen, FormError } from './auth-kit';
+import { Button } from './button';
+import { Guard } from './guard';
+import { Link } from './link';
+import { Text } from './text';
 
 // The login of the client, or of the professional area (`pro`): each one only takes the accounts of its own area
 export function LoginForm({ pro = false }: { pro?: boolean }) {
   return (
     <Guard kind={pro ? 'proEntry' : 'clientEntry'}>
-      <Login pro={pro} />
+      <AuthScreen
+        pro={pro}
+        area="login"
+        title={pro ? t('Área do profissional') : t('Bem-vindo de volta')}
+        subtitle={
+          pro
+            ? t('Entre para gerenciar sua agenda e seus clientes.')
+            : t('Que bom te ver de novo! Entre para usar o app.')
+        }
+      >
+        <Login pro={pro} />
+      </AuthScreen>
     </Guard>
   );
 }
@@ -65,19 +73,10 @@ function Login({ pro }: { pro: boolean }) {
   };
 
   return (
-    <Screen>
-      <BackButton />
-      <Text accessibilityRole="header" style={[styles.title, { color: theme.text }]}>
-        {pro ? t('Entrar como profissional') : t('Entrar')}
-      </Text>
-      <Text style={{ color: theme.muted }}>
-        {pro
-          ? t('Entre para ver os seus agendamentos e cuidar do seu perfil.')
-          : t('Entre para agendar e conversar com os profissionais.')}
-      </Text>
-
-      <TextField
-        label={t('E-mail')}
+    <>
+      <AuthField
+        icon="mail"
+        placeholder={t('E-mail')}
         value={email}
         onChangeText={setEmail}
         error={errors.email}
@@ -86,8 +85,9 @@ function Login({ pro }: { pro: boolean }) {
         autoComplete="email"
         textContentType="emailAddress"
       />
-      <TextField
-        label={t('Senha')}
+      <AuthField
+        icon="lock"
+        placeholder={t('Senha')}
         value={password}
         onChangeText={setPassword}
         error={errors.password}
@@ -96,43 +96,51 @@ function Login({ pro }: { pro: boolean }) {
         autoComplete="current-password"
         textContentType="password"
       />
-      {formError ? (
-        <Text accessibilityRole="alert" style={styles.error}>
-          {formError}
-        </Text>
-      ) : null}
+      <View style={styles.options}>
+        <Link
+          href={'/esqueci-senha' as never}
+          accessibilityRole="link"
+          style={[styles.forgot, { color: theme.primary }]}
+        >
+          {t('Esqueceu a senha?')}
+        </Link>
+      </View>
+      {formError ? <FormError>{formError}</FormError> : null}
 
-      <Button label={t('Entrar')} onPress={() => void submit()} loading={submitting} />
-      <Link href={'/esqueci-senha' as never} style={styles.link} accessibilityRole="link">
-        {t('Esqueci minha senha')}
-      </Link>
+      <View style={styles.submit}>
+        <Button
+          label={submitting ? t('Aguarde...') : t('Entrar')}
+          onPress={() => void submit()}
+          loading={submitting}
+        />
+      </View>
 
-      <Link
-        href={(pro ? PATHS.login : PATHS.proLogin) as never}
-        accessibilityRole="link"
-        style={styles.link}
-      >
-        {pro ? t('Sou cliente') : t('Sou profissional')}
-      </Link>
-
-      <View style={styles.switch}>
-        <Text style={{ color: theme.muted }}>{t('Não tem uma conta?')} </Text>
+      <Text style={[styles.switch, { color: theme.text }]}>
+        {t('Não tem uma conta?')}{' '}
         <Link
           href={(pro ? PATHS.proSignup : PATHS.signup) as never}
           accessibilityRole="link"
-          style={styles.linkInline}
+          style={[styles.switchLink, { color: theme.primary }]}
         >
           {t('Cadastre-se')}
         </Link>
-      </View>
-    </Screen>
+      </Text>
+
+      {pro ? null : (
+        <Button
+          variant="outline"
+          label={t('Continuar como visitante')}
+          onPress={() => router.replace(PATHS.home as never)}
+        />
+      )}
+    </>
   );
 }
 
 const styles = StyleSheet.create({
-  title: { fontSize: 28, fontWeight: '700' },
-  error: { color: fixed.dangerStrong },
-  link: { color: fixed.accentText, textAlign: 'center', fontWeight: '600', padding: 8 },
-  linkInline: { color: fixed.accentText, fontWeight: '600' },
-  switch: { flexDirection: 'row', justifyContent: 'center', flexWrap: 'wrap' },
+  options: { flexDirection: 'row', justifyContent: 'flex-end' },
+  forgot: { fontSize: 14 },
+  submit: { marginTop: 8 },
+  switch: { textAlign: 'center', fontSize: 16 },
+  switchLink: { fontWeight: '600' },
 });

@@ -48,7 +48,9 @@ English or Spanish, `utils/locale.ts`).
 file per weight and the components pick it from `fontWeight` (`theme/fonts.ts`). The root layout holds the splash until the
 font is loaded. The bottom bar (`components/tab-bar.tsx`) is the one of the site: only icons, a dot under the selected one, a
 dot of the accent color for news, and the "Ambiente de teste" banner above it in the test environment. The screens of a
-visitor use `components/visitor.tsx`. The sides of a screen are 24 px (`1.5rem` of the site) and the buttons are 56 px tall.
+visitor use `components/visitor.tsx`. The sign in, sign up and password screens use `components/auth-kit.tsx`
+(`AuthScreen`, `AuthField`): the pill fields, the switch between client and professional and the blue theme of the
+professional area (`ThemeProvider pro`), as on the site. The sides of a screen are 24 px (`1.5rem` of the site) and the buttons are 56 px tall.
 
 **Styles.** `theme/colors.ts` has the tokens of `src/styles.scss` of the site. The professional area wraps its
 screens in `<ThemeProvider pro>`, which swaps `primary`, `text`, `muted`... like `body.pro-theme`.

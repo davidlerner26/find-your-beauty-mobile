@@ -9,10 +9,12 @@ type Props = {
   scroll?: boolean;
   padded?: boolean;
   edges?: Edge[];
+  // Puts the content in the middle of the screen (the sign in and sign up screens)
+  center?: boolean;
 };
 
 // The base of a screen: safe area, theme background, optional scroll, and the keyboard out of the way
-export function Screen({ children, scroll = true, padded = true, edges }: Props) {
+export function Screen({ children, scroll = true, padded = true, edges, center = false }: Props) {
   const theme = useTheme();
   return (
     <SafeAreaView edges={edges} style={{ flex: 1, backgroundColor: theme.background }}>
@@ -23,7 +25,12 @@ export function Screen({ children, scroll = true, padded = true, edges }: Props)
         {scroll ? (
           <ScrollView
             keyboardShouldPersistTaps="handled"
-            contentContainerStyle={{ padding: padded ? 24 : 0, gap: 16, flexGrow: 1 }}
+            contentContainerStyle={{
+              padding: padded ? 24 : 0,
+              gap: 16,
+              flexGrow: 1,
+              ...(center ? { justifyContent: 'center' as const } : {}),
+            }}
           >
             {children}
           </ScrollView>

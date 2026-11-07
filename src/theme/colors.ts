@@ -43,6 +43,10 @@ export type Theme = {
   onPrimary: string;
   // Lists and dividers
   line: string;
+  // The background of the fields of the sign in and sign up screens
+  field: string;
+  // The color of an error written on the background
+  errorFg: string;
 };
 
 export const clientTheme: Theme = {
@@ -54,6 +58,8 @@ export const clientTheme: Theme = {
   muted: fixed.gray,
   onPrimary: fixed.white,
   line: fixed.borderSoft,
+  field: fixed.surface,
+  errorFg: fixed.danger,
 };
 
 // The professional area: the blue becomes the background and the letters turn white
@@ -66,4 +72,6 @@ export const proTheme: Theme = {
   muted: 'rgba(255, 255, 255, 0.92)',
   onPrimary: fixed.brand,
   line: 'rgba(255, 255, 255, 0.22)',
+  field: fixed.white,
+  errorFg: '#ffc9cb',
 };

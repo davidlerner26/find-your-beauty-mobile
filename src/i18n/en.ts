@@ -42,6 +42,7 @@ export const en: Record<string, string> = {
   'Agendar serviço': 'Book a service',
   Aguardando: 'Pending',
   'Aguardando aprovação': 'Waiting for approval',
+  'Aguarde...': 'Please wait...',
   'Ainda não há avaliações.': 'No reviews yet.',
   'Ainda não há profissionais para sugerir.': 'There are no professionals to suggest yet.',
   'Algo deu errado. Tente novamente.': 'Something went wrong. Please try again.',
@@ -56,6 +57,7 @@ export const en: Record<string, string> = {
   'Aplicação de cílios': 'Eyelash application',
   Aprovado: 'Approved',
   Aprovar: 'Approve',
+  'Área do profissional': 'Professional area',
   Arquivo: 'File',
   às: 'to',
   'As senhas não são iguais.': 'The passwords do not match.',
@@ -74,6 +76,7 @@ export const en: Record<string, string> = {
   Avaliações: 'Reviews',
   'Avalie este profissional': 'Rate this professional',
   Bairro: 'Neighborhood',
+  'Bem-vindo de volta': 'Welcome back',
   'Bloquear período': 'Block period',
   Buscar: 'Search',
   'Buscar mensagens ou cliente': 'Search messages or clients',
@@ -81,6 +84,7 @@ export const en: Record<string, string> = {
   'Buscas populares': 'Popular searches',
   Cabelo: 'Hair',
   'Cada arquivo pode ter até 10 MB.': 'Each file can be up to 10 MB.',
+  Cadastrar: 'Sign up',
   'Cadastre-se': 'Sign up',
   'Cadastro de profissional': 'Professional sign up',
   'Cadastro enviado!': 'Registration sent!',
@@ -116,12 +120,16 @@ export const en: Record<string, string> = {
   'Conte a sua experiência. Deixe uma linha em branco para separar parágrafos.':
     'Tell us about your experience. Leave a blank line to separate paragraphs.',
   'Conte como foi (opcional)': 'Tell us how it went (optional)',
+  'Continuar como visitante': 'Continue as a visitor',
   Conversar: 'Chat',
   'Conversar com {{name}}': 'Chat with {{name}}',
   'Copiar endereço': 'Copy address',
   'Corte feminino': "Women's haircut",
   'Corte masculino': "Men's haircut",
   'Criar conta': 'Create account',
+  'Crie a conta do profissional. No próximo passo você completa o perfil: foto, endereço e serviços.':
+    "Create the professional's account. In the next step you complete the profile: photo, address and services.",
+  'Crie uma conta': 'Create an account',
   'Crie uma nova senha para {{email}}.': 'Create a new password for {{email}}.',
   'Cronograma capilar': 'Hair care schedule',
   Dados: 'Details',
@@ -135,9 +143,9 @@ export const en: Record<string, string> = {
   'Digite a senha.': 'Enter your password.',
   'Digite o celular completo, com DDD e 9 dígitos.':
     'Enter the full mobile number, with area code and 9 digits.',
-  'Digite o e-mail da sua conta e enviaremos um link para criar uma nova senha.':
-    'Enter the e-mail of your account and we will send a link to create a new password.',
   'Digite o seu endereço.': 'Enter your address.',
+  'Digite seu e-mail abaixo e enviaremos um link para você criar uma nova senha.':
+    'Type your email below and we will send you a link to create a new password.',
   'Digite um CPF válido.': 'Enter a valid CPF.',
   'Digite um e-mail válido.': 'Enter a valid email.',
   'Disponível em': 'Available on',
@@ -164,22 +172,21 @@ export const en: Record<string, string> = {
   'Endereço confirmado.': 'Address confirmed.',
   'Endereço copiado': 'Address copied',
   Entrar: 'Sign in',
-  'Entrar como profissional': 'Sign in as a professional',
   'Entrar sem conta': 'Continue without an account',
   'Entre na sua conta para agendar.': 'Sign in to book.',
   'Entre na sua conta para ver os seus agendamentos.': 'Sign in to see your bookings.',
   'Entre na sua conta para ver suas mensagens.': 'Sign in to see your messages.',
   'Entre na sua conta para ver suas notificações.': 'Sign in to see your notifications.',
-  'Entre para agendar e conversar com os profissionais.':
-    'Sign in to book and chat with the professionals.',
-  'Entre para ver os seus agendamentos e cuidar do seu perfil.':
-    'Sign in to see your bookings and manage your profile.',
+  'Entre para gerenciar sua agenda e seus clientes.':
+    'Sign in to manage your schedule and your clients.',
   'Enviamos um código de 4 dígitos para {{email}}.': 'We sent a 4-digit code to {{email}}.',
   'Enviamos um novo código.': 'We sent a new code.',
+  'Enviando...': 'Sending...',
   Enviar: 'Send',
   'Enviar avaliação': 'Send review',
   'Enviar cadastro': 'Send sign up',
   'Enviar link': 'Send link',
+  'Enviar novamente': 'Send again',
   'Envie uma mensagem para começar a conversa.': 'Send a message to start the conversation.',
   'Escolha de 1 a 5 estrelas.': 'Choose from 1 to 5 stars.',
   'Escolha os dias, um horário de início antes do fim e um preço.':
@@ -189,7 +196,7 @@ export const en: Record<string, string> = {
   'escolher o endereço na lista de sugestões': 'choose the address from the suggestions',
   Escova: 'Blow-dry',
   'Escreva uma mensagem': 'Write a message',
-  'Esqueci minha senha': 'Forgot my password',
+  'Esqueceu a senha?': 'Forgot your password?',
   'Esta conta do Google ainda não está cadastrada. Faça o cadastro de profissional primeiro.':
     'This Google account is not registered yet. Sign up as a professional first.',
   'Esta conta do Google já é de cliente. Use outra conta para se cadastrar como profissional.':
@@ -240,6 +247,7 @@ export const en: Record<string, string> = {
   'Ler mais': 'Read more',
   'Ler menos': 'Read less',
   'Limpar tudo': 'Clear all',
+  'Link inválido': 'Invalid link',
   Localização: 'Location',
   'Login por e-mail não está ativado no Firebase.': 'Email sign in is not enabled in Firebase.',
   'Maior preço': 'Highest price',
@@ -368,6 +376,8 @@ export const en: Record<string, string> = {
   'Preço (R$)': 'Price (R$)',
   'Preencha os dados abaixo. Depois do envio, o cadastro é analisado antes de entrar no ar.':
     'Fill in the details below. After you send it, the sign up is reviewed before going live.',
+  'Preencha todas as informações abaixo para criar sua conta.':
+    'Fill in all the information below to create your account.',
   'Preencha todos os campos obrigatórios dos serviços ou remova os que estiverem vazios.':
     'Fill in all the required fields of the services or remove the empty ones.',
   'Preencher meus dados': 'Fill in my details',
@@ -386,6 +396,8 @@ export const en: Record<string, string> = {
   Qualquer: 'Any',
   'Qualquer nota': 'Any rating',
   Quarta: 'Wednesday',
+  'Que bom te ver de novo! Entre para usar o app.':
+    'Good to see you again! Sign in to use the app.',
   Qui: 'Thu',
   Quinta: 'Thursday',
   'Realce sua beleza de acordo com o seu estilo de vida':
@@ -410,8 +422,8 @@ export const en: Record<string, string> = {
   Sair: 'Sign out',
   Salvar: 'Save',
   'Salvar nova senha': 'Save new password',
-  'Se existir uma conta com este e-mail, enviamos um link para criar uma nova senha.':
-    'If an account with this e-mail exists, we sent a link to create a new password.',
+  'Se o e-mail estiver cadastrado, você vai receber o link em instantes. Confira também o spam.':
+    'If the email is registered, you will receive the link shortly. Check your spam folder too.',
   Seg: 'Mon',
   Segunda: 'Monday',
   Selecionado: 'Selected',
@@ -419,6 +431,7 @@ export const en: Record<string, string> = {
   'Sem conexão. Verifique sua internet.': 'No connection. Check your internet.',
   'Sem foto': 'No photo',
   Senha: 'Password',
+  'Senha alterada': 'Password changed',
   'Senha alterada! Já pode entrar com a nova senha.':
     'Password changed! You can now sign in with the new password.',
   serviço: 'service',
@@ -449,6 +462,7 @@ export const en: Record<string, string> = {
   Ter: 'Tue',
   Terça: 'Tuesday',
   'Termos de Uso': 'Terms of Use',
+  'Tipo de conta': 'Account type',
   'Todos os bairros do Rio de Janeiro': 'All neighborhoods of Rio de Janeiro',
   'Toque no dia que quer bloquear. Para um período, toque também no último dia.':
     'Tap the day you want to block. For a period, also tap the last day.',

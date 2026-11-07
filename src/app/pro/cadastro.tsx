@@ -1,19 +1,18 @@
-import { Link } from '../../components/link';
+import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
-import { StyleSheet } from 'react-native';
-import { Text } from '../../components/text';
 import { Guard } from '../../components/guard';
 import { ProProfileForm } from '../../components/pro-profile-form';
-import { Screen } from '../../components/screen';
+import { AuthScreen } from '../../components/auth-kit';
+import { Button } from '../../components/button';
 import { SignupForm } from '../../components/signup-form';
 import { useAuth, useAuthActions } from '../../contexts/auth';
 import { t } from '../../i18n';
-import { fixed } from '../../theme/colors';
 import { PATHS } from '../../utils/paths';
 
 // The sign up of the professional, in two steps: the account, then the profile. When the profile is sent, the
 // account waits for an admin and this screen says so.
 export default function ProSignup() {
+  const router = useRouter();
   const auth = useAuth();
   const { clearSignupSubmitted } = useAuthActions();
 
@@ -22,19 +21,19 @@ export default function ProSignup() {
 
   if (auth.signupSubmitted) {
     return (
-      <Screen>
-        <Text accessibilityRole="header" style={styles.title}>
-          {t('Cadastro enviado!')}
-        </Text>
-        <Text style={styles.muted}>
-          {t(
-            'Sua conta está em análise. Você poderá entrar na área do profissional assim que ela for aprovada.',
-          )}
-        </Text>
-        <Link href={PATHS.proLogin as never} accessibilityRole="link" style={styles.link}>
-          {t('Ir para o login')}
-        </Link>
-      </Screen>
+      <AuthScreen
+        pro
+        title={t('Cadastro enviado!')}
+        subtitle={t(
+          'Sua conta está em análise. Você poderá entrar na área do profissional assim que ela for aprovada.',
+        )}
+        free={false}
+      >
+        <Button
+          label={t('Ir para o login')}
+          onPress={() => router.replace(PATHS.proLogin as never)}
+        />
+      </AuthScreen>
     );
   }
 
@@ -48,9 +47,3 @@ export default function ProSignup() {
   }
   return <SignupForm pro />;
 }
-
-const styles = StyleSheet.create({
-  title: { fontSize: 28, fontWeight: '700', color: fixed.ink },
-  muted: { color: fixed.gray, fontSize: 16 },
-  link: { color: fixed.accentText, fontWeight: '600', paddingVertical: 8 },
-});

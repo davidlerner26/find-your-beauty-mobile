@@ -1,31 +1,41 @@
-import { useRouter } from 'expo-router';
-import { Link } from './link';
 import * as Location from 'expo-location';
+import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Text } from './text';
-import { BackButton } from './back-button';
-import { Button } from './button';
-import { Guard } from './guard';
-import { Screen } from './screen';
-import { TextField } from './text-field';
 import { useAuthActions } from '../contexts/auth';
 import { t } from '../i18n';
-import { fixed } from '../theme/colors';
 import { useTheme } from '../theme/theme';
 import { hasErrors, SignupValues, validateSignup } from '../utils/auth-forms';
 import { formatCpf } from '../utils/cpf';
 import { log } from '../utils/log';
 import { formatPhone } from '../utils/phone';
 import { PATHS } from '../utils/paths';
-import { authErrorMessage, PASSWORD_RULE } from '../utils/validators';
+import { authErrorMessage } from '../utils/validators';
+import { AuthField, AuthScreen, FormError } from './auth-kit';
+import { Button } from './button';
+import { Guard } from './guard';
+import { Link } from './link';
+import { Text } from './text';
 
 // The sign up of the client, or the first step of the one of the professional (`pro`): the professional gives the
 // address and the rest of the profile in the second step
 export function SignupForm({ pro = false }: { pro?: boolean }) {
   return (
     <Guard kind={pro ? 'proEntry' : 'clientEntry'}>
-      <Signup pro={pro} />
+      <AuthScreen
+        pro={pro}
+        area="signup"
+        title={pro ? t('Cadastro de profissional') : t('Crie uma conta')}
+        subtitle={
+          pro
+            ? t(
+                'Crie a conta do profissional. No próximo passo você completa o perfil: foto, endereço e serviços.',
+              )
+            : t('Preencha todas as informações abaixo para criar sua conta.')
+        }
+      >
+        <Signup pro={pro} />
+      </AuthScreen>
     </Guard>
   );
 }
@@ -95,32 +105,31 @@ function Signup({ pro }: { pro: boolean }) {
     }
   };
 
-  return (
-    <Screen>
-      <BackButton />
-      <Text accessibilityRole="header" style={[styles.title, { color: theme.text }]}>
-        {pro ? t('Cadastro de profissional') : t('Criar conta')}
-      </Text>
-      <Text style={{ color: theme.muted }}>{t('O Find Your Beauty é 100% gratuito.')}</Text>
+  const link = { color: theme.primary, fontWeight: '600' as const };
 
-      <TextField
-        label={t('Nome')}
+  return (
+    <>
+      <AuthField
+        icon="person"
+        placeholder={t('Nome')}
         value={values.firstName}
         onChangeText={set('firstName')}
         error={errors.firstName}
         autoComplete="given-name"
         textContentType="givenName"
       />
-      <TextField
-        label={t('Sobrenome')}
+      <AuthField
+        icon="person"
+        placeholder={t('Sobrenome')}
         value={values.lastName}
         onChangeText={set('lastName')}
         error={errors.lastName}
         autoComplete="family-name"
         textContentType="familyName"
       />
-      <TextField
-        label={t('E-mail')}
+      <AuthField
+        icon="mail"
+        placeholder={t('E-mail')}
         value={values.email}
         onChangeText={set('email')}
         error={errors.email}
@@ -129,8 +138,9 @@ function Signup({ pro }: { pro: boolean }) {
         autoComplete="email"
         textContentType="emailAddress"
       />
-      <TextField
-        label={t('Celular')}
+      <AuthField
+        icon="call"
+        placeholder={t('Celular')}
         value={values.phone}
         onChangeText={(value) => set('phone')(formatPhone(value))}
         error={errors.phone}
@@ -138,29 +148,31 @@ function Signup({ pro }: { pro: boolean }) {
         autoComplete="tel"
         textContentType="telephoneNumber"
       />
-      <TextField
-        label="CPF"
+      <AuthField
+        icon="badge"
+        placeholder="CPF"
         value={values.cpf}
         onChangeText={(value) => set('cpf')(formatCpf(value))}
         error={errors.cpf}
         keyboardType="number-pad"
       />
       {pro ? null : (
-        <TextField
-          label={t('Endereço')}
+        <AuthField
+          icon="location-on"
+          placeholder={t('Endereço')}
           value={address}
           onChangeText={(value) => {
             setAddress(value);
             setAddressError('');
           }}
           error={addressError}
-          placeholder={t('Rua, número, bairro e cidade')}
           autoComplete="street-address"
           textContentType="fullStreetAddress"
         />
       )}
-      <TextField
-        label={t('Senha')}
+      <AuthField
+        icon="lock"
+        placeholder={t('Senha')}
         value={values.password}
         onChangeText={set('password')}
         error={errors.password}
@@ -169,46 +181,44 @@ function Signup({ pro }: { pro: boolean }) {
         autoComplete="new-password"
         textContentType="newPassword"
       />
-      {!errors.password ? <Text style={styles.hint}>{PASSWORD_RULE}</Text> : null}
-      {formError ? (
-        <Text accessibilityRole="alert" style={styles.error}>
-          {formError}
-        </Text>
-      ) : null}
+      {formError ? <FormError>{formError}</FormError> : null}
 
-      <Button label={t('Criar conta')} onPress={() => void submit()} loading={submitting} />
+      <View style={styles.submit}>
+        <Button
+          label={submitting ? t('Aguarde...') : t('Cadastrar')}
+          onPress={() => void submit()}
+          loading={submitting}
+        />
+      </View>
 
-      <Text style={styles.legal}>
+      <Text style={[styles.legal, { color: theme.muted }]}>
         {t('Ao criar a conta você concorda com os')}{' '}
-        <Link href={'/termos' as never} style={styles.linkInline}>
+        <Link href={'/termos' as never} style={link}>
           {t('Termos de Uso')}
         </Link>{' '}
         {t('e a')}{' '}
-        <Link href={'/privacidade' as never} style={styles.linkInline}>
+        <Link href={'/privacidade' as never} style={link}>
           {t('Política de Privacidade')}
         </Link>
         .
       </Text>
 
-      <View style={styles.switch}>
-        <Text style={{ color: theme.muted }}>{t('Já tem uma conta?')} </Text>
+      <Text style={[styles.switch, { color: theme.text }]}>
+        {t('Já tem uma conta?')}{' '}
         <Link
           href={(pro ? PATHS.proLogin : PATHS.login) as never}
           accessibilityRole="link"
-          style={styles.linkInline}
+          style={link}
         >
           {t('Entrar')}
         </Link>
-      </View>
-    </Screen>
+      </Text>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
-  title: { fontSize: 28, fontWeight: '700' },
-  hint: { color: fixed.gray, fontSize: 13, marginTop: -8 },
-  error: { color: fixed.dangerStrong },
-  legal: { color: fixed.gray, fontSize: 13, textAlign: 'center' },
-  linkInline: { color: fixed.accentText, fontWeight: '600' },
-  switch: { flexDirection: 'row', justifyContent: 'center', flexWrap: 'wrap' },
+  submit: { marginTop: 8 },
+  legal: { fontSize: 13, textAlign: 'center' },
+  switch: { textAlign: 'center', fontSize: 16 },
 });
