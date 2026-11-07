@@ -513,4 +513,6 @@ export const en: Record<string, string> = {
     'We could not get your location. Allow access in the settings.',
   Começar: 'Get started',
   'Entrar com e-mail': 'Continue with email',
+  'Voltar ao login': 'Back to sign in',
+  'O endereço não existe ou foi movido.': 'The address does not exist or was moved.',
 };

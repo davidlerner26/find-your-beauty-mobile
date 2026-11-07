@@ -520,4 +520,6 @@ export const es: Record<string, string> = {
     'No pudimos obtener tu ubicación. Permite el acceso en los ajustes.',
   Começar: 'Empezar',
   'Entrar com e-mail': 'Continuar con correo',
+  'Voltar ao login': 'Volver a iniciar sesión',
+  'O endereço não existe ou foi movido.': 'La dirección no existe o fue movida.',
 };
