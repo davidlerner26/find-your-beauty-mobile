@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import { FlatList, Modal, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { t } from '../i18n';
@@ -5,8 +6,11 @@ import { catalogLabel } from '../utils/catalog';
 import { Card } from '../utils/search-filter';
 import { Button } from './button';
 import { Chip } from './chip';
-import { ExploreCard } from './explore-card';
+import { EXPLORE_CARD_HEIGHT, ExploreCard } from './explore-card';
 import { Text } from './text';
+
+const GAP = 16;
+const LIST_TOP = 4;
 
 type Props = {
   visible: boolean;
@@ -30,6 +34,9 @@ export function NearbySheet({
   onOpen,
   onClose,
 }: Props) {
+  const list = useRef<FlatList<Card>>(null);
+  const selectedIndex = cards.findIndex((card) => card.id === selectedId);
+
   return (
     <Modal
       visible={visible}
@@ -60,9 +67,26 @@ export function NearbySheet({
           ))}
         </ScrollView>
         <FlatList
+          ref={list}
           data={cards}
           keyExtractor={(card) => card.id}
           contentContainerStyle={styles.list}
+          // Every card has the same height: the list knows where each one is, so it can go straight to one
+          getItemLayout={(_, index) => ({
+            length: EXPLORE_CARD_HEIGHT + GAP,
+            offset: LIST_TOP + (EXPLORE_CARD_HEIGHT + GAP) * index,
+            index,
+          })}
+          // The list opens with the selected professional in the middle of the screen
+          onLayout={() => {
+            if (selectedIndex >= 0) {
+              list.current?.scrollToIndex({
+                index: selectedIndex,
+                viewPosition: 0.5,
+                animated: false,
+              });
+            }
+          }}
           ItemSeparatorComponent={() => <View style={styles.gap} />}
           ListEmptyComponent={
             <Text style={styles.empty}>{t('Nenhum profissional encontrado.')}</Text>
@@ -92,7 +116,7 @@ const styles = StyleSheet.create({
   title: { fontSize: 20, fontWeight: '700' },
   chipsScroll: { flexGrow: 0 },
   chips: { gap: 12, paddingHorizontal: 24, paddingVertical: 16 },
-  list: { paddingHorizontal: 22, paddingTop: 4, paddingBottom: 48 },
-  gap: { height: 16 },
+  list: { paddingHorizontal: 22, paddingTop: LIST_TOP, paddingBottom: 48 },
+  gap: { height: GAP },
   empty: { paddingVertical: 16, paddingHorizontal: 2 },
 });
