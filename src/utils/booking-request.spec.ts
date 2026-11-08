@@ -75,6 +75,10 @@ describe('buildBookingRequest', () => {
     expect(buildBookingRequest(choice()).paymentStatus).toBe('pending');
   });
 
+  it('says it was made in the app, so the server does not ask it for a payment', () => {
+    expect(buildBookingRequest(choice()).source).toBe('mobile');
+  });
+
   it('sends the address of the client only for a service at home', () => {
     expect(buildBookingRequest(choice({ place: 'home' })).clientAddress).toBe('Rua Teste, 10');
     expect('clientAddress' in buildBookingRequest(choice({ place: 'studio' }))).toBe(false);

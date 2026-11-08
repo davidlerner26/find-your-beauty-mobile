@@ -63,8 +63,9 @@ The provider only wraps the search screen. The filter sheet edits a draft that o
 **Booking.** `stores/booking-flow-reducer.ts` is the pure part of the site's `BookingFlowStore` (month, day, time, free times,
 next day with a free time), tested; `stores/booking-flow.tsx` is the hook that loads the taken slots. The booking is
 written by `services/bookings.ts` in one batch (the slots and the booking together, as the rules require). The app has
-**no payment**: "Finalizar" (the check mark) books straight away, with `paymentStatus: 'pending'`, and the professional
-answers the request. The day strip scrolls to the selected day (`components/centered-strip.tsx`), which starts as the
+**no payment**, in any environment: "Finalizar" (the check mark) books straight away, with `paymentStatus: 'pending'`
+and `source: 'mobile'` (the Functions of the site's test environment, where payments are on, skip the payment hold for
+that source: see `needsPayment` in the site's repo), and the professional answers the request. The day strip scrolls to the selected day (`components/centered-strip.tsx`), which starts as the
 next day with a free time.
 
 **Addresses.** Every address field (client sign up, client profile, professional profile) is `components/address-field.tsx`:

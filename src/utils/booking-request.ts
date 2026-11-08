@@ -50,6 +50,8 @@ export const buildBookingRequest = (choice: BookingChoice): NewBooking => {
     place,
     ...(place === 'home' ? { clientAddress: choice.clientAddress } : {}),
     paymentStatus: 'pending',
+    // The app has no payment, in any environment: the server must not ask this booking for one
+    source: 'mobile',
   };
 };
 

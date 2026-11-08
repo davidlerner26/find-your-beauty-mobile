@@ -27,4 +27,7 @@ export type Booking = {
   lang?: Lang;
   // The app has no payment: bookings are created with the payment pending
   paymentStatus: PaymentStatus;
+  // Where the booking was made. The app says 'mobile' and the Functions do not ask it for a payment hold (the test
+  // environment of the site asks the bookings of the site; the older ones have no value and count as the site's)
+  source?: 'web' | 'mobile';
 };
