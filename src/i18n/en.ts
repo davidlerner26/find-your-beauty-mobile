@@ -120,21 +120,16 @@ export const en: Record<string, string> = {
   Celular: 'Mobile',
   'Código de 4 dígitos': '4-digit code',
   Coloração: 'Hair coloring',
-  'Complete o seu perfil': 'Complete your profile',
   'Complete seus dados no perfil para agendar. Falta: {{missing}}.':
     'Complete your details in your profile to book. Missing: {{missing}}.',
   Concluído: 'Completed',
   'Conectar Instagram': 'Connect Instagram',
-  'Conecte a conta profissional do Instagram para mostrar suas fotos mais recentes no perfil.':
-    'Connect your professional Instagram account to show your latest photos on your profile.',
   Confirmado: 'Confirmed',
   'Confirmar endereço': 'Confirm address',
   'Confirme a nova senha': 'Confirm the new password',
   'Confirme o seu e-mail': 'Confirm your e-mail',
   'Conheça nossos especialistas': 'Meet our specialists',
   Contato: 'Contact',
-  'Conte a sua experiência. Deixe uma linha em branco para separar parágrafos.':
-    'Tell us about your experience. Leave a blank line to separate paragraphs.',
   'Conte como foi (opcional)': 'Tell us how it went (optional)',
   'Continuar como visitante': 'Continue as a visitor',
   com: 'with',
@@ -170,8 +165,6 @@ export const en: Record<string, string> = {
   'Duração (h:mm)': 'Duration (h:mm)',
   'Duração de cada horário': 'Length of each time slot',
   'e a': 'and the',
-  'É a sua foto nos cartões, no topo do perfil e nas mensagens.':
-    'It is your photo on the cards, at the top of the profile and in the messages.',
   'E-mail': 'Email',
   'E-mail ou senha incorretos.': 'Wrong email or password.',
   Editar: 'Edit',
@@ -391,8 +384,6 @@ export const en: Record<string, string> = {
   'Permita a localização para ordenar por distância.': 'Allow location to sort by distance.',
   'Política de Privacidade': 'Privacy Policy',
   'Preço (R$)': 'Price (R$)',
-  'Preencha os dados abaixo. Depois do envio, o cadastro é analisado antes de entrar no ar.':
-    'Fill in the details below. After you send it, the sign up is reviewed before going live.',
   'Preencha todas as informações abaixo para criar sua conta.':
     'Fill in all the information below to create your account.',
   'Preencha todos os campos obrigatórios dos serviços ou remova os que estiverem vazios.':
@@ -515,4 +506,18 @@ export const en: Record<string, string> = {
     'Show your work: the photos appear in the gallery of your profile.',
   'Onde você atende?': 'Where do you work?',
   'Sem celular': 'No phone',
+  'Meu perfil': 'My profile',
+  'Complete seu cadastro': 'Complete your registration',
+  'Preencha todos os dados abaixo para enviar o cadastro. Depois, ele passa pela aprovação da nossa equipe.':
+    'Fill in all the data below to send your registration. After that, it goes through approval by our team.',
+  'Seu cadastro anterior não foi aprovado. Revise os dados abaixo e envie novamente.':
+    'Your previous registration was not approved. Review the data below and send it again.',
+  'Aparece nos cards, no topo da sua página e redonda nas mensagens.':
+    'Shown on the cards, at the top of your page and round in the messages.',
+  'Conte sobre o seu trabalho': 'Tell us about your work',
+  'Conecte a sua conta para mostrar as 12 fotos mais recentes do seu Instagram no perfil. A conta precisa ser profissional (Criador ou Empresa): conta pessoal não funciona. Para mudar, no Instagram vá em Configurações > Tipo de conta e ferramentas > Mudar para conta profissional.':
+    'Connect your account to show the 12 most recent photos of your Instagram on your profile. The account must be a professional one (Creator or Business): a personal account does not work. To change it, in Instagram go to Settings > Account type and tools > Switch to professional account.',
+  'Seu perfil está completo, mas oculto para os clientes.':
+    'Your profile is complete, but hidden from clients.',
+  'Salvar perfil': 'Save profile',
 };

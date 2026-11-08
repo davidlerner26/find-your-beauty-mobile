@@ -121,21 +121,16 @@ export const es: Record<string, string> = {
   Celular: 'Celular',
   'Código de 4 dígitos': 'Código de 4 dígitos',
   Coloração: 'Coloración',
-  'Complete o seu perfil': 'Completa tu perfil',
   'Complete seus dados no perfil para agendar. Falta: {{missing}}.':
     'Completa tus datos en el perfil para reservar. Falta: {{missing}}.',
   Concluído: 'Completada',
   'Conectar Instagram': 'Conectar Instagram',
-  'Conecte a conta profissional do Instagram para mostrar suas fotos mais recentes no perfil.':
-    'Conecta tu cuenta profesional de Instagram para mostrar tus fotos más recientes en tu perfil.',
   Confirmado: 'Confirmada',
   'Confirmar endereço': 'Confirmar dirección',
   'Confirme a nova senha': 'Confirma la nueva contraseña',
   'Confirme o seu e-mail': 'Confirma tu correo',
   'Conheça nossos especialistas': 'Conoce a nuestros especialistas',
   Contato: 'Contacto',
-  'Conte a sua experiência. Deixe uma linha em branco para separar parágrafos.':
-    'Cuenta tu experiencia. Deja una línea en blanco para separar párrafos.',
   'Conte como foi (opcional)': 'Cuéntanos cómo fue (opcional)',
   'Continuar como visitante': 'Continuar como visitante',
   com: 'con',
@@ -171,8 +166,6 @@ export const es: Record<string, string> = {
   'Duração (h:mm)': 'Duración (h:mm)',
   'Duração de cada horário': 'Duración de cada horario',
   'e a': 'y la',
-  'É a sua foto nos cartões, no topo do perfil e nas mensagens.':
-    'Es tu foto en las tarjetas, en la parte superior del perfil y en los mensajes.',
   'E-mail': 'Correo electrónico',
   'E-mail ou senha incorretos.': 'Correo o contraseña incorrectos.',
   Editar: 'Editar',
@@ -398,8 +391,6 @@ export const es: Record<string, string> = {
     'Permite la ubicación para ordenar por distancia.',
   'Política de Privacidade': 'Política de Privacidad',
   'Preço (R$)': 'Precio (R$)',
-  'Preencha os dados abaixo. Depois do envio, o cadastro é analisado antes de entrar no ar.':
-    'Completa los datos de abajo. Después del envío, el registro se revisa antes de publicarse.',
   'Preencha todas as informações abaixo para criar sua conta.':
     'Completa toda la información de abajo para crear tu cuenta.',
   'Preencha todos os campos obrigatórios dos serviços ou remova os que estiverem vazios.':
@@ -522,4 +513,18 @@ export const es: Record<string, string> = {
     'Muestra tu trabajo: las fotos aparecen en la galería de tu perfil.',
   'Onde você atende?': '¿Dónde atiendes?',
   'Sem celular': 'Sin celular',
+  'Meu perfil': 'Mi perfil',
+  'Complete seu cadastro': 'Completa tu registro',
+  'Preencha todos os dados abaixo para enviar o cadastro. Depois, ele passa pela aprovação da nossa equipe.':
+    'Completa todos los datos de abajo para enviar tu registro. Después, pasa por la aprobación de nuestro equipo.',
+  'Seu cadastro anterior não foi aprovado. Revise os dados abaixo e envie novamente.':
+    'Tu registro anterior no fue aprobado. Revisa los datos abajo y envíalo de nuevo.',
+  'Aparece nos cards, no topo da sua página e redonda nas mensagens.':
+    'Aparece en las tarjetas, en la parte superior de tu página y redonda en los mensajes.',
+  'Conte sobre o seu trabalho': 'Cuéntanos sobre tu trabajo',
+  'Conecte a sua conta para mostrar as 12 fotos mais recentes do seu Instagram no perfil. A conta precisa ser profissional (Criador ou Empresa): conta pessoal não funciona. Para mudar, no Instagram vá em Configurações > Tipo de conta e ferramentas > Mudar para conta profissional.':
+    'Conecta tu cuenta para mostrar las 12 fotos más recientes de tu Instagram en tu perfil. La cuenta debe ser profesional (Creador o Empresa): una cuenta personal no funciona. Para cambiarla, en Instagram ve a Configuración > Tipo de cuenta y herramientas > Cambiar a cuenta profesional.',
+  'Seu perfil está completo, mas oculto para os clientes.':
+    'Tu perfil está completo, pero oculto para los clientes.',
+  'Salvar perfil': 'Guardar perfil',
 };

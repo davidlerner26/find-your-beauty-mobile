@@ -401,13 +401,20 @@ function Form({ profile, signup }: { profile: Professional; signup: boolean }) {
   return (
     <Screen edges={['top']}>
       <Text accessibilityRole="header" style={[styles.title, { color: theme.text }]}>
-        {signup ? t('Complete o seu perfil') : t('Perfil')}
+        {signup ? t('Complete seu cadastro') : t('Meu perfil')}
       </Text>
       {signup ? (
         <Text style={{ color: theme.muted }}>
           {t(
-            'Preencha os dados abaixo. Depois do envio, o cadastro é analisado antes de entrar no ar.',
+            'Preencha todos os dados abaixo para enviar o cadastro. Depois, ele passa pela aprovação da nossa equipe.',
           )}
+        </Text>
+      ) : null}
+      {signup && profile.rejected ? (
+        <Text
+          style={[styles.message, { backgroundColor: theme.primaryLight, color: theme.primary }]}
+        >
+          {t('Seu cadastro anterior não foi aprovado. Revise os dados abaixo e envie novamente.')}
         </Text>
       ) : null}
       {missing.length ? (
@@ -440,7 +447,7 @@ function Form({ profile, signup }: { profile: Professional; signup: boolean }) {
           {t('Foto')}
         </Text>
         <Text style={{ color: theme.muted }}>
-          {t('É a sua foto nos cartões, no topo do perfil e nas mensagens.')}
+          {t('Aparece nos cards, no topo da sua página e redonda nas mensagens.')}
         </Text>
         <View style={styles.photoRow}>
           {draft.image ? (
@@ -467,9 +474,7 @@ function Form({ profile, signup }: { profile: Professional; signup: boolean }) {
 
         <FormField
           label={t('Sobre você')}
-          placeholder={t(
-            'Conte a sua experiência. Deixe uma linha em branco para separar parágrafos.',
-          )}
+          placeholder={t('Conte sobre o seu trabalho')}
           value={draft.about}
           onChangeText={(about) => set({ about })}
           multiline
@@ -509,7 +514,7 @@ function Form({ profile, signup }: { profile: Professional; signup: boolean }) {
           <>
             <Text style={{ color: theme.muted }}>
               {t(
-                'Conecte a conta profissional do Instagram para mostrar suas fotos mais recentes no perfil.',
+                'Conecte a sua conta para mostrar as 12 fotos mais recentes do seu Instagram no perfil. A conta precisa ser profissional (Criador ou Empresa): conta pessoal não funciona. Para mudar, no Instagram vá em Configurações > Tipo de conta e ferramentas > Mudar para conta profissional.',
               )}
             </Text>
             <InstagramButton
@@ -659,9 +664,15 @@ function Form({ profile, signup }: { profile: Professional; signup: boolean }) {
         </View>
       ) : null}
 
+      {!signup && !missing.length && !draft.visible ? (
+        <Text style={{ color: theme.muted }}>
+          {t('Seu perfil está completo, mas oculto para os clientes.')}
+        </Text>
+      ) : null}
+
       <View style={styles.submit}>
         <Button
-          label={signup ? t('Enviar cadastro') : t('Salvar')}
+          label={signup ? t('Enviar cadastro') : t('Salvar perfil')}
           onPress={() => void save()}
           loading={saving}
         />
@@ -705,6 +716,7 @@ function InstagramButton({
 
 const styles = StyleSheet.create({
   title: { fontSize: 24, fontWeight: '700' },
+  message: { padding: 14, borderRadius: 12, overflow: 'hidden' },
   subheading: { fontSize: 16, fontWeight: '700', marginTop: 8 },
   bold: { fontWeight: '700' },
   flex: { flex: 1 },
