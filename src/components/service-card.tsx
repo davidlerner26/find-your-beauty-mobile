@@ -10,26 +10,26 @@ import { formatPrice } from '../utils/money';
 import { ruleLabel } from '../utils/pricing';
 import { CardSurface } from './card-surface';
 import { PhotoPager } from './photo-pager';
-import { ServiceSheet } from './service-sheet';
 
 const PHOTO = 136;
 
 // A service of the professional, like the site: photos on the left, name, price and duration, the prices by day and
 // time and the description, and a round button on the corner to add it to the booking (or take it out). The card
-// opens the sheet of the service.
+// opens the sheet of the service (`onOpen`): the sheet lives in the page, not here, so it stays open while the card
+// is redrawn when the service is added or taken out.
 export function ServiceCard({
   service,
   selected,
   onToggle,
+  onOpen,
 }: {
   service: Service;
   // The client picks the services to book: without `onToggle` the card only shows the service
   selected?: boolean;
   onToggle?: () => void;
+  onOpen: () => void;
 }) {
   const theme = useTheme();
-  // The sheet with the whole service (the card opens it)
-  const [open, setOpen] = useState(false);
   // The photos have the height of the card; the card has the height of the text
   const [height, setHeight] = useState(150);
   const long = service.description.length > 90;
@@ -37,7 +37,7 @@ export function ServiceCard({
   const name = catalogLabel(service.name);
 
   return (
-    <Pressable accessibilityRole="button" accessibilityLabel={name} onPress={() => setOpen(true)}>
+    <Pressable accessibilityRole="button" accessibilityLabel={name} onPress={onOpen}>
       <CardSurface>
         {hasPhotos ? (
           <View style={styles.photos}>
@@ -94,13 +94,6 @@ export function ServiceCard({
           ) : null}
         </View>
       </CardSurface>
-      <ServiceSheet
-        service={service}
-        visible={open}
-        selected={!!selected}
-        onToggle={onToggle}
-        onClose={() => setOpen(false)}
-      />
     </Pressable>
   );
 }

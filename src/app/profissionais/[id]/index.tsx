@@ -19,6 +19,7 @@ import { PhotoPager } from '../../../components/photo-pager';
 import { ReviewsSection } from '../../../components/reviews-section';
 import { Screen } from '../../../components/screen';
 import { ServiceCard } from '../../../components/service-card';
+import { ServiceSheet } from '../../../components/service-sheet';
 import { Spinner } from '../../../components/spinner';
 import { BackButton } from '../../../components/back-button';
 import { useAuth } from '../../../contexts/auth';
@@ -29,6 +30,7 @@ import {
   DEFAULT_AVAILABILITY,
   hasLocation,
   Professional,
+  Service,
   ServiceCategory,
 } from '../../../models/professional';
 import { missingProfileData } from '../../../models/user';
@@ -72,6 +74,9 @@ function Details({ artist }: { artist: Professional }) {
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
   const [aboutOpen, setAboutOpen] = useState(false);
+  // The sheet of a service. It is here, not in the card, like the page of the site: it stays open while the service
+  // is added or taken out. The service is kept after it closes so the sheet can slide down.
+  const [sheet, setSheet] = useState<{ service: Service; visible: boolean } | null>(null);
   const [chosen, setChosen] = useState<ServiceCategory[]>([]);
   // The services the client picked to book
   const [picked, setPicked] = useState<string[]>([]);
@@ -325,6 +330,7 @@ function Details({ artist }: { artist: Professional }) {
                     service={service}
                     selected={picked.includes(service.id)}
                     onToggle={canBook || !auth.user ? () => togglePicked(service.id) : undefined}
+                    onOpen={() => setSheet({ service, visible: true })}
                   />
                 ))}
               </View>
@@ -424,6 +430,15 @@ function Details({ artist }: { artist: Professional }) {
           </View>
         </View>
       </View>
+      {sheet ? (
+        <ServiceSheet
+          service={sheet.service}
+          visible={sheet.visible}
+          selected={picked.includes(sheet.service.id)}
+          onToggle={canBook || !auth.user ? () => togglePicked(sheet.service.id) : undefined}
+          onClose={() => setSheet({ ...sheet, visible: false })}
+        />
+      ) : null}
     </Screen>
   );
 }
