@@ -19,13 +19,13 @@ export const withFont = (style: StyleProp<TextStyle>): StyleProp<TextStyle> => {
 };
 
 // In the professional area (blue) the letters are white: the colors that screens write for the light background (the
-// ink, the gray, the copper of the links and the blue of the brand) become the ones of the theme. The other colors
-// (status pills, errors, white letters) stay as they are.
+// ink, the gray and the copper of the links) become the ones of the theme. The other colors stay as they are: the
+// blue of the brand too, because it is the color of the letters on the white buttons and pills of that area.
 export const themedStyle = (style: StyleProp<TextStyle>, theme: Theme): StyleProp<TextStyle> => {
   if (theme.name !== 'pro') return style;
   const { color } = StyleSheet.flatten(style) ?? {};
   const swap =
-    color === fixed.ink || color === fixed.accentText || color === fixed.brand
+    color === fixed.ink || color === fixed.accentText
       ? theme.text
       : color === fixed.gray
         ? theme.muted
