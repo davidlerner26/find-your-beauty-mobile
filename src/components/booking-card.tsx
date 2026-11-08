@@ -1,7 +1,7 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { Animated, Easing, LayoutAnimation, Pressable, StyleSheet, View } from 'react-native';
 import { isOpen } from '../../shared/domain';
 import { t } from '../i18n';
 import { Booking } from '../models/booking';
@@ -40,6 +40,25 @@ export function BookingCard({ booking, professional, onCancel, onCopyAddress }: 
   const router = useRouter();
   const theme = useTheme();
   const [open, setOpen] = useState(false);
+  // The arrow turns while the list of services opens and closes (the card grows or shrinks with the same curve)
+  const [turn] = useState(() => new Animated.Value(0));
+  useEffect(() => {
+    Animated.timing(turn, {
+      toValue: open ? 1 : 0,
+      duration: 250,
+      easing: Easing.inOut(Easing.ease),
+      useNativeDriver: true,
+    }).start();
+  }, [open, turn]);
+  const toggleServices = () => {
+    LayoutAnimation.configureNext({
+      duration: 250,
+      create: { type: 'easeInEaseOut', property: 'opacity' },
+      update: { type: 'easeInEaseOut' },
+      delete: { type: 'easeInEaseOut', property: 'opacity' },
+    });
+    setOpen((current) => !current);
+  };
   const address = bookingAddress(booking, professional);
   const pill = statusColors(booking, theme.primary, theme.primaryLight);
   const goToProfessional = () => router.push(PATHS.professional(booking.professionalId) as never);
@@ -84,15 +103,21 @@ export function BookingCard({ booking, professional, onCancel, onCopyAddress }: 
           accessibilityRole="button"
           accessibilityLabel={t('Serviços')}
           accessibilityState={{ expanded: open }}
-          onPress={() => setOpen((current) => !current)}
+          onPress={toggleServices}
           style={styles.summary}
         >
           <Text style={styles.bold}>{t('Serviços')}</Text>
-          <MaterialIcons
-            name={open ? 'keyboard-arrow-up' : 'keyboard-arrow-down'}
-            size={24}
-            color={fixed.ink}
-          />
+          <Animated.View
+            style={{
+              transform: [
+                {
+                  rotate: turn.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '180deg'] }),
+                },
+              ],
+            }}
+          >
+            <MaterialIcons name="keyboard-arrow-down" size={24} color={theme.text} />
+          </Animated.View>
         </Pressable>
         {open ? (
           <View style={styles.services}>

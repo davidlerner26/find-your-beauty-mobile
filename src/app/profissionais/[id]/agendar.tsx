@@ -5,13 +5,13 @@ import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from 'reac
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Text, TextInput } from '../../../components/text';
 import { BackButton } from '../../../components/back-button';
+import { CenteredStrip } from '../../../components/centered-strip';
 import { Guard } from '../../../components/guard';
 import { Screen } from '../../../components/screen';
 import { Spinner } from '../../../components/spinner';
 import { TopBar } from '../../../components/top-bar';
 import { useAuth } from '../../../contexts/auth';
 import { useBookings } from '../../../contexts/bookings';
-import { useCheckoutDraft } from '../../../contexts/checkout-draft';
 import { useProfessionals } from '../../../contexts/professionals';
 import { useToast } from '../../../contexts/toast';
 import { t } from '../../../i18n';
@@ -28,7 +28,6 @@ import { localizeAddress } from '../../../utils/address';
 import { log } from '../../../utils/log';
 import { formatPrice, roundMoney } from '../../../utils/money';
 import { PATHS } from '../../../utils/paths';
-import { checkoutEnabled } from '../../../utils/features';
 
 export default function BookingScreen() {
   return (
@@ -61,7 +60,6 @@ function Booking({ id, serviceIds }: { id: string; serviceIds: string[] }) {
   const auth = useAuth();
   const toast = useToast();
   const { mine } = useBookings();
-  const draft = useCheckoutDraft();
   const artist = useProfessionals().byId(id)!;
 
   const services = useMemo(
@@ -100,7 +98,7 @@ function Booking({ id, serviceIds }: { id: string; serviceIds: string[] }) {
 
   const canCheckout = !!flow.selectedDay && !!flow.selectedTime && !saving && services.length > 0;
 
-  // Finalizar: requests the booking. The professional confirms it afterwards.
+  // Finalizar: requests the booking right away (there is no payment in the app). The professional confirms it.
   const checkout = async () => {
     const { selectedDay: day, selectedTime: time } = flow;
     const user = auth.user;
@@ -144,13 +142,6 @@ function Booking({ id, serviceIds }: { id: string; serviceIds: string[] }) {
       clientAddress,
       slotMinutes: availability.slotMinutes,
     });
-
-    // The test environment asks for the (simulated) payment first; production books straight away
-    if (checkoutEnabled()) {
-      draft.set(request);
-      router.push(PATHS.checkout(artist.id) as never);
-      return;
-    }
 
     setError('');
     setSaving(true);
@@ -254,11 +245,12 @@ function Booking({ id, serviceIds }: { id: string; serviceIds: string[] }) {
               <MaterialIcons name="chevron-right" size={28} color={theme.primary} />
             </Pressable>
           </View>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
+          <CenteredStrip
+            index={flow.days.findIndex((day) => flow.selectedDay?.getTime() === day.date.getTime())}
+            itemWidth={64}
+            gap={12}
+            padding={24}
             style={styles.bleed}
-            contentContainerStyle={styles.days}
           >
             {flow.days.map((day) => {
               const selected = flow.selectedDay?.getTime() === day.date.getTime();
@@ -295,7 +287,7 @@ function Booking({ id, serviceIds }: { id: string; serviceIds: string[] }) {
                 </Pressable>
               );
             })}
-          </ScrollView>
+          </CenteredStrip>
         </View>
 
         <View style={styles.section}>
@@ -418,7 +410,6 @@ const styles = StyleSheet.create({
   // Rows that go from edge to edge of the screen (the content has 24px on the sides)
   bleed: { marginHorizontal: -24 },
   month: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  days: { gap: 12, paddingHorizontal: 24 },
   day: {
     width: 64,
     height: 88,

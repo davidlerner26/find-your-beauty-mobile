@@ -39,7 +39,12 @@ export default function Explore() {
   const router = useRouter();
   const toast = useToast();
   const { width: screen } = useWindowDimensions();
-  const params = useLocalSearchParams<{ service?: string; categories?: string }>();
+  const params = useLocalSearchParams<{
+    service?: string;
+    categories?: string;
+    focus?: string;
+    at?: string;
+  }>();
   const { published } = useProfessionals();
   const location = useUserLocation();
   const map = useRef<MapView>(null);
@@ -51,6 +56,8 @@ export default function Explore() {
   // The user asked for "my location" and the position has not arrived yet
   const locating = useRef(false);
   const centered = useRef(false);
+  // The map takes the camera only once it is ready
+  const [mapReady, setMapReady] = useState(false);
   const width = cardWidth(screen);
 
   // Coming from a service of the home: its categories (or its own) start selected, and so does its chip.
@@ -88,6 +95,16 @@ export default function Explore() {
   );
   const selectedIndex = cards.findIndex((card) => card.id === selectedId);
 
+  // Coming from the page of a professional ("Ver no mapa"): that professional's pin and card start selected. `at`
+  // makes every tap a new request, even for the same professional. Adjusted while rendering when the params change.
+  const focusKey = params.focus ? `${params.focus}|${params.at ?? ''}` : '';
+  const [seenFocus, setSeenFocus] = useState('');
+  const focusIndex = params.focus ? cards.findIndex((card) => card.id === params.focus) : -1;
+  if (focusKey && focusKey !== seenFocus && focusIndex >= 0) {
+    setSeenFocus(focusKey);
+    setSelectedId(params.focus ?? null);
+  }
+
   const goTo = useCallback((lat: number, lng: number, delta = 0.05) => {
     map.current?.animateToRegion(
       { latitude: lat, longitude: lng, latitudeDelta: delta, longitudeDelta: delta },
@@ -107,6 +124,23 @@ export default function Explore() {
     }
     centered.current = true;
   }, [location.position, goTo]);
+
+  // The map and the carousel go to the professional that came from its page (once for each request)
+  const focused = useRef('');
+  useEffect(() => {
+    if (!mapReady || !seenFocus || focused.current === seenFocus) return;
+    const card = cards.find((item) => item.id === seenFocus.split('|')[0]);
+    if (!card) return;
+    focused.current = seenFocus;
+    // The position of the user must not take the map away from the professional that was asked for
+    centered.current = true;
+    goTo(card.position.lat, card.position.lng, 0.03);
+    carousel.current?.scrollToIndex({
+      index: cards.indexOf(card),
+      animated: false,
+      viewPosition: 0.5,
+    });
+  }, [mapReady, seenFocus, cards, goTo]);
 
   const select = (index: number) => {
     const card = cards[index];
@@ -160,6 +194,7 @@ export default function Explore() {
         showsUserLocation={location.permission === 'granted'}
         showsPointsOfInterests={false}
         toolbarEnabled={false}
+        onMapReady={() => setMapReady(true)}
         onPress={() => setSelectedId(null)}
         accessibilityLabel={t('Mapa de profissionais de beleza')}
       >

@@ -31,7 +31,7 @@ export function HeartButton({
       <MaterialIcons
         name={on ? 'favorite' : 'favorite-border'}
         size={large ? 26 : 22}
-        color={on ? fixed.danger : fixed.ink}
+        color={fixed.danger}
       />
     </Pressable>
   );

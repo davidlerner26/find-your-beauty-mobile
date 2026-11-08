@@ -1,7 +1,6 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
-import { Link } from '../../components/link';
 import { useMemo, useState } from 'react';
 import { FlatList, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { Text } from '../../components/text';
@@ -125,15 +124,19 @@ export default function Home() {
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ gap: 14 }}
+            // From edge to edge of the screen, with room above and below so the ring is not cut
+            style={styles.bleed}
+            contentContainerStyle={styles.followed}
           >
             {followed.map((card) => (
-              <Link
+              <Pressable
                 key={card.id}
-                href={PATHS.professional(card.id) as never}
+                accessibilityRole="link"
                 accessibilityLabel={card.name}
+                onPress={() => router.push(PATHS.professional(card.id) as never)}
+                style={styles.follow}
               >
-                <View style={styles.follow}>
+                <View style={[styles.ring, { borderColor: theme.primary }]}>
                   <Image
                     accessibilityIgnoresInvertColors
                     source={{ uri: card.image }}
@@ -141,11 +144,11 @@ export default function Home() {
                     contentPosition={focusPosition(card.imagePosition)}
                     style={styles.avatar}
                   />
-                  <Text numberOfLines={1} style={styles.followName}>
-                    {card.name}
-                  </Text>
                 </View>
-              </Link>
+                <Text numberOfLines={1} style={styles.followName}>
+                  {card.name}
+                </Text>
+              </Pressable>
             ))}
           </ScrollView>
         </View>
@@ -271,7 +274,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   serviceLabel: { fontSize: 14, lineHeight: 18, textAlign: 'center' },
-  follow: { alignItems: 'center', gap: 4, width: 72 },
-  avatar: { width: 64, height: 64, borderRadius: 32, backgroundColor: fixed.surface },
-  followName: { fontSize: 12, color: fixed.ink },
+  // The circles of the professionals the client hearted: a white gap, then a ring in the color of the app
+  followed: { gap: 16, paddingHorizontal: 24, paddingVertical: 6 },
+  follow: { alignItems: 'center', gap: 8, width: 94 },
+  ring: {
+    width: 94,
+    height: 94,
+    padding: 3,
+    borderRadius: 47,
+    borderWidth: 3,
+    backgroundColor: fixed.white,
+  },
+  avatar: { width: 82, height: 82, borderRadius: 41, backgroundColor: fixed.surface },
+  followName: { width: '100%', textAlign: 'center', fontSize: 14, color: fixed.ink },
 });

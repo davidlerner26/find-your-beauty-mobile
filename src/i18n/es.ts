@@ -52,8 +52,6 @@ export const es: Record<string, string> = {
     '¿Alguna observación para el profesional? (opcional)',
   'Alterações salvas': 'Cambios guardados',
   'Ambiente de teste': 'Entorno de pruebas',
-  'Ambiente de teste: o pagamento é simulado e nada é cobrado.':
-    'Entorno de prueba: el pago es simulado y no se cobra nada.',
   Anexar: 'Adjuntar',
   Anteriores: 'Anteriores',
   'Ao criar a conta você concorda com os': 'Al crear la cuenta aceptas los',
@@ -106,11 +104,16 @@ export const es: Record<string, string> = {
   'Seu perfil não está publicado, então os clientes não encontram você. Abra o perfil, complete os dados e marque para mostrar.':
     'Tu perfil no está publicado, así que los clientes no te encuentran. Abre el perfil, completa los datos y márcalo para mostrarlo.',
   Confirmar: 'Confirmar',
+  'Busque o endereço e escolha uma das sugestões.':
+    'Busca la dirección y elige una de las sugerencias.',
+  'Não foi possível buscar endereços agora. Tente novamente em instantes.':
+    'No se pudieron buscar direcciones ahora. Inténtalo de nuevo en unos instantes.',
+  'Não foi possível carregar este endereço. Escolha outro.':
+    'No se pudo cargar esta dirección. Elige otra.',
   Cancelar: 'Cancelar',
   'Cancelar agendamento': 'Cancelar reserva',
   'Cancelar o agendamento com {{name}}?': '¿Cancelar la reserva con {{name}}?',
   Carregando: 'Cargando',
-  'Cartão de teste •••• 4242': 'Tarjeta de prueba •••• 4242',
   Categoria: 'Categoría',
   Categorias: 'Categorías',
   Cauterização: 'Cauterización',
@@ -165,7 +168,6 @@ export const es: Record<string, string> = {
   Distância: 'Distancia',
   Dom: 'Dom',
   Domingo: 'Domingo',
-  Duração: 'Duración',
   'Duração (h:mm)': 'Duración (h:mm)',
   'Duração de cada horário': 'Duración de cada horario',
   'e a': 'y la',
@@ -373,8 +375,6 @@ export const es: Record<string, string> = {
     'Los horarios atenuados coinciden con otra reserva tuya.',
   ou: 'o',
   'Outros preços, por dia e horário': 'Otros precios, por día y horario',
-  Pagamento: 'Pago',
-  'Pagar agora': 'Pagar ahora',
   'Página não encontrada': 'Página no encontrada',
   'Para enviar o cadastro falta: {{missing}}.': 'Para enviar el registro falta: {{missing}}.',
   'Para publicar falta: {{missing}}.': 'Para publicar falta: {{missing}}.',
@@ -405,11 +405,9 @@ export const es: Record<string, string> = {
   'Preencha todos os campos obrigatórios dos serviços ou remova os que estiverem vazios.':
     'Completa todos los campos obligatorios de los servicios o quita los que estén vacíos.',
   'Preencher meus dados': 'Completar mis datos',
-  'Processando...': 'Procesando...',
   'Profissionais em destaque': 'Profesionales destacados',
   'Profissionais favoritos': 'Profesionales favoritos',
   'Profissionais próximos': 'Profesionales cercanos',
-  Profissional: 'Profesional',
   'Profissional não encontrado.': 'Profesional no encontrado.',
   Progressiva: 'Alisado progresivo',
   Próximo: 'Siguiente',
@@ -438,7 +436,6 @@ export const es: Record<string, string> = {
   'Remover preço': 'Quitar precio',
   'Remover serviço': 'Quitar servicio',
   'Removido dos favoritos': 'Quitado de favoritos',
-  'Resumo do agendamento': 'Resumen de la reserva',
   'Rua, número, bairro e cidade': 'Calle, número, barrio y ciudad',
   Sáb: 'Sáb',
   Sábado: 'Sábado',

@@ -22,6 +22,4 @@ export const PATHS = {
   booking: (id: string) => `/profissionais/${id}/agendar`,
   // The cards of the client
   cards: '/cartoes',
-  // The payment that comes before a booking in the test environment
-  checkout: (id: string) => `/profissionais/${id}/pagamento`,
 } as const;

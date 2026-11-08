@@ -6,7 +6,6 @@ import { StatusBar } from 'expo-status-bar';
 import '../i18n';
 import { AuthProvider } from '../contexts/auth';
 import { BookingsProvider } from '../contexts/bookings';
-import { CheckoutDraftProvider } from '../contexts/checkout-draft';
 import { FavoritesProvider } from '../contexts/favorites';
 import { LocationProvider } from '../contexts/location';
 import { MessagesProvider } from '../contexts/messages';
@@ -38,11 +37,9 @@ export default function RootLayout() {
                 <BookingsProvider>
                   <MessagesProvider>
                     <NotificationsProvider>
-                      <CheckoutDraftProvider>
-                        <StatusBar style="dark" />
-                        <Stack screenOptions={{ headerShown: false }} />
-                        <TestBanner />
-                      </CheckoutDraftProvider>
+                      <StatusBar style="dark" />
+                      <Stack screenOptions={{ headerShown: false }} />
+                      <TestBanner />
                     </NotificationsProvider>
                   </MessagesProvider>
                 </BookingsProvider>

@@ -10,11 +10,13 @@ import { Button } from '../../components/button';
 import { Guard } from '../../components/guard';
 import { Screen } from '../../components/screen';
 import { Spinner } from '../../components/spinner';
+import { AddressField } from '../../components/address-field';
 import { TextField } from '../../components/text-field';
 import { useAuth, useAuthActions } from '../../contexts/auth';
 import { useToast } from '../../contexts/toast';
 import { t } from '../../i18n';
 import { UserProfile } from '../../models/user';
+import { placesAvailable } from '../../services/places';
 import { users } from '../../services/users';
 import { fixed } from '../../theme/colors';
 import { useTheme } from '../../theme/theme';
@@ -51,6 +53,8 @@ function Profile() {
   const [editing, setEditing] = useState(false);
   const [values, setValues] = useState<ProfileValues>(EMPTY);
   const [address, setAddress] = useState('');
+  // Where the address is on the map: set when a suggestion of Google is chosen, cleared when the text is edited
+  const [position, setPosition] = useState<{ lat: number; lng: number } | null>(null);
   const [submitted, setSubmitted] = useState(false);
   const [saving, setSaving] = useState(false);
   const [addressError, setAddressError] = useState('');
@@ -79,6 +83,7 @@ function Profile() {
       cpf: data?.cpf ? formatCpf(data.cpf) : '',
     });
     setAddress(data?.address ?? '');
+    setPosition(data?.addressPosition ?? null);
     setSubmitted(false);
     setAddressError('');
     setSaveError('');
@@ -101,14 +106,23 @@ function Profile() {
     setAddressError('');
     setSaving(true);
     try {
-      // The address has to be one that exists: it is searched, and the position found is what is saved
-      const [found] = await Location.geocodeAsync(address.trim()).catch((error) => {
-        log.warn('Failed to find the address', error);
-        return [];
-      });
-      if (!found) {
-        setAddressError(t('Não encontramos esse endereço. Inclua a rua, o número e a cidade.'));
-        return;
+      // The address has to be one that exists. With the search of Google it was chosen from the suggestions (that gave
+      // it a position); without it, it is searched here and the position found is what is saved.
+      let spot = position;
+      if (!spot) {
+        if (placesAvailable()) {
+          setAddressError(t('Busque o endereço e escolha uma das sugestões.'));
+          return;
+        }
+        const [found] = await Location.geocodeAsync(address.trim()).catch((error) => {
+          log.warn('Failed to find the address', error);
+          return [];
+        });
+        if (!found) {
+          setAddressError(t('Não encontramos esse endereço. Inclua a rua, o número e a cidade.'));
+          return;
+        }
+        spot = { lat: found.latitude, lng: found.longitude };
       }
       const data = {
         firstName: values.firstName.trim(),
@@ -116,7 +130,7 @@ function Profile() {
         phone: values.phone,
         cpf: values.cpf,
         address: address.trim(),
-        addressPosition: { lat: found.latitude, lng: found.longitude },
+        addressPosition: spot,
       };
       await users.update(uid, data);
       await updateName(`${data.firstName} ${data.lastName}`);
@@ -239,15 +253,23 @@ function Profile() {
               error={errors.cpf}
               keyboardType="number-pad"
             />
-            <TextField
+            <AddressField
               label={t('Endereço')}
               value={address}
               onChangeText={(value) => {
                 setAddress(value);
+                setPosition(null);
                 setAddressError('');
               }}
+              onPlace={(place) => {
+                setAddress(place.address);
+                setPosition(place.position);
+                setAddressError('');
+              }}
+              confirmed={!!position}
               error={addressError}
               placeholder={t('Rua, número, bairro e cidade')}
+              autoComplete="street-address"
             />
             {saveError ? (
               <Text accessibilityRole="alert" style={[styles.error, { color: theme.errorFg }]}>

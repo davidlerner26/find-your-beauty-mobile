@@ -51,8 +51,6 @@ export const en: Record<string, string> = {
   'Alguma observação para o profissional? (opcional)': 'Any notes for the professional? (optional)',
   'Alterações salvas': 'Changes saved',
   'Ambiente de teste': 'Test environment',
-  'Ambiente de teste: o pagamento é simulado e nada é cobrado.':
-    'Test environment: the payment is simulated and nothing is charged.',
   Anexar: 'Attach',
   Anteriores: 'Earlier',
   'Ao criar a conta você concorda com os': 'By creating an account you agree to the',
@@ -105,11 +103,16 @@ export const en: Record<string, string> = {
   'Seu perfil não está publicado, então os clientes não encontram você. Abra o perfil, complete os dados e marque para mostrar.':
     'Your profile is not published, so clients cannot find you. Open the profile, complete the data and mark it to show.',
   Confirmar: 'Confirm',
+  'Busque o endereço e escolha uma das sugestões.':
+    'Search for the address and choose one of the suggestions.',
+  'Não foi possível buscar endereços agora. Tente novamente em instantes.':
+    'Could not search for addresses right now. Try again in a moment.',
+  'Não foi possível carregar este endereço. Escolha outro.':
+    'Could not load this address. Choose another.',
   Cancelar: 'Cancel',
   'Cancelar agendamento': 'Cancel booking',
   'Cancelar o agendamento com {{name}}?': 'Cancel the booking with {{name}}?',
   Carregando: 'Loading',
-  'Cartão de teste •••• 4242': 'Test card •••• 4242',
   Categoria: 'Category',
   Categorias: 'Categories',
   Cauterização: 'Hair cauterization',
@@ -164,7 +167,6 @@ export const en: Record<string, string> = {
   Distância: 'Distance',
   Dom: 'Sun',
   Domingo: 'Sunday',
-  Duração: 'Duration',
   'Duração (h:mm)': 'Duration (h:mm)',
   'Duração de cada horário': 'Length of each time slot',
   'e a': 'and the',
@@ -368,8 +370,6 @@ export const en: Record<string, string> = {
     'The dimmed times overlap another booking of yours.',
   ou: 'or',
   'Outros preços, por dia e horário': 'Other prices, by day and time',
-  Pagamento: 'Payment',
-  'Pagar agora': 'Pay now',
   'Página não encontrada': 'Page not found',
   'Para enviar o cadastro falta: {{missing}}.': 'To send the sign up you still need: {{missing}}.',
   'Para publicar falta: {{missing}}.': 'To publish you still need: {{missing}}.',
@@ -398,11 +398,9 @@ export const en: Record<string, string> = {
   'Preencha todos os campos obrigatórios dos serviços ou remova os que estiverem vazios.':
     'Fill in all the required fields of the services or remove the empty ones.',
   'Preencher meus dados': 'Fill in my details',
-  'Processando...': 'Processing...',
   'Profissionais em destaque': 'Featured professionals',
   'Profissionais favoritos': 'Favorite professionals',
   'Profissionais próximos': 'Nearby professionals',
-  Profissional: 'Professional',
   'Profissional não encontrado.': 'Professional not found.',
   Progressiva: 'Keratin straightening',
   Próximo: 'Next',
@@ -431,7 +429,6 @@ export const en: Record<string, string> = {
   'Remover preço': 'Remove price',
   'Remover serviço': 'Remove service',
   'Removido dos favoritos': 'Removed from favorites',
-  'Resumo do agendamento': 'Booking summary',
   'Rua, número, bairro e cidade': 'Street, number, neighborhood and city',
   Sáb: 'Sat',
   Sábado: 'Saturday',

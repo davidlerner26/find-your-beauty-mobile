@@ -16,7 +16,7 @@ import {
 } from './booking-flow-reducer';
 
 // The choice of day and time of a booking: the month being shown, the day, the time, and the times that are free
-// on that day. The screen keeps what is about the services, the price and the payment.
+// on that day. The screen keeps what is about the services and the price.
 export function useBookingFlow(context: BookingContext) {
   const [state, dispatch] = useReducer(bookingFlowReducer, undefined, () => initialBookingFlow());
   const { professionalId, availability, durationMinutes } = context;

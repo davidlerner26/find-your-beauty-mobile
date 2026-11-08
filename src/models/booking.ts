@@ -25,8 +25,6 @@ export type Booking = {
   clientAddress?: string;
   // Language of the page where the booking was made (the e-mails go in it)
   lang?: Lang;
-  // No payment integration yet: bookings are created with the payment pending
+  // The app has no payment: bookings are created with the payment pending
   paymentStatus: PaymentStatus;
-  // The hold on the card of the client (Stripe). Only in the test environment, where the payment exists.
-  paymentIntentId?: string;
 };

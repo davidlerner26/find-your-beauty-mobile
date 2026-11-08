@@ -33,6 +33,7 @@ import {
   refreshInstagram,
 } from '../services/instagram';
 import { professionalAccounts } from '../services/professional-accounts';
+import { placesAvailable } from '../services/places';
 import { removePhoto, uploadPhoto } from '../services/photos';
 import { fixed, radius } from '../theme/colors';
 import { useTheme } from '../theme/theme';
@@ -50,6 +51,7 @@ import {
 } from '../utils/profile-form';
 import { isServiceComplete, ServiceDraft, toService, toServiceDraft } from '../utils/service-draft';
 import { WEEKDAYS } from '../utils/weekdays';
+import { AddressField } from './address-field';
 import { AvailabilityEditor } from './availability-editor';
 import { Button } from './button';
 import { FormField, FormSection } from './form-kit';
@@ -598,7 +600,8 @@ function Form({ profile, signup }: { profile: Professional; signup: boolean }) {
         </View>
         {needsAddress && draft.serviceMode ? (
           <>
-            <FormField
+            <AddressField
+              variant="form"
               label={t('Endereço')}
               placeholder={t('Rua, número, bairro e cidade')}
               value={draft.address}
@@ -606,15 +609,16 @@ function Form({ profile, signup }: { profile: Professional; signup: boolean }) {
                 set({ address, addressConfirmed: false, position: NO_POSITION });
                 setAddressError('');
               }}
+              // A suggestion of Google was chosen: the address is written as Google writes it, and has a place
+              onPlace={(place) => {
+                set({ address: place.address, position: place.position, addressConfirmed: true });
+                setAddressError('');
+              }}
+              confirmed={draft.addressConfirmed}
               error={addressError || undefined}
             />
-            {draft.addressConfirmed ? (
-              <Text
-                style={[styles.ok, { color: theme.name === 'pro' ? fixed.white : fixed.success }]}
-              >
-                ✓ {t('Endereço confirmado.')}
-              </Text>
-            ) : (
+            {/* Without a Google key there are no suggestions: the address is confirmed with the geocoder of the phone */}
+            {!placesAvailable() && !draft.addressConfirmed ? (
               <Button
                 variant="outline"
                 label={t('Confirmar endereço')}
@@ -622,7 +626,7 @@ function Form({ profile, signup }: { profile: Professional; signup: boolean }) {
                 onPress={() => void confirmAddress()}
                 disabled={draft.address.trim().length < 5}
               />
-            )}
+            ) : null}
           </>
         ) : null}
       </FormSection>

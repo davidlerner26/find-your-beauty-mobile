@@ -146,7 +146,10 @@ function Details({ artist }: { artist: Professional }) {
               accessibilityRole="button"
               accessibilityLabel={t('Ver no mapa')}
               onPress={() =>
-                router.push({ pathname: PATHS.explore, params: { focus: artist.id } } as never)
+                router.push({
+                  pathname: PATHS.explore,
+                  params: { focus: artist.id, at: String(Date.now()) },
+                } as never)
               }
               style={styles.round}
             >

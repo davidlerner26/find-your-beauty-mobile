@@ -12,6 +12,7 @@ import { monthDays, startOfDay, startOfMonth } from '../utils/calendar';
 import { INTL_LOCALE } from '../utils/locale';
 import { Filters, MAX_KM, noFilters, SortKey } from '../utils/search-filter';
 import { Button } from './button';
+import { CenteredStrip } from './centered-strip';
 import { Chip } from './chip';
 import { SelectField } from './select-field';
 
@@ -141,14 +142,23 @@ function FilterBody({ applied, allTags, neighborhoods, hasPosition, onApply, onC
               <MaterialIcons name="chevron-right" size={28} color={theme.primary} />
             </Pressable>
           </View>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.days}
+          {/* The strip opens with the chosen day (or today) in the middle of the screen */}
+          <CenteredStrip
+            index={days.findIndex((day) =>
+              draft.date
+                ? day.date.getTime() === draft.date.getTime()
+                : day.date.getTime() === today.getTime(),
+            )}
+            itemWidth={56}
+            gap={10}
+            padding={24}
+            style={styles.bleed}
           >
             {days.map((day) => {
-              const selected = draft.date?.getTime() === day.date.getTime();
+              const chosen = draft.date?.getTime() === day.date.getTime();
               const isToday = day.date.getTime() === today.getTime();
+              // Until a day is chosen, today looks selected (it only becomes a filter when it is tapped)
+              const selected = chosen || (!draft.date && isToday);
               return (
                 <Pressable
                   key={day.number}
@@ -158,7 +168,7 @@ function FilterBody({ applied, allTags, neighborhoods, hasPosition, onApply, onC
                   })}
                   accessibilityState={{ selected, disabled: day.disabled }}
                   disabled={day.disabled}
-                  onPress={() => set('date', selected ? null : day.date)}
+                  onPress={() => set('date', chosen ? null : day.date)}
                   style={[
                     styles.day,
                     isToday && { borderColor: theme.primary },
@@ -175,7 +185,7 @@ function FilterBody({ applied, allTags, neighborhoods, hasPosition, onApply, onC
                 </Pressable>
               );
             })}
-          </ScrollView>
+          </CenteredStrip>
 
           <Title>{t('Serviço')}</Title>
           <View style={styles.wrap}>
@@ -278,7 +288,8 @@ const styles = StyleSheet.create({
   bold: { fontWeight: '700', color: fixed.ink },
   capital: { textTransform: 'capitalize' },
   month: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  days: { gap: 10, paddingVertical: 4 },
+  // The strip goes from edge to edge of the sheet (the body has 24px on the sides)
+  bleed: { marginHorizontal: -24 },
   day: {
     width: 56,
     height: 80,

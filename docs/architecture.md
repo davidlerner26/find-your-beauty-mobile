@@ -24,7 +24,7 @@ shared/         domain.ts: a copy of the site's file (npm run sync:shared)
 
 **Expo Router, Firebase JS SDK.** The SDK is the same as the site's, so the services are almost the same code and the
 app runs in Expo Go. The session is kept in AsyncStorage (`getReactNativePersistence`), so the app stays signed in; the
-site's "do not remember me" option does not exist. Google sign in and Stripe need a development build.
+site's "do not remember me" option does not exist. Google sign in needs a development build.
 
 **State: Context + `useReducer`, no library.** `Auth` is a provider with two contexts (state and actions), so a screen
 that only signs in does not render again when the state changes. The reducer is a pure exported function with a spec.
@@ -62,11 +62,17 @@ The provider only wraps the search screen. The filter sheet edits a draft that o
 
 **Booking.** `stores/booking-flow-reducer.ts` is the pure part of the site's `BookingFlowStore` (month, day, time, free times,
 next day with a free time), tested; `stores/booking-flow.tsx` is the hook that loads the taken slots. The booking is
-written by `services/bookings.ts` in one batch (the slots and the booking together, as the rules require). In the test
-environment (`features.checkout`, off in production like the site) "Finalizar" goes to a **simulated** payment screen
-and the booking is created by "Pagar agora" with `paymentStatus: 'pending'`. Saved cards and real holds use Stripe's
-native SDK, which does not run in Expo Go: they come with the first development build, behind the same
-`features.checkout` switch.
+written by `services/bookings.ts` in one batch (the slots and the booking together, as the rules require). The app has
+**no payment**: "Finalizar" (the check mark) books straight away, with `paymentStatus: 'pending'`, and the professional
+answers the request. The day strip scrolls to the selected day (`components/centered-strip.tsx`), which starts as the
+next day with a free time.
+
+**Addresses.** Every address field (client sign up, client profile, professional profile) is `components/address-field.tsx`:
+after a pause in the typing it shows the suggestions of Google Places (`services/places.ts`, the REST API) and the address
+only counts once one is chosen, which gives it the address as Google writes it and its position on the map. The key of the
+apps is not the one of the site (that one is restricted to web referrers): it comes from `EXPO_PUBLIC_GOOGLE_MAPS_API_KEY`
+and has to be restricted to the bundle id and the package. Without the key the field is a plain field and the address is
+confirmed with the geocoder of the phone.
 
 **Live data.** Bookings, conversations and notifications are contexts that follow Firestore (`contexts/`). Each list is
 stored with the uid it belongs to, so the list of a previous account never shows for another one. Photos for the chat
@@ -101,7 +107,7 @@ and a Spanish entry with the same placeholders, and an entry nobody uses fails t
 
 1. Foundation (done): repo, tooling, config, theme, i18n, Firebase, Auth, guards.
 2. Client, read side (done): home, search with filters, map, professional page with reviews, onboarding, login, sign up, e-mail code, password reset, legal. Left for later phases: Google sign in (needs OAuth client ids), booking from the professional page (phase 3).
-3. Client, transactions (done, except cards and real payments): booking, simulated payment, agenda, inbox and chat, notifications, profile. Cards and Stripe need a development build.
+3. Client, transactions (done): booking (no payment), agenda, inbox and chat, notifications, profile.
 4. Professional area (done): sign up in 2 steps, agenda (accept, decline, cancel), messages, profile editor, Instagram connection.
 5. Admin (done): the list of sign ups waiting for approval and the review of a professional (approve or deny).
 6. Polish (done, except push): icons and splash from the site's mark, permission texts, EAS build profiles, an accessibility audit. Push notifications are a proposal below.
@@ -118,9 +124,9 @@ The tests run in Portuguese (`jest.setup.ts` mocks the device locale).
 
 ## Builds and what is still open
 
-`eas.json` has three profiles: `development` (a development client, needed for Stripe and Google sign in), `preview`
+`eas.json` has three profiles: `development` (a development client, needed for Google sign in), `preview`
 (internal) and `production` (`EXPO_PUBLIC_APP_ENV=prod`, which selects the production Firebase project and turns
-`features.checkout` off). The `EXPO_PUBLIC_FIREBASE_*` variables of production are set in EAS, never in the repo. Nothing
+the featured professionals off). The `EXPO_PUBLIC_FIREBASE_*` variables of production are set in EAS, never in the repo. Nothing
 here is built or submitted without asking.
 
 Open, each one needs an account, a console or a change outside this repo:
@@ -135,7 +141,8 @@ Open, each one needs an account, a console or a change outside this repo:
   EAS), and, for the App Store, an equivalent option such as Sign in with Apple.
 - **Android map.** `react-native-maps` on Android needs a Google Maps key for the app (`android.config.googleMaps.apiKey`);
   the key of the site is restricted to web referrers.
-- **Stripe.** `@stripe/stripe-react-native` and saved cards, in a development build, behind `features.checkout`.
+- **Google Places key.** A key restricted to the iOS bundle id and the Android package, set as
+  `EXPO_PUBLIC_GOOGLE_MAPS_API_KEY`, for the address suggestions (the key of the site does not work from the apps).
 - **Instagram.** The redirect address in the Meta app (see above).
 - **Push notifications (proposal).** `expo-notifications` to get a token, stored in `users/{uid}` (or `professionals/{id}/private`),
   and a Cloud Function (in the site's repo) that sends a push where it already writes `users/{uid}/notifications`. It needs

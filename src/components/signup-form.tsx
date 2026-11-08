@@ -9,8 +9,10 @@ import { hasErrors, SignupValues, validateSignup } from '../utils/auth-forms';
 import { formatCpf } from '../utils/cpf';
 import { log } from '../utils/log';
 import { formatPhone } from '../utils/phone';
+import { placesAvailable } from '../services/places';
 import { PATHS } from '../utils/paths';
 import { authErrorMessage } from '../utils/validators';
+import { AddressField } from './address-field';
 import { AuthField, AuthScreen, FormError } from './auth-kit';
 import { Button } from './button';
 import { GoogleButton } from './google-button';
@@ -55,6 +57,8 @@ function Signup({ pro }: { pro: boolean }) {
     password: '',
   });
   const [address, setAddress] = useState('');
+  // Where the address is on the map: set when a suggestion of Google is chosen, cleared when the text is edited
+  const [position, setPosition] = useState<{ lat: number; lng: number } | null>(null);
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState('');
@@ -64,8 +68,11 @@ function Signup({ pro }: { pro: boolean }) {
     setValues((current) => ({ ...current, [field]: value }));
   const errors = submitted ? validateSignup(values) : {};
 
-  // The address has to be one that exists: it is searched, and the position found is what is saved
+  // The address has to be one that exists. With the search of Google it was chosen from the suggestions (that gave it
+  // a position); without it, it is searched here and the position found is what is saved.
   const findAddress = async () => {
+    if (position) return position;
+    if (placesAvailable()) return null;
     try {
       const [found] = await Location.geocodeAsync(address.trim());
       return found ? { lat: found.latitude, lng: found.longitude } : null;
@@ -95,7 +102,11 @@ function Signup({ pro }: { pro: boolean }) {
       }
       const addressPosition = await findAddress();
       if (!addressPosition) {
-        setAddressError(t('Não encontramos esse endereço. Inclua a rua, o número e a cidade.'));
+        setAddressError(
+          placesAvailable()
+            ? t('Busque o endereço e escolha uma das sugestões.')
+            : t('Não encontramos esse endereço. Inclua a rua, o número e a cidade.'),
+        );
         return;
       }
       await signUpWithEmail({ ...values, address: address.trim(), addressPosition });
@@ -159,14 +170,21 @@ function Signup({ pro }: { pro: boolean }) {
         keyboardType="number-pad"
       />
       {pro ? null : (
-        <AuthField
-          icon="location-on"
-          placeholder={t('Endereço')}
+        <AddressField
+          variant="auth"
+          label={t('Endereço')}
           value={address}
           onChangeText={(value) => {
             setAddress(value);
+            setPosition(null);
             setAddressError('');
           }}
+          onPlace={(place) => {
+            setAddress(place.address);
+            setPosition(place.position);
+            setAddressError('');
+          }}
+          confirmed={!!position}
           error={addressError}
           autoComplete="street-address"
           textContentType="fullStreetAddress"
