@@ -62,14 +62,18 @@ export function ProBookingCard({ booking, onAnswer }: Props) {
         <View style={styles.services}>
           {booking.services.map((service) => (
             <View key={service.id} style={styles.line}>
-              <Text style={styles.flex}>{catalogLabel(service.name)}</Text>
-              <Text>{formatPrice(service.price)}</Text>
+              <Text style={[styles.flex, { color: theme.text }]}>{catalogLabel(service.name)}</Text>
+              <Text style={{ color: theme.text }}>{formatPrice(service.price)}</Text>
             </View>
           ))}
         </View>
-        <View style={[styles.line, styles.total, { borderTopColor: theme.lineStrong }]}>
-          <Text style={styles.bold}>{t('Total')}</Text>
-          <Text style={styles.bold}>{formatPrice(booking.total)}</Text>
+        {/* A dashed line: a box with a dashed border on every side, cut to its top edge (a border on one side is not dashed) */}
+        <View style={styles.dash}>
+          <View style={[styles.dashed, { borderColor: theme.lineStrong }]} />
+        </View>
+        <View style={[styles.line, styles.total]}>
+          <Text style={[styles.bold, { color: theme.text }]}>{t('Total')}</Text>
+          <Text style={[styles.bold, { color: theme.text }]}>{formatPrice(booking.total)}</Text>
         </View>
 
         {booking.notes ? (
@@ -131,7 +135,9 @@ const styles = StyleSheet.create({
   services: { gap: 6, marginTop: 16, marginBottom: 8 },
   line: { flexDirection: 'row', justifyContent: 'space-between', gap: 12 },
   bold: { fontWeight: '700', color: fixed.ink },
-  total: { paddingTop: 12, borderTopWidth: 1, borderStyle: 'dashed' },
+  dash: { height: 1, overflow: 'hidden', marginTop: 4 },
+  dashed: { height: 4, borderWidth: 1, borderStyle: 'dashed' },
+  total: { paddingTop: 12 },
   notes: { marginTop: 12 },
   actions: { flexDirection: 'row', justifyContent: 'flex-end', gap: 12, marginTop: 16 },
   button: {
