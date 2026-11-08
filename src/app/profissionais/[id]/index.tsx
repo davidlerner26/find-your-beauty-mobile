@@ -25,7 +25,12 @@ import { useAuth } from '../../../contexts/auth';
 import { useProfessionals } from '../../../contexts/professionals';
 import { useToast } from '../../../contexts/toast';
 import { t } from '../../../i18n';
-import { DEFAULT_AVAILABILITY, Professional, ServiceCategory } from '../../../models/professional';
+import {
+  DEFAULT_AVAILABILITY,
+  hasLocation,
+  Professional,
+  ServiceCategory,
+} from '../../../models/professional';
 import { missingProfileData } from '../../../models/user';
 import { registerView } from '../../../services/profile-views';
 import { users } from '../../../services/users';
@@ -142,19 +147,22 @@ function Details({ artist }: { artist: Professional }) {
           </View>
           <View style={[styles.actions, { top: insets.top + 12 }]}>
             <HeartButton professionalId={artist.id} large style={styles.heart} />
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel={t('Ver no mapa')}
-              onPress={() =>
-                router.push({
-                  pathname: PATHS.explore,
-                  params: { focus: artist.id, at: String(Date.now()) },
-                } as never)
-              }
-              style={styles.round}
-            >
-              <MaterialIcons name="map" size={26} color={theme.primary} />
-            </Pressable>
+            {/* A professional that only goes to the client has no place on the map: nothing to find there */}
+            {hasLocation(artist) ? (
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={t('Ver no mapa')}
+                onPress={() =>
+                  router.push({
+                    pathname: PATHS.explore,
+                    params: { focus: artist.id, at: String(Date.now()) },
+                  } as never)
+                }
+                style={styles.round}
+              >
+                <MaterialIcons name="map" size={26} color={theme.primary} />
+              </Pressable>
+            ) : null}
           </View>
         </View>
 
