@@ -71,7 +71,8 @@ next day with a free time.
 after a pause in the typing it shows the suggestions of Google Places (`services/places.ts`, the REST API) and the address
 only counts once one is chosen, which gives it the address as Google writes it and its position on the map. The key of the
 apps is not the one of the site (that one is restricted to web referrers): it comes from `EXPO_PUBLIC_GOOGLE_MAPS_API_KEY`
-and has to be restricted to the bundle id and the package. Without the key the field is a plain field and the address is
+and has to be restricted to the bundle id and to the package with the SHA-1 of the signing certificate (debug, EAS and
+Play Store each have their own); the SHA-1 of the build goes in `EXPO_PUBLIC_GOOGLE_MAPS_ANDROID_CERT` (hex, no colons). Without the key the field is a plain field and the address is
 confirmed with the geocoder of the phone.
 
 **Live data.** Bookings, conversations and notifications are contexts that follow Firestore (`contexts/`). Each list is

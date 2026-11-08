@@ -38,13 +38,19 @@ export const toPlace = (answer: DetailsAnswer, fallback: string): Place | null =
   };
 };
 
-// The key of the apps is restricted to them: Google knows the app by its bundle id (iOS)
+// The key of the apps is restricted to them: Google knows the app by its bundle id (iOS) or by its package and the
+// SHA-1 of its signing certificate (Android)
 const headers = (): Record<string, string> => {
   const bundleId = Constants.expoConfig?.ios?.bundleIdentifier;
+  const androidPackage = Constants.expoConfig?.android?.package;
+  const { androidCert } = environment.maps;
   return {
     'Content-Type': 'application/json',
     'X-Goog-Api-Key': environment.maps.apiKey,
     ...(Platform.OS === 'ios' && bundleId ? { 'X-Ios-Bundle-Identifier': bundleId } : {}),
+    ...(Platform.OS === 'android' && androidPackage && androidCert
+      ? { 'X-Android-Package': androidPackage, 'X-Android-Cert': androidCert }
+      : {}),
   };
 };
 

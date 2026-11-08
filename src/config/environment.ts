@@ -15,7 +15,11 @@ const dev = {
   },
   // Google Places (the address search). The key of the apps is restricted to them (bundle id and package), so it is not
   // the one of the site: it comes from EXPO_PUBLIC_GOOGLE_MAPS_API_KEY. Without it the address is a plain field.
-  maps: { apiKey: process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY ?? '' },
+  // `androidCert` is the SHA-1 of the signing certificate of the build (hex, no colons) that the key is restricted to.
+  maps: {
+    apiKey: process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY ?? '',
+    androidCert: process.env.EXPO_PUBLIC_GOOGLE_MAPS_ANDROID_CERT ?? '',
+  },
   firebase: {
     apiKey: 'AIzaSyBwamplQdQ7d2BYMuD56DfVigkO1fuSpEw',
     authDomain: 'find-your-beauty-dev.firebaseapp.com',
@@ -39,7 +43,10 @@ export const environment =
           webClientId: env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID ?? '',
           iosClientId: env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID ?? '',
         },
-        maps: { apiKey: env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY ?? '' },
+        maps: {
+          apiKey: env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY ?? '',
+          androidCert: env.EXPO_PUBLIC_GOOGLE_MAPS_ANDROID_CERT ?? '',
+        },
         firebase: {
           apiKey: env.EXPO_PUBLIC_FIREBASE_API_KEY ?? '',
           authDomain: env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN ?? '',
