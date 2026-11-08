@@ -77,7 +77,7 @@ export function GoogleButton({
       >
         <Image
           accessibilityIgnoresInvertColors
-          source={require('../../assets/images/google.png')}
+          source={require('../../assets/images/google.svg')}
           style={styles.logo}
         />
         <Text style={styles.label}>{label}</Text>
