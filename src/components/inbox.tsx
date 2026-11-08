@@ -136,7 +136,7 @@ export function Inbox({ pro = false }: { pro?: boolean }) {
 
       {!auth.user ? null : tab === 'mensagens' ? (
         <>
-          <View style={styles.search}>
+          <View style={[styles.search, { backgroundColor: theme.field }]}>
             <MaterialIcons name="search" size={24} color={fixed.brand} />
             <TextInput
               accessibilityLabel={
@@ -274,7 +274,7 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     backgroundColor: fixed.surface,
   },
-  searchField: { flex: 1, fontSize: 16, color: fixed.ink },
+  searchField: { flex: 1, fontSize: 16, color: fixed.ink, backgroundColor: 'transparent' },
   row: { flexDirection: 'row', gap: 16, paddingVertical: 16, alignItems: 'center' },
   divided: { borderBottomWidth: 1, borderBottomColor: fixed.borderSoft },
   avatar: {
