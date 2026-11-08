@@ -520,4 +520,9 @@ export const en: Record<string, string> = {
   'Seu perfil está completo, mas oculto para os clientes.':
     'Your profile is complete, but hidden from clients.',
   'Salvar perfil': 'Save profile',
+  Card: 'Card',
+  'Topo da página': 'Top of the page',
+  'Arraste para ajustar': 'Drag to adjust',
+  'Centralizar foto': 'Center photo',
+  'Enquadramento da foto. Arraste para mover.': 'Photo framing. Drag to move it.',
 };

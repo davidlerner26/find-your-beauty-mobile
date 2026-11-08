@@ -2,7 +2,7 @@ import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
 import { useEffect, useRef, useState } from 'react';
-import { MaterialIcons } from '@expo/vector-icons';
+import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import {
   ActivityIndicator,
   Alert,
@@ -55,6 +55,7 @@ import { AddressField } from './address-field';
 import { AvailabilityEditor } from './availability-editor';
 import { Button } from './button';
 import { FormField, FormSection } from './form-kit';
+import { PhotoPositioner } from './photo-positioner';
 import { Screen } from './screen';
 import { ServicesEditor } from './services-editor';
 import { Spinner } from './spinner';
@@ -450,14 +451,7 @@ function Form({ profile, signup }: { profile: Professional; signup: boolean }) {
           {t('Aparece nos cards, no topo da sua página e redonda nas mensagens.')}
         </Text>
         <View style={styles.photoRow}>
-          {draft.image ? (
-            <Image
-              accessibilityIgnoresInvertColors
-              source={{ uri: draft.image }}
-              contentFit="cover"
-              style={styles.preview}
-            />
-          ) : (
+          {draft.image ? null : (
             <View style={[styles.preview, styles.empty, { backgroundColor: theme.primaryLight }]}>
               <Text style={{ color: theme.primary, fontSize: 14 }}>{t('Sem foto')}</Text>
             </View>
@@ -471,6 +465,13 @@ function Form({ profile, signup }: { profile: Professional; signup: boolean }) {
             />
           </View>
         </View>
+        {draft.image ? (
+          <PhotoPositioner
+            src={draft.image}
+            position={draft.imagePosition}
+            onChange={(imagePosition) => set({ imagePosition })}
+          />
+        ) : null}
 
         <FormField
           label={t('Sobre você')}
@@ -593,10 +594,10 @@ function Form({ profile, signup }: { profile: Professional; signup: boolean }) {
                 style={[
                   styles.mode,
                   { borderColor: on ? theme.primary : theme.muted },
-                  on && { backgroundColor: theme.primaryLight },
+                  on && { backgroundColor: theme.selectedBg },
                 ]}
               >
-                <Text style={{ color: on ? theme.primary : theme.text, fontWeight: '500' }}>
+                <Text style={{ color: on ? theme.selectedFg : theme.text, fontWeight: '500' }}>
                   {label}
                 </Text>
               </Pressable>
@@ -708,7 +709,7 @@ function InstagramButton({
       onPress={onPress}
       style={[styles.pill, styles.instagram, busy && styles.off]}
     >
-      <MaterialIcons name="photo-camera" size={22} color={fixed.white} />
+      <Ionicons name="logo-instagram" size={24} color={fixed.white} />
       <Text style={styles.instagramLabel}>{label}</Text>
     </Pressable>
   );
@@ -767,7 +768,10 @@ const styles = StyleSheet.create({
   brandPillLabel: { fontSize: 16, color: fixed.brand },
   dangerPill: { borderWidth: 1.5, borderColor: fixed.dangerStrong, backgroundColor: fixed.white },
   dangerLabel: { fontSize: 16, color: fixed.dangerStrong },
-  instagram: { backgroundColor: fixed.instagram.pink },
+  // The gradient of the site (45deg, orange to blue)
+  instagram: {
+    experimental_backgroundImage: `linear-gradient(45deg, ${fixed.instagram.orange}, ${fixed.instagram.pink} 45%, ${fixed.instagram.purple} 75%, ${fixed.instagram.blue})`,
+  },
   instagramLabel: { fontSize: 16, fontWeight: '700', color: fixed.white },
   off: { opacity: 0.5 },
   submit: { marginTop: 8 },

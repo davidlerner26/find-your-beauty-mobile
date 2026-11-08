@@ -45,6 +45,10 @@ export type Theme = {
   line: string;
   // The background of the fields of the sign in and sign up screens
   field: string;
+  // A chosen option (a chip, a place of work): the light color with the main color on the client side; white with the
+  // blue letters on the professional side, where the main color is white
+  selectedBg: string;
+  selectedFg: string;
   // The color of an error written on the background
   errorFg: string;
   // Messages: the background of the chat and the bubbles (theirs and mine) with the color of their letters
@@ -74,6 +78,8 @@ export const clientTheme: Theme = {
   onPrimary: fixed.white,
   line: fixed.borderSoft,
   field: fixed.surface,
+  selectedBg: '#e8edf3',
+  selectedFg: fixed.brand,
   errorFg: fixed.danger,
   chatBg: '#f7fafb',
   bubble: fixed.brand,
@@ -99,6 +105,8 @@ export const proTheme: Theme = {
   onPrimary: fixed.brand,
   line: 'rgba(255, 255, 255, 0.22)',
   field: fixed.white,
+  selectedBg: fixed.white,
+  selectedFg: fixed.brand,
   errorFg: '#ffc9cb',
   chatBg: 'transparent',
   bubble: 'rgba(255, 255, 255, 0.16)',

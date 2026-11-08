@@ -527,4 +527,9 @@ export const es: Record<string, string> = {
   'Seu perfil está completo, mas oculto para os clientes.':
     'Tu perfil está completo, pero oculto para los clientes.',
   'Salvar perfil': 'Guardar perfil',
+  Card: 'Tarjeta',
+  'Topo da página': 'Parte superior de la página',
+  'Arraste para ajustar': 'Arrastra para ajustar',
+  'Centralizar foto': 'Centrar foto',
+  'Enquadramento da foto. Arraste para mover.': 'Encuadre de la foto. Arrastra para moverla.',
 };

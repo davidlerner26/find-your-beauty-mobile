@@ -28,7 +28,7 @@ export function Chip({
   const look = soft
     ? { backgroundColor: theme.primaryLight, borderColor: theme.primaryLight, color: theme.primary }
     : active
-      ? { backgroundColor: theme.primaryLight, borderColor: theme.primary, color: theme.primary }
+      ? { backgroundColor: theme.selectedBg, borderColor: theme.primary, color: theme.selectedFg }
       : { backgroundColor: fixed.white, borderColor: fixed.border, color: fixed.ink };
   return (
     <Pressable
