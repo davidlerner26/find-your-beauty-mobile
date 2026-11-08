@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Callout, Marker } from 'react-native-maps';
+import { Marker } from 'react-native-maps';
 import { fixed } from '../theme/colors';
 
 const HEAD = 36;
@@ -40,15 +40,13 @@ export function MapPin({
       anchor={{ x: 0.5, y: 1 }}
       tracksViewChanges={watching}
       zIndex={selected ? 1 : 0}
-      // The map selects a marker that is tapped and opens its balloon (empty here): the screen keeps the selection
+      // The map selects a marker that is tapped: the screen keeps the selection. There is no <Callout> child: with the
+      // new architecture it breaks the index of the next child and the app closes when the map mounts.
       onPress={() => {
         marker.current?.hideCallout();
         onPress();
       }}
     >
-      <Callout tooltip>
-        <View />
-      </Callout>
       <View style={styles.box}>
         <View style={[styles.drop, { backgroundColor: selected ? fixed.accent : fixed.brand }]} />
         <View style={styles.dot} />
