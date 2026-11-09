@@ -27,9 +27,7 @@ export const es: Record<string, string> = {
   'Abrir no navegador': 'Abrir en el navegador',
   'Adicionado aos favoritos': 'Añadido a favoritos',
   'Adicionar {{name}}': 'Añadir {{name}}',
-  'Adicionar foto': 'Añadir foto',
   'Adicionar fotos': 'Añadir fotos',
-  'Adicionar preço por dia e horário': 'Añadir precio por día y horario',
   'Adicionar serviço': 'Añadir servicio',
   Administração: 'Administración',
   Agenda: 'Agenda',
@@ -148,7 +146,6 @@ export const es: Record<string, string> = {
   Desconectar: 'Desconectar',
   'Desconectar o Instagram? As fotos importadas deixam de aparecer no seu perfil.':
     '¿Desconectar Instagram? Las fotos importadas dejarán de aparecer en tu perfil.',
-  'Descrição (opcional)': 'Descripción (opcional)',
   'Design de sobrancelhas': 'Diseño de cejas',
   'Dias bloqueados': 'Días bloqueados',
   'Digite a senha.': 'Escribe la contraseña.',
@@ -367,7 +364,6 @@ export const es: Record<string, string> = {
   'Os horários apagados coincidem com outro agendamento seu.':
     'Los horarios atenuados coinciden con otra reserva tuya.',
   ou: 'o',
-  'Outros preços, por dia e horário': 'Otros precios, por día y horario',
   'Página não encontrada': 'Página no encontrada',
   'Para enviar o cadastro falta: {{missing}}.': 'Para enviar el registro falta: {{missing}}.',
   'Para publicar falta: {{missing}}.': 'Para publicar falta: {{missing}}.',
@@ -424,7 +420,6 @@ export const es: Record<string, string> = {
   'Remover {{text}}': 'Quitar {{text}}',
   'Remover dos favoritos': 'Quitar de favoritos',
   'Remover foto': 'Quitar foto',
-  'Remover preço': 'Quitar precio',
   'Remover serviço': 'Quitar servicio',
   'Removido dos favoritos': 'Quitado de favoritos',
   'Rua, número, bairro e cidade': 'Calle, número, barrio y ciudad',
@@ -535,4 +530,14 @@ export const es: Record<string, string> = {
   Selecione: 'Selecciona',
   'Dias já bloqueados': 'Días ya bloqueados',
   'Desbloquear período': 'Desbloquear período',
+  'Nome do serviço': 'Nombre del servicio',
+  'Preço por dia e horário': 'Precio por día y horario',
+  Descrição: 'Descripción',
+  Das: 'Desde',
+  Até: 'Hasta',
+  'Início do dia': 'Inicio del día',
+  'Fim do dia': 'Fin del día',
+  Remover: 'Quitar',
+  'Ex: aos sábados o serviço custa mais. O preço vale pelo horário de início do atendimento.':
+    'Ej: los sábados el servicio cuesta más. El precio vale por la hora de inicio de la atención.',
 };

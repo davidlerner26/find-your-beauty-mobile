@@ -29,7 +29,10 @@ export function Chip({
     ? { backgroundColor: theme.primaryLight, borderColor: theme.primaryLight, color: theme.primary }
     : active
       ? { backgroundColor: theme.selectedBg, borderColor: theme.primary, color: theme.selectedFg }
-      : { backgroundColor: fixed.white, borderColor: fixed.border, color: fixed.ink };
+      : theme.name === 'pro'
+        ? // On the blue: an outline in the letters' color, as on the site
+          { backgroundColor: 'transparent', borderColor: theme.muted, color: theme.text }
+        : { backgroundColor: fixed.white, borderColor: fixed.border, color: fixed.ink };
   return (
     <Pressable
       accessibilityRole="button"

@@ -27,9 +27,7 @@ export const en: Record<string, string> = {
   'Abrir no navegador': 'Open in the browser',
   'Adicionado aos favoritos': 'Added to favorites',
   'Adicionar {{name}}': 'Add {{name}}',
-  'Adicionar foto': 'Add photo',
   'Adicionar fotos': 'Add photos',
-  'Adicionar preço por dia e horário': 'Add a price by day and time',
   'Adicionar serviço': 'Add service',
   Administração: 'Administration',
   Agenda: 'Schedule',
@@ -147,7 +145,6 @@ export const en: Record<string, string> = {
   Desconectar: 'Disconnect',
   'Desconectar o Instagram? As fotos importadas deixam de aparecer no seu perfil.':
     'Disconnect Instagram? The imported photos will stop showing on your profile.',
-  'Descrição (opcional)': 'Description (optional)',
   'Design de sobrancelhas': 'Eyebrow design',
   'Dias bloqueados': 'Blocked days',
   'Digite a senha.': 'Enter your password.',
@@ -362,7 +359,6 @@ export const en: Record<string, string> = {
   'Os horários apagados coincidem com outro agendamento seu.':
     'The dimmed times overlap another booking of yours.',
   ou: 'or',
-  'Outros preços, por dia e horário': 'Other prices, by day and time',
   'Página não encontrada': 'Page not found',
   'Para enviar o cadastro falta: {{missing}}.': 'To send the sign up you still need: {{missing}}.',
   'Para publicar falta: {{missing}}.': 'To publish you still need: {{missing}}.',
@@ -417,7 +413,6 @@ export const en: Record<string, string> = {
   'Remover {{text}}': 'Remove {{text}}',
   'Remover dos favoritos': 'Remove from favorites',
   'Remover foto': 'Remove photo',
-  'Remover preço': 'Remove price',
   'Remover serviço': 'Remove service',
   'Removido dos favoritos': 'Removed from favorites',
   'Rua, número, bairro e cidade': 'Street, number, neighborhood and city',
@@ -528,4 +523,14 @@ export const en: Record<string, string> = {
   Selecione: 'Select',
   'Dias já bloqueados': 'Days already blocked',
   'Desbloquear período': 'Unblock period',
+  'Nome do serviço': 'Service name',
+  'Preço por dia e horário': 'Price by day and time',
+  Descrição: 'Description',
+  Das: 'From',
+  Até: 'Until',
+  'Início do dia': 'Start of day',
+  'Fim do dia': 'End of day',
+  Remover: 'Remove',
+  'Ex: aos sábados o serviço custa mais. O preço vale pelo horário de início do atendimento.':
+    'E.g. on Saturdays the service costs more. The price applies to the start time of the appointment.',
 };

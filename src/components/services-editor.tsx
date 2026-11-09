@@ -1,6 +1,7 @@
 import { Image } from 'expo-image';
 import { useMemo } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
+import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native';
 import { Text, TextInput } from './text';
 import { t } from '../i18n';
 import { ServiceCategory } from '../models/professional';
@@ -56,6 +57,68 @@ function Field({
       {children}
       {error ? <Text style={styles.error}>{t('Obrigatório')}</Text> : null}
     </View>
+  );
+}
+
+// Start and end of the day in a price rule ("Início do dia" / "Fim do dia"), as the site saves them
+const DAY_START = '00:00';
+const DAY_END = '24:00';
+
+// A time typed as digits ("1830" -> "18:30"), with a clock on the right like the time field of the site
+function TimeField({
+  label,
+  value,
+  disabled,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  disabled: boolean;
+  onChange: (value: string) => void;
+}) {
+  const styles = useStyles();
+  return (
+    <View style={styles.timeBox}>
+      <TextInput
+        accessibilityLabel={label}
+        editable={!disabled}
+        value={value}
+        onChangeText={(text) => onChange(maskTime(text))}
+        placeholder="--:--"
+        keyboardType="number-pad"
+        maxLength={5}
+        style={[styles.input, styles.ruleInput, styles.timeInput, disabled && styles.off]}
+      />
+      <MaterialIcons name="schedule" size={18} color={fixed.ink} style={styles.clock} />
+    </View>
+  );
+}
+
+// A check box with its text, like the ones of the site
+function Check({
+  label,
+  checked,
+  onChange,
+}: {
+  label: string;
+  checked: boolean;
+  onChange: () => void;
+}) {
+  const styles = useStyles();
+  return (
+    <Pressable
+      accessibilityRole="checkbox"
+      accessibilityLabel={label}
+      accessibilityState={{ checked }}
+      onPress={onChange}
+      hitSlop={6}
+      style={styles.check}
+    >
+      <View style={[styles.box, checked && styles.boxOn]}>
+        {checked ? <MaterialIcons name="check" size={16} color={fixed.white} /> : null}
+      </View>
+      <Text style={styles.checkText}>{label}</Text>
+    </Pressable>
   );
 }
 
@@ -119,9 +182,9 @@ export function ServicesEditor({
             </Field>
 
             {service.category ? (
-              <Field label={t('Serviço')} error={missing && !service.name.trim()}>
+              <Field label={t('Nome do serviço')} error={missing && !service.name.trim()}>
                 <SelectField
-                  label={t('Serviço')}
+                  label={t('Nome do serviço')}
                   placeholder={t('Selecione')}
                   value={service.name || null}
                   options={serviceNamesOf(service).map((name) => ({
@@ -161,119 +224,174 @@ export function ServicesEditor({
               </View>
             </View>
 
-            <Field label={t('Descrição (opcional)')}>
+            {/* Another price for some days of the week and times */}
+            <View style={styles.rules}>
+              <Text style={styles.label}>{t('Preço por dia e horário')}</Text>
+              {service.priceRules.map((rule) => (
+                <View key={rule.id} style={[styles.rule, { borderColor: theme.muted }]}>
+                  <View style={styles.ruleDays}>
+                    {WEEKDAYS.map((day) => (
+                      <Chip
+                        key={day.key}
+                        small
+                        label={day.label.slice(0, 3)}
+                        active={rule.days.includes(Number(day.key))}
+                        onPress={() => {
+                          const next = { ...rule, days: [...rule.days] };
+                          toggleRuleDay(next, Number(day.key));
+                          updateRule(service, rule.id, { days: next.days });
+                        }}
+                      />
+                    ))}
+                  </View>
+                  <View style={styles.ruleFields}>
+                    <View style={styles.ruleTime}>
+                      <Text style={styles.label}>{t('Das')}</Text>
+                      <TimeField
+                        label={t('A partir das')}
+                        value={rule.start === DAY_START ? '' : rule.start}
+                        disabled={rule.start === DAY_START}
+                        onChange={(start) => updateRule(service, rule.id, { start })}
+                      />
+                      <Check
+                        label={t('Início do dia')}
+                        checked={rule.start === DAY_START}
+                        onChange={() =>
+                          updateRule(service, rule.id, {
+                            start: rule.start === DAY_START ? '' : DAY_START,
+                          })
+                        }
+                      />
+                    </View>
+                    <View style={styles.ruleTime}>
+                      <Text style={styles.label}>{t('Até')}</Text>
+                      <TimeField
+                        label={t('Até as')}
+                        value={rule.end === DAY_END ? '' : rule.end}
+                        disabled={rule.end === DAY_END}
+                        onChange={(end) => updateRule(service, rule.id, { end })}
+                      />
+                      <Check
+                        label={t('Fim do dia')}
+                        checked={rule.end === DAY_END}
+                        onChange={() =>
+                          updateRule(service, rule.id, { end: rule.end === DAY_END ? '' : DAY_END })
+                        }
+                      />
+                    </View>
+                    <View style={styles.ruleTime}>
+                      <Text style={styles.label}>{t('Preço (R$)')}</Text>
+                      <TextInput
+                        accessibilityLabel={t('Preço (R$)')}
+                        value={rule.price}
+                        onChangeText={(text) =>
+                          updateRule(service, rule.id, { price: maskMoney(text) })
+                        }
+                        keyboardType="number-pad"
+                        style={[styles.input, styles.ruleInput]}
+                      />
+                    </View>
+                  </View>
+                  {tried && !isRuleComplete(rule) ? (
+                    <Text style={styles.error}>
+                      {t('Escolha os dias, um horário de início antes do fim e um preço.')}
+                    </Text>
+                  ) : null}
+                  <Pressable
+                    accessibilityRole="button"
+                    accessibilityLabel={t('Remover')}
+                    onPress={() =>
+                      update(service.id, {
+                        priceRules: service.priceRules.filter((r) => r.id !== rule.id),
+                      })
+                    }
+                    style={styles.ruleRemove}
+                  >
+                    <Text style={styles.underlined}>{t('Remover')}</Text>
+                  </Pressable>
+                </View>
+              ))}
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={t('Preço por dia e horário')}
+                onPress={() =>
+                  update(service.id, { priceRules: [...service.priceRules, newRuleDraft()] })
+                }
+              >
+                <Text style={{ color: theme.primary, fontSize: 16 }}>
+                  + {t('Preço por dia e horário')}
+                </Text>
+              </Pressable>
+              {service.priceRules.length ? null : (
+                <Text style={styles.muted}>
+                  {t(
+                    'Ex: aos sábados o serviço custa mais. O preço vale pelo horário de início do atendimento.',
+                  )}
+                </Text>
+              )}
+            </View>
+
+            {/* Photos of the service: the card on the professional page shows them as a gallery */}
+            <View style={styles.photosHead}>
+              <Text style={styles.label}>{t('Fotos do serviço')}</Text>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={t('Adicionar fotos')}
+                accessibilityState={{ busy: uploading }}
+                disabled={uploading}
+                hitSlop={8}
+                onPress={() =>
+                  void onAddPhoto().then((url) => {
+                    if (url) update(service.id, { photos: [...service.photos, url] });
+                  })
+                }
+              >
+                {uploading ? (
+                  <ActivityIndicator color={theme.primary} />
+                ) : (
+                  <Text style={{ color: theme.primary, fontSize: 16 }}>
+                    + {t('Adicionar fotos')}
+                  </Text>
+                )}
+              </Pressable>
+            </View>
+            {service.photos.length ? (
+              <View style={styles.chips}>
+                {service.photos.map((photo) => (
+                  <View key={photo} style={styles.photo}>
+                    <Image
+                      accessibilityIgnoresInvertColors
+                      source={{ uri: photo }}
+                      contentFit="cover"
+                      style={styles.photoImage}
+                    />
+                    <Pressable
+                      accessibilityRole="button"
+                      accessibilityLabel={t('Remover foto')}
+                      hitSlop={6}
+                      onPress={() => {
+                        onDiscard([photo]);
+                        update(service.id, { photos: service.photos.filter((p) => p !== photo) });
+                      }}
+                      style={styles.photoRemove}
+                    >
+                      <MaterialIcons name="close" size={16} color={fixed.white} />
+                    </Pressable>
+                  </View>
+                ))}
+              </View>
+            ) : null}
+
+            <Field label={t('Descrição')}>
               <TextInput
-                accessibilityLabel={t('Descrição (opcional)')}
+                accessibilityLabel={t('Descrição')}
                 value={service.description}
                 onChangeText={(description) => update(service.id, { description })}
                 multiline
-                maxLength={500}
+                maxLength={1000}
                 style={[styles.input, styles.multiline]}
               />
             </Field>
-
-            <Text style={styles.label}>{t('Outros preços, por dia e horário')}</Text>
-            {service.priceRules.map((rule) => (
-              <View key={rule.id} style={[styles.rule, { backgroundColor: theme.primaryLight }]}>
-                <View style={styles.chips}>
-                  {WEEKDAYS.map((day) => (
-                    <Chip
-                      key={day.key}
-                      label={day.label.slice(0, 3)}
-                      active={rule.days.includes(Number(day.key))}
-                      onPress={() => {
-                        const next = { ...rule, days: [...rule.days] };
-                        toggleRuleDay(next, Number(day.key));
-                        updateRule(service, rule.id, { days: next.days });
-                      }}
-                    />
-                  ))}
-                </View>
-                <View style={styles.row}>
-                  <TextInput
-                    accessibilityLabel={t('A partir das')}
-                    value={rule.start}
-                    onChangeText={(text) => updateRule(service, rule.id, { start: maskTime(text) })}
-                    placeholder="18:00"
-                    keyboardType="number-pad"
-                    maxLength={5}
-                    style={[styles.input, styles.small]}
-                  />
-                  <Text style={styles.muted}>{t('às')}</Text>
-                  <TextInput
-                    accessibilityLabel={t('Até as')}
-                    value={rule.end}
-                    onChangeText={(text) => updateRule(service, rule.id, { end: maskTime(text) })}
-                    placeholder="22:00"
-                    keyboardType="number-pad"
-                    maxLength={5}
-                    style={[styles.input, styles.small]}
-                  />
-                  <TextInput
-                    accessibilityLabel={t('Preço (R$)')}
-                    value={rule.price}
-                    onChangeText={(text) =>
-                      updateRule(service, rule.id, { price: maskMoney(text) })
-                    }
-                    keyboardType="number-pad"
-                    style={[styles.input, styles.small]}
-                  />
-                </View>
-                {tried && !isRuleComplete(rule) ? (
-                  <Text style={styles.error}>
-                    {t('Escolha os dias, um horário de início antes do fim e um preço.')}
-                  </Text>
-                ) : null}
-                <Button
-                  variant="link"
-                  label={t('Remover preço')}
-                  onPress={() =>
-                    update(service.id, {
-                      priceRules: service.priceRules.filter((r) => r.id !== rule.id),
-                    })
-                  }
-                />
-              </View>
-            ))}
-            <Button
-              variant="outline"
-              label={t('Adicionar preço por dia e horário')}
-              onPress={() =>
-                update(service.id, { priceRules: [...service.priceRules, newRuleDraft()] })
-              }
-            />
-
-            <Text style={styles.label}>{t('Fotos do serviço')}</Text>
-            <View style={styles.chips}>
-              {service.photos.map((photo) => (
-                <Pressable
-                  key={photo}
-                  accessibilityRole="button"
-                  accessibilityLabel={t('Remover foto')}
-                  onPress={() => {
-                    onDiscard([photo]);
-                    update(service.id, { photos: service.photos.filter((p) => p !== photo) });
-                  }}
-                >
-                  <Image
-                    accessibilityIgnoresInvertColors
-                    source={{ uri: photo }}
-                    contentFit="cover"
-                    style={styles.photo}
-                  />
-                </Pressable>
-              ))}
-            </View>
-            <Button
-              variant="outline"
-              label={t('Adicionar foto')}
-              loading={uploading}
-              onPress={() =>
-                void onAddPhoto().then((url) => {
-                  if (url) update(service.id, { photos: [...service.photos, url] });
-                })
-              }
-            />
 
             <View style={styles.removeGap}>
               <Button
@@ -329,8 +447,45 @@ const makeStyles = (theme: Theme) =>
     },
     small: { flex: 1, textAlign: 'center' },
     multiline: { minHeight: 80, textAlignVertical: 'top', paddingTop: 10 },
-    rule: { gap: 8, padding: 10, borderRadius: 10, backgroundColor: fixed.surface },
-    photo: { width: 72, height: 72, borderRadius: 10, backgroundColor: fixed.surface },
+    rules: { gap: 10 },
+    rule: { gap: 10, padding: 12, borderWidth: 1, borderRadius: 12 },
+    ruleDays: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
+    ruleFields: { flexDirection: 'row', gap: 8, alignItems: 'flex-start' },
+    ruleTime: { flex: 1, gap: 6 },
+    ruleInput: { minHeight: 44, paddingHorizontal: 12 },
+    timeBox: { justifyContent: 'center' },
+    timeInput: { paddingRight: 32 },
+    clock: { position: 'absolute', right: 10 },
+    off: { opacity: 0.5 },
+    check: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+    box: {
+      width: 20,
+      height: 20,
+      borderRadius: 4,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: fixed.white,
+      borderWidth: 1.5,
+      borderColor: fixed.border,
+    },
+    boxOn: { backgroundColor: fixed.brand, borderColor: fixed.brand },
+    checkText: { fontSize: 13.5, color: theme.text },
+    ruleRemove: { alignSelf: 'flex-end' },
+    underlined: { color: theme.errorFg, textDecorationLine: 'underline' },
+    photosHead: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline' },
+    photo: { width: 96, height: 96 },
+    photoImage: { flex: 1, borderRadius: 12, backgroundColor: fixed.surface },
+    photoRemove: {
+      position: 'absolute',
+      top: 6,
+      right: 6,
+      width: 26,
+      height: 26,
+      borderRadius: 13,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    },
     removeGap: { marginTop: 14 },
     muted: { color: theme.muted },
     error: { color: theme.errorFg, fontSize: 13 },
