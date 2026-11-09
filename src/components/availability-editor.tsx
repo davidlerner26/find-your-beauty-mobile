@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { StyleSheet, Switch, View } from 'react-native';
+import { Pressable, StyleSheet, Switch, View } from 'react-native';
 import { Text, TextInput } from './text';
 import { t } from '../i18n';
 import { Availability, DateRange } from '../models/professional';
@@ -146,7 +146,7 @@ export function AvailabilityEditor({
         </Text>
       ) : null}
       <Button
-        variant="outline"
+        variant="light"
         label={t('Bloquear período')}
         onPress={block}
         disabled={!pending.start}
@@ -154,12 +154,16 @@ export function AvailabilityEditor({
       {availability.blockedRanges.length ? (
         <View style={styles.chips}>
           {availability.blockedRanges.map((range) => (
-            <Chip
+            <Pressable
               key={range.start + range.end}
-              label={`${rangeLabel(range.start, range.end)} ✕`}
-              active
+              accessibilityRole="button"
+              accessibilityLabel={`${t('Desbloquear período')}: ${rangeLabel(range.start, range.end)}`}
               onPress={() => unblock(range)}
-            />
+              style={styles.blockedChip}
+            >
+              <Text style={styles.blockedText}>{rangeLabel(range.start, range.end)}</Text>
+              <Text style={styles.blockedText}>✕</Text>
+            </Pressable>
           ))}
         </View>
       ) : (
@@ -192,6 +196,16 @@ const makeStyles = (theme: Theme) =>
       color: fixed.ink,
     },
     bold: { fontWeight: '700', color: theme.text },
+    blockedChip: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+      paddingVertical: 8,
+      paddingHorizontal: 16,
+      borderRadius: 999,
+      backgroundColor: fixed.dangerBg,
+    },
+    blockedText: { color: fixed.danger },
     muted: { color: theme.muted },
     error: { color: theme.errorFg },
   });

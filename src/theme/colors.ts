@@ -19,6 +19,8 @@ export const fixed = {
   surface: '#f1f2f6',
   divider: '#f0f0f0',
   disabled: '#ccc',
+  // The days that can not be picked in a calendar
+  disabledText: '#c4c7cf',
   success: '#1f8f4d',
   white: '#fff',
   instagram: {

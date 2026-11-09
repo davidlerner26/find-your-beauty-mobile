@@ -533,4 +533,6 @@ export const es: Record<string, string> = {
   'Centralizar foto': 'Centrar foto',
   'Enquadramento da foto. Arraste para mover.': 'Encuadre de la foto. Arrastra para moverla.',
   Selecione: 'Selecciona',
+  'Dias já bloqueados': 'Días ya bloqueados',
+  'Desbloquear período': 'Desbloquear período',
 };

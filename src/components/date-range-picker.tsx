@@ -6,14 +6,7 @@ import { t } from '../i18n';
 import { DateRange } from '../models/professional';
 import { fixed } from '../theme/colors';
 import { INTL_LOCALE } from '../utils/locale';
-import {
-  isBlockedDay,
-  isEdgeOfRange,
-  isInsideRange,
-  monthCells,
-  PendingRange,
-  pickInRange,
-} from '../utils/range-picker';
+import { isInsideRange, monthCells, PendingRange, pickInRange } from '../utils/range-picker';
 import { startOfMonth } from '../utils/calendar';
 import { ThemeProvider } from '../theme/theme';
 
@@ -49,7 +42,11 @@ export function DateRangePicker({ range, onChange, min, blocked }: Props) {
             onPress={() => setMonth(new Date(month.getFullYear(), month.getMonth() - 1, 1))}
             style={{ opacity: canGoBack ? 1 : 0.3 }}
           >
-            <MaterialIcons name="chevron-left" size={28} color={fixed.ink} />
+            <MaterialIcons
+              name="chevron-left"
+              size={28}
+              color={canGoBack ? fixed.brand : fixed.disabledText}
+            />
           </Pressable>
           <Text style={styles.month}>{label}</Text>
           <Pressable
@@ -57,7 +54,7 @@ export function DateRangePicker({ range, onChange, min, blocked }: Props) {
             accessibilityLabel={t('Próximo mês')}
             onPress={() => setMonth(new Date(month.getFullYear(), month.getMonth() + 1, 1))}
           >
-            <MaterialIcons name="chevron-right" size={28} color={fixed.ink} />
+            <MaterialIcons name="chevron-right" size={28} color={fixed.brand} />
           </Pressable>
         </View>
         <View style={styles.grid}>
@@ -68,8 +65,11 @@ export function DateRangePicker({ range, onChange, min, blocked }: Props) {
           ))}
           {cells.map((cell, n) => {
             if (!cell) return <View key={n} style={styles.cell} />;
-            const taken = isBlockedDay(cell.key, blocked);
-            const edge = isEdgeOfRange(range, cell.key);
+            const band = blocked.find((range) => cell.key >= range.start && cell.key <= range.end);
+            const taken = !!band;
+            const start = range.start === cell.key;
+            const end = (range.end ?? range.start) === cell.key;
+            const edge = start || end;
             const inside = isInsideRange(range, cell.key);
             return (
               <Pressable
@@ -82,13 +82,22 @@ export function DateRangePicker({ range, onChange, min, blocked }: Props) {
                 style={[
                   styles.cell,
                   inside && styles.inside,
+                  // With both ends picked, the band is closed on the inner side
                   edge && styles.edge,
-                  taken && styles.taken,
-                  cell.disabled && { opacity: 0.3 },
+                  edge && !!range.end && start && !end && styles.bandStart,
+                  edge && !!range.end && end && !start && styles.bandEnd,
+                  band && styles.taken,
+                  band && cell.key === band.start && styles.roundLeft,
+                  band && cell.key === band.end && styles.roundRight,
                 ]}
               >
                 <Text
-                  style={{ color: edge ? fixed.white : taken ? fixed.dangerStrong : fixed.ink }}
+                  style={[
+                    { color: edge ? fixed.white : taken ? fixed.danger : fixed.ink },
+                    inside && { color: fixed.brand },
+                    taken && styles.struck,
+                    cell.disabled && !taken && { color: fixed.disabledText },
+                  ]}
                 >
                   {cell.day}
                 </Text>
@@ -96,6 +105,12 @@ export function DateRangePicker({ range, onChange, min, blocked }: Props) {
             );
           })}
         </View>
+        {blocked.length ? (
+          <View style={styles.legend}>
+            <View style={styles.swatch} />
+            <Text style={styles.legendText}>{t('Dias já bloqueados')}</Text>
+          </View>
+        ) : null}
       </View>
     </ThemeProvider>
   );
@@ -105,21 +120,44 @@ const styles = StyleSheet.create({
   wrap: {
     padding: 16,
     borderRadius: 16,
+    borderWidth: 1.5,
+    borderColor: fixed.borderSoft,
     backgroundColor: fixed.white,
-    gap: 8,
   },
-  head: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  month: { fontWeight: '700', color: fixed.ink, textTransform: 'capitalize' },
-  grid: { flexDirection: 'row', flexWrap: 'wrap' },
-  weekday: { width: `${100 / 7}%`, textAlign: 'center', color: fixed.gray, paddingVertical: 4 },
-  cell: {
-    width: `${100 / 7}%`,
-    aspectRatio: 1,
+  head: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 999,
+    justifyContent: 'space-between',
+    marginBottom: 12,
   },
-  inside: { backgroundColor: fixed.surface, borderRadius: 0 },
-  edge: { backgroundColor: fixed.brand },
-  taken: { backgroundColor: fixed.dangerBg },
+  month: { fontWeight: '700', color: fixed.ink, textTransform: 'capitalize' },
+  grid: { flexDirection: 'row', flexWrap: 'wrap', rowGap: 4 },
+  weekday: {
+    width: `${100 / 7}%`,
+    textAlign: 'center',
+    color: fixed.gray,
+    fontSize: 13,
+    paddingBottom: 6,
+  },
+  cell: { width: `${100 / 7}%`, height: 40, alignItems: 'center', justifyContent: 'center' },
+  // The days between the ends form a continuous band
+  inside: { backgroundColor: fixed.surface },
+  edge: { backgroundColor: fixed.brand, borderRadius: 999 },
+  bandStart: { borderTopRightRadius: 0, borderBottomRightRadius: 0 },
+  bandEnd: { borderTopLeftRadius: 0, borderBottomLeftRadius: 0 },
+  roundLeft: { borderTopLeftRadius: 999, borderBottomLeftRadius: 999 },
+  roundRight: { borderTopRightRadius: 999, borderBottomRightRadius: 999 },
+  // Already blocked: a red band, closed on the ends of each blocked period
+  taken: { backgroundColor: fixed.dangerBg, borderRadius: 0 },
+  struck: { textDecorationLine: 'line-through' },
+  legend: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 12 },
+  swatch: {
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+    backgroundColor: fixed.dangerBg,
+    borderWidth: 1.5,
+    borderColor: fixed.danger,
+  },
+  legendText: { fontSize: 14, color: fixed.gray },
 });

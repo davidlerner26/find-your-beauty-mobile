@@ -6,8 +6,8 @@ import { useTheme } from '../theme/theme';
 type Props = {
   label: string;
   onPress: () => void;
-  // 'solid' fills with the theme color, 'outline' has a border, 'danger' is white with a red border (remove, sign out), 'link' is plain text
-  variant?: 'solid' | 'outline' | 'danger' | 'link';
+  // 'solid' fills with the theme color, 'outline' has a border, 'light' is white with a border in the theme color and blue letters (also in the blue professional area), 'danger' is white with a red border (remove, sign out), 'link' is plain text
+  variant?: 'solid' | 'outline' | 'light' | 'danger' | 'link';
   disabled?: boolean;
   loading?: boolean;
 };
@@ -16,7 +16,13 @@ export function Button({ label, onPress, variant = 'solid', disabled, loading }:
   const theme = useTheme();
   const off = disabled || loading;
   const solid = variant === 'solid';
-  const color = solid ? theme.onPrimary : variant === 'danger' ? fixed.dangerStrong : theme.primary;
+  const color = solid
+    ? theme.onPrimary
+    : variant === 'danger'
+      ? fixed.dangerStrong
+      : variant === 'light'
+        ? fixed.brand
+        : theme.primary;
 
   return (
     <Pressable
@@ -29,6 +35,11 @@ export function Button({ label, onPress, variant = 'solid', disabled, loading }:
         styles.base,
         solid && { backgroundColor: off ? fixed.disabled : theme.primary },
         variant === 'outline' && { borderWidth: 1.5, borderColor: theme.primary },
+        variant === 'light' && {
+          borderWidth: 1.5,
+          borderColor: theme.primary,
+          backgroundColor: fixed.white,
+        },
         variant === 'danger' && {
           borderWidth: 1.5,
           borderColor: fixed.dangerStrong,
