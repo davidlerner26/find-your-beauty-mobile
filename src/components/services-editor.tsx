@@ -23,7 +23,7 @@ import {
 import { WEEKDAYS } from '../utils/weekdays';
 import { maskTime } from './availability-editor';
 import { Button } from './button';
-import { Chip } from './chip';
+import { SelectField } from './select-field';
 
 const CATEGORIES: ServiceCategory[] = ['Maquiagem', 'Cabelo'];
 
@@ -100,34 +100,35 @@ export function ServicesEditor({
             ]}
           >
             <Field label={t('Categoria')} error={missing && !service.category}>
-              <View style={styles.chips}>
-                {CATEGORIES.map((category) => (
-                  <Chip
-                    key={category}
-                    label={catalogLabel(category)}
-                    active={service.category === category}
-                    onPress={() => {
-                      const next = { ...service };
-                      setCategory(next, category);
-                      update(service.id, { category: next.category, name: next.name });
-                    }}
-                  />
-                ))}
-              </View>
+              <SelectField
+                label={t('Categoria')}
+                placeholder={t('Selecione')}
+                value={service.category || null}
+                options={CATEGORIES.map((category) => ({
+                  value: category,
+                  label: catalogLabel(category),
+                }))}
+                onChange={(category) => {
+                  if (!category) return;
+                  const next = { ...service };
+                  setCategory(next, category);
+                  update(service.id, { category: next.category, name: next.name });
+                }}
+              />
             </Field>
 
             {service.category ? (
               <Field label={t('Serviço')} error={missing && !service.name.trim()}>
-                <View style={styles.chips}>
-                  {serviceNamesOf(service).map((name) => (
-                    <Chip
-                      key={name}
-                      label={catalogLabel(name)}
-                      active={service.name === name}
-                      onPress={() => update(service.id, { name })}
-                    />
-                  ))}
-                </View>
+                <SelectField
+                  label={t('Serviço')}
+                  placeholder={t('Selecione')}
+                  value={service.name || null}
+                  options={serviceNamesOf(service).map((name) => ({
+                    value: name,
+                    label: catalogLabel(name),
+                  }))}
+                  onChange={(name) => name && update(service.id, { name })}
+                />
               </Field>
             ) : null}
 

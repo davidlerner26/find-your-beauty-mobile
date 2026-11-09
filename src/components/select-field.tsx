@@ -4,7 +4,7 @@ import { FlatList, Modal, Pressable, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { t } from '../i18n';
 import { fixed } from '../theme/colors';
-import { useTheme } from '../theme/theme';
+import { ThemeProvider } from '../theme/theme';
 import { Button } from './button';
 import { Text } from './text';
 
@@ -15,6 +15,8 @@ type Props<T> = {
   value: T;
   options: Option<T>[];
   onChange: (value: T) => void;
+  // Shown while there is no value ("Selecione")
+  placeholder?: string;
 };
 
 // A dropdown like the select of the site: a bordered field that opens the list of options
@@ -23,8 +25,8 @@ export function SelectField<T extends string | null>({
   value,
   options,
   onChange,
+  placeholder,
 }: Props<T>) {
-  const theme = useTheme();
   const [open, setOpen] = useState(false);
   const current = options.find((option) => option.value === value);
 
@@ -32,14 +34,14 @@ export function SelectField<T extends string | null>({
     <>
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel={`${label}: ${current?.label ?? ''}`}
+        accessibilityLabel={`${label}: ${current?.label ?? placeholder ?? ''}`}
         onPress={() => setOpen(true)}
         style={styles.field}
       >
-        <Text style={styles.value} numberOfLines={1}>
-          {current?.label}
+        <Text style={[styles.value, !current && { color: fixed.gray }]} numberOfLines={1}>
+          {current?.label ?? placeholder}
         </Text>
-        <MaterialIcons name="keyboard-arrow-down" size={26} color={theme.primary} />
+        <MaterialIcons name="keyboard-arrow-down" size={26} color={fixed.brand} />
       </Pressable>
 
       <Modal
@@ -48,38 +50,41 @@ export function SelectField<T extends string | null>({
         presentationStyle="pageSheet"
         onRequestClose={() => setOpen(false)}
       >
-        <SafeAreaView style={styles.sheet}>
-          <View style={styles.head}>
-            <Text accessibilityRole="header" style={styles.title}>
-              {label}
-            </Text>
-            <Button variant="link" label={t('Cancelar')} onPress={() => setOpen(false)} />
-          </View>
-          <FlatList
-            data={options}
-            keyExtractor={(option) => String(option.value)}
-            renderItem={({ item }) => {
-              const selected = item.value === value;
-              return (
-                <Pressable
-                  accessibilityRole="button"
-                  accessibilityLabel={item.label}
-                  accessibilityState={{ selected }}
-                  onPress={() => {
-                    onChange(item.value);
-                    setOpen(false);
-                  }}
-                  style={styles.option}
-                >
-                  <Text style={[styles.optionText, selected && { color: theme.primary }]}>
-                    {item.label}
-                  </Text>
-                  {selected ? <MaterialIcons name="check" size={22} color={theme.primary} /> : null}
-                </Pressable>
-              );
-            }}
-          />
-        </SafeAreaView>
+        {/* The list is white: it keeps the client theme even inside the blue professional area */}
+        <ThemeProvider>
+          <SafeAreaView style={styles.sheet}>
+            <View style={styles.head}>
+              <Text accessibilityRole="header" style={styles.title}>
+                {label}
+              </Text>
+              <Button variant="link" label={t('Cancelar')} onPress={() => setOpen(false)} />
+            </View>
+            <FlatList
+              data={options}
+              keyExtractor={(option) => String(option.value)}
+              renderItem={({ item }) => {
+                const selected = item.value === value;
+                return (
+                  <Pressable
+                    accessibilityRole="button"
+                    accessibilityLabel={item.label}
+                    accessibilityState={{ selected }}
+                    onPress={() => {
+                      onChange(item.value);
+                      setOpen(false);
+                    }}
+                    style={styles.option}
+                  >
+                    <Text style={[styles.optionText, selected && { color: fixed.brand }]}>
+                      {item.label}
+                    </Text>
+                    {selected ? <MaterialIcons name="check" size={22} color={fixed.brand} /> : null}
+                  </Pressable>
+                );
+              }}
+            />
+          </SafeAreaView>
+        </ThemeProvider>
       </Modal>
     </>
   );

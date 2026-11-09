@@ -525,4 +525,5 @@ export const en: Record<string, string> = {
   'Arraste para ajustar': 'Drag to adjust',
   'Centralizar foto': 'Center photo',
   'Enquadramento da foto. Arraste para mover.': 'Photo framing. Drag to move it.',
+  Selecione: 'Select',
 };
