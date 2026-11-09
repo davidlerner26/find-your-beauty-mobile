@@ -275,7 +275,13 @@ export function ServicesEditor({
               }
             />
 
-            <Button variant="link" label={t('Remover serviço')} onPress={() => remove(service)} />
+            <View style={styles.removeGap}>
+              <Button
+                variant="danger"
+                label={t('Remover serviço')}
+                onPress={() => remove(service)}
+              />
+            </View>
           </View>
         );
       })}
@@ -325,6 +331,7 @@ const makeStyles = (theme: Theme) =>
     multiline: { minHeight: 80, textAlignVertical: 'top', paddingTop: 10 },
     rule: { gap: 8, padding: 10, borderRadius: 10, backgroundColor: fixed.surface },
     photo: { width: 72, height: 72, borderRadius: 10, backgroundColor: fixed.surface },
+    removeGap: { marginTop: 14 },
     muted: { color: theme.muted },
     error: { color: theme.errorFg, fontSize: 13 },
   });
