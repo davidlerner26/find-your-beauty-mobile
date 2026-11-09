@@ -23,6 +23,7 @@ import {
 import { WEEKDAYS } from '../utils/weekdays';
 import { maskTime } from './availability-editor';
 import { Button } from './button';
+import { Chip } from './chip';
 import { SelectField } from './select-field';
 
 const CATEGORIES: ServiceCategory[] = ['Maquiagem', 'Cabelo'];
