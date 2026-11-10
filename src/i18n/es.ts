@@ -22,7 +22,6 @@ export const es: Record<string, string> = {
   'A senha precisa ter pelo menos 6 caracteres, com letras, 1 número e 1 caractere especial.':
     'La contraseña debe tener al menos 6 caracteres, con letras, 1 número y 1 carácter especial.',
   'Aberto hoje': 'Abierto hoy',
-  'Abertura: {{day}}': 'Apertura: {{day}}',
   'Abrir no navegador': 'Abrir en el navegador',
   'Adicionado aos favoritos': 'Añadido a favoritos',
   'Adicionar {{name}}': 'Añadir {{name}}',
@@ -223,7 +222,6 @@ export const es: Record<string, string> = {
   'Excluir a sua avaliação?': '¿Eliminar tu reseña?',
   Explorar: 'Explorar',
   Favoritar: 'Añadir a favoritos',
-  'Fechamento: {{day}}': 'Cierre: {{day}}',
   Filtros: 'Filtros',
   'Filtros ({{count}})': 'Filtros ({{count}})',
   Finalizar: 'Finalizar',
@@ -539,4 +537,9 @@ export const es: Record<string, string> = {
   'Ex: aos sábados o serviço custa mais. O preço vale pelo horário de início do atendimento.':
     'Ej: los sábados el servicio cuesta más. El precio vale por la hora de inicio de la atención.',
   'Adicionar preço por dia e horário': 'Añadir un precio por día y horario',
+  Abertura: 'Apertura',
+  Fechamento: 'Cierre',
+  Pronto: 'Listo',
+  Hora: 'Hora',
+  Minutos: 'Minutos',
 };

@@ -10,7 +10,7 @@ import { PendingRange } from '../utils/range-picker';
 import { toDateKey } from '../utils/slots';
 import { WEEKDAYS } from '../utils/weekdays';
 import { Button } from './button';
-import { TimeField } from './time-field';
+import { TimeRangeField } from './time-range-field';
 import { DateRangePicker } from './date-range-picker';
 
 const KEYS = WEEKDAYS.map(({ key }) => key);
@@ -74,19 +74,12 @@ export function AvailabilityEditor({
               {day.label}
             </Text>
             {config.enabled ? (
-              <>
-                <TimeField
-                  label={t('Abertura: {{day}}', { day: day.label })}
-                  value={config.start}
-                  onChange={(start) => setDay(day.key, { start })}
-                />
-                <Text style={styles.muted}>{t('às')}</Text>
-                <TimeField
-                  label={t('Fechamento: {{day}}', { day: day.label })}
-                  value={config.end}
-                  onChange={(end) => setDay(day.key, { end })}
-                />
-              </>
+              <TimeRangeField
+                label={day.label}
+                start={config.start}
+                end={config.end}
+                onChange={(start, end) => setDay(day.key, { start, end })}
+              />
             ) : (
               <Text style={styles.off}>{t('Folga')}</Text>
             )}
