@@ -1,6 +1,6 @@
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button } from '../components/button';
@@ -12,6 +12,7 @@ import { useAuthActions } from '../contexts/auth';
 import { t } from '../i18n';
 import { fixed, radius } from '../theme/colors';
 import { PATHS } from '../utils/paths';
+import { markWelcomeSeen } from '../utils/welcome';
 
 const STEPS = [
   {
@@ -42,6 +43,8 @@ export default function Onboarding() {
   const insets = useSafeAreaInsets();
   const { signInWithGoogle } = useAuthActions();
   const [current, setCurrent] = useState(0);
+  // Leaving it (as a visitor, or signed in) must not bring it back until the app is opened again
+  useEffect(() => markWelcomeSeen(), []);
   const step = STEPS[current];
   const last = current === STEPS.length - 1;
   const beforeLast = current === STEPS.length - 2;

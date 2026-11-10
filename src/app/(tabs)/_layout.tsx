@@ -7,6 +7,7 @@ import { TabBar } from '../../components/tab-bar';
 import { t } from '../../i18n';
 import { fixed } from '../../theme/colors';
 import { PATHS } from '../../utils/paths';
+import { welcomeSeen } from '../../utils/welcome';
 
 type IconName = keyof typeof MaterialIcons.glyphMap;
 // The icon of a tab: a function that draws it with the color and the size the bar gives
@@ -21,6 +22,12 @@ export default function TabsLayout() {
   const { unreadTotal: messages } = useMessages();
   const { unreadTotal: notifications } = useNotifications();
   const news = auth.user ? messages + notifications : 0;
+
+  // Wait for Firebase to say if there is a session, so a signed in client does not see the welcome screen first
+  if (!auth.ready) return null;
+  if (!auth.user && !welcomeSeen()) {
+    return <Redirect href={PATHS.welcome as never} />;
+  }
 
   // Professionals have their own area (and an unfinished sign up goes back to its second step)
   if (auth.signupIncomplete) return <Redirect href={PATHS.proSignup as never} />;

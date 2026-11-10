@@ -2,6 +2,7 @@
 // Use these instead of writing the text again.
 export const PATHS = {
   home: '/',
+  welcome: '/boas-vindas',
   explore: '/explore',
   search: '/busca',
   login: '/entrar',
