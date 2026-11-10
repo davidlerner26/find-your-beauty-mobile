@@ -4,7 +4,11 @@ import * as Linking from 'expo-linking';
 import * as WebBrowser from 'expo-web-browser';
 import { httpsCallable } from 'firebase/functions';
 import { environment } from '../config/environment';
-import { instagramAuthorizeUrl, parseInstagramReturn } from '../utils/instagram-oauth';
+import {
+  instagramAuthorizeUrl,
+  instagramRedirectUri,
+  parseInstagramReturn,
+} from '../utils/instagram-oauth';
 import { functions } from './firebase';
 
 const STATE_KEY = 'instagram-oauth-state';
@@ -13,9 +17,8 @@ const call = <Request, Response>(name: string) => httpsCallable<Request, Respons
 
 export const instagramAvailable = !!environment.instagramAppId;
 
-// Where Instagram sends the professional back after they allow the access. It has to be listed in the Meta app as a
-// valid OAuth redirect URI.
-export const instagramRedirectUri = () => Linking.createURL('pro/instagram');
+// The link that brings the professional back to the app: the page of the site hands the answer of Instagram over to it
+const returnUrl = () => Linking.createURL('pro/instagram');
 
 export type InstagramConnection =
   { ok: true; username: string; photos: number } | { ok: false; reason: string };
@@ -25,11 +28,11 @@ export type InstagramConnection =
 export const connectInstagram = async (): Promise<InstagramConnection | null> => {
   const state = Crypto.randomUUID();
   await AsyncStorage.setItem(STATE_KEY, state);
-  const redirectUri = instagramRedirectUri();
+  const redirectUri = instagramRedirectUri(environment.siteUrl);
 
   const result = await WebBrowser.openAuthSessionAsync(
     instagramAuthorizeUrl(environment.instagramAppId, redirectUri, state),
-    redirectUri,
+    returnUrl(),
   );
   // Closed without allowing: nothing to say
   if (result.type !== 'success') return null;

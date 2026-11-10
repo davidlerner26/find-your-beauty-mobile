@@ -1,3 +1,10 @@
+// Where Instagram sends the professional back. Instagram only takes https addresses that are listed in the Meta app,
+// so it is a page of the site (public/instagram-app) that hands the code over to the app by its link
+// (findyourbeauty://pro/instagram). The trailing slash is part of the address and has to be written the same in the
+// Meta app.
+export const instagramRedirectUri = (siteUrl: string) =>
+  `${siteUrl.replace(/\/+$/, '')}/instagram-app/`;
+
 // The address that asks Instagram for the access (Instagram API with Instagram Login)
 export const instagramAuthorizeUrl = (appId: string, redirectUri: string, state: string) => {
   const url = new URL('https://www.instagram.com/oauth/authorize');
