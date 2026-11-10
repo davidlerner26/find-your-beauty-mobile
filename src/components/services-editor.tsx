@@ -190,6 +190,17 @@ export function ServicesEditor({
               </View>
             </View>
 
+            <Field label={t('Descrição')}>
+              <TextInput
+                accessibilityLabel={t('Descrição')}
+                value={service.description}
+                onChangeText={(description) => update(service.id, { description })}
+                multiline
+                maxLength={1000}
+                style={[styles.input, styles.multiline]}
+              />
+            </Field>
+
             {/* Another price for some days of the week and times */}
             <View style={styles.rules}>
               <Text style={styles.label}>{t('Preço por dia e horário')}</Text>
@@ -338,17 +349,6 @@ export function ServicesEditor({
                 })
               }
             />
-
-            <Field label={t('Descrição')}>
-              <TextInput
-                accessibilityLabel={t('Descrição')}
-                value={service.description}
-                onChangeText={(description) => update(service.id, { description })}
-                multiline
-                maxLength={1000}
-                style={[styles.input, styles.multiline]}
-              />
-            </Field>
 
             <View style={styles.removeGap}>
               <Button
