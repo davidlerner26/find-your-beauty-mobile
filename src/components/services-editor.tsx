@@ -283,15 +283,18 @@ export function ServicesEditor({
                     </View>
                     <View style={styles.ruleTime}>
                       <Text style={styles.label}>{t('Preço (R$)')}</Text>
-                      <TextInput
-                        accessibilityLabel={t('Preço (R$)')}
-                        value={rule.price}
-                        onChangeText={(text) =>
-                          updateRule(service, rule.id, { price: maskMoney(text) })
-                        }
-                        keyboardType="number-pad"
-                        style={[styles.input, styles.ruleInput]}
-                      />
+                      <View style={styles.timeRow}>
+                        <TextInput
+                          accessibilityLabel={t('Preço (R$)')}
+                          value={rule.price}
+                          onChangeText={(text) =>
+                            updateRule(service, rule.id, { price: maskMoney(text) })
+                          }
+                          keyboardType="number-pad"
+                          style={[styles.input, styles.ruleInput, styles.half]}
+                        />
+                        <View style={styles.toggle} />
+                      </View>
                     </View>
                   </View>
                   {tried && !isRuleComplete(rule) ? (
@@ -299,18 +302,15 @@ export function ServicesEditor({
                       {t('Escolha os dias, um horário de início antes do fim e um preço.')}
                     </Text>
                   ) : null}
-                  <Pressable
-                    accessibilityRole="button"
-                    accessibilityLabel={t('Remover')}
+                  <Button
+                    variant="danger"
+                    label={t('Remover')}
                     onPress={() =>
                       update(service.id, {
                         priceRules: service.priceRules.filter((r) => r.id !== rule.id),
                       })
                     }
-                    style={styles.ruleRemove}
-                  >
-                    <Text style={styles.underlined}>{t('Remover')}</Text>
-                  </Pressable>
+                  />
                 </View>
               ))}
               <Pressable
@@ -462,8 +462,6 @@ const makeStyles = (theme: Theme) =>
     timeInput: { paddingRight: 32 },
     clock: { position: 'absolute', right: 10 },
     off: { opacity: 0.5 },
-    ruleRemove: { alignSelf: 'flex-end' },
-    underlined: { color: theme.errorFg, textDecorationLine: 'underline' },
     photosHead: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline' },
     photo: { width: 96, height: 96 },
     photoImage: { flex: 1, borderRadius: 12, backgroundColor: fixed.surface },
