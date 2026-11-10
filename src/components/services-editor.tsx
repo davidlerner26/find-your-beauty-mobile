@@ -1,7 +1,7 @@
 import { Image } from 'expo-image';
 import { useMemo } from 'react';
 import { MaterialIcons } from '@expo/vector-icons';
-import { ActivityIndicator, Pressable, StyleSheet, Switch, View } from 'react-native';
+import { Pressable, StyleSheet, Switch, View } from 'react-native';
 import { Text, TextInput } from './text';
 import { t } from '../i18n';
 import { ServiceCategory } from '../models/professional';
@@ -300,29 +300,7 @@ export function ServicesEditor({
             </View>
 
             {/* Photos of the service: the card on the professional page shows them as a gallery */}
-            <View style={styles.photosHead}>
-              <Text style={styles.label}>{t('Fotos do serviço')}</Text>
-              <Pressable
-                accessibilityRole="button"
-                accessibilityLabel={t('Adicionar fotos')}
-                accessibilityState={{ busy: uploading }}
-                disabled={uploading}
-                hitSlop={8}
-                onPress={() =>
-                  void onAddPhoto().then((url) => {
-                    if (url) update(service.id, { photos: [...service.photos, url] });
-                  })
-                }
-              >
-                {uploading ? (
-                  <ActivityIndicator color={theme.primary} />
-                ) : (
-                  <Text style={{ color: theme.primary, fontSize: 16 }}>
-                    + {t('Adicionar fotos')}
-                  </Text>
-                )}
-              </Pressable>
-            </View>
+            <Text style={styles.label}>{t('Fotos do serviço')}</Text>
             {service.photos.length ? (
               <View style={styles.chips}>
                 {service.photos.map((photo) => (
@@ -349,6 +327,17 @@ export function ServicesEditor({
                 ))}
               </View>
             ) : null}
+
+            <Button
+              variant="outline"
+              label={t('Adicionar fotos')}
+              loading={uploading}
+              onPress={() =>
+                void onAddPhoto().then((url) => {
+                  if (url) update(service.id, { photos: [...service.photos, url] });
+                })
+              }
+            />
 
             <Field label={t('Descrição')}>
               <TextInput
@@ -424,7 +413,6 @@ const makeStyles = (theme: Theme) =>
     toggle: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 8 },
     toggleText: { flex: 1, color: theme.text },
     ruleInput: { minHeight: 44, paddingHorizontal: 12 },
-    photosHead: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline' },
     photo: { width: 96, height: 96 },
     photoImage: { flex: 1, borderRadius: 12, backgroundColor: fixed.surface },
     photoRemove: {
