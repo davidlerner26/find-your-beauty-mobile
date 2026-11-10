@@ -22,7 +22,7 @@ import {
   toggleRuleDay,
 } from '../utils/service-draft';
 import { WEEKDAYS } from '../utils/weekdays';
-import { maskTime } from './availability-editor';
+import { TimeField } from './time-field';
 import { Button } from './button';
 import { Chip } from './chip';
 import { SelectField } from './select-field';
@@ -63,36 +63,6 @@ function Field({
 // Start and end of the day in a price rule ("Início do dia" / "Fim do dia"), as the site saves them
 const DAY_START = '00:00';
 const DAY_END = '24:00';
-
-// A time typed as digits ("1830" -> "18:30"), with a clock on the right like the time field of the site
-function TimeField({
-  label,
-  value,
-  disabled,
-  onChange,
-}: {
-  label: string;
-  value: string;
-  disabled: boolean;
-  onChange: (value: string) => void;
-}) {
-  const styles = useStyles();
-  return (
-    <View style={styles.timeBox}>
-      <TextInput
-        accessibilityLabel={label}
-        editable={!disabled}
-        value={value}
-        onChangeText={(text) => onChange(maskTime(text))}
-        placeholder="--:--"
-        keyboardType="number-pad"
-        maxLength={5}
-        style={[styles.input, styles.ruleInput, styles.timeInput, disabled && styles.off]}
-      />
-      <MaterialIcons name="schedule" size={18} color={fixed.ink} style={styles.clock} />
-    </View>
-  );
-}
 
 // A switch with its text on the side ("Início do dia" / "Fim do dia")
 function Toggle({
@@ -454,10 +424,6 @@ const makeStyles = (theme: Theme) =>
     toggle: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 8 },
     toggleText: { flex: 1, color: theme.text },
     ruleInput: { minHeight: 44, paddingHorizontal: 12 },
-    timeBox: { flex: 1, justifyContent: 'center' },
-    timeInput: { paddingRight: 32 },
-    clock: { position: 'absolute', right: 10 },
-    off: { opacity: 0.5 },
     photosHead: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline' },
     photo: { width: 96, height: 96 },
     photoImage: { flex: 1, borderRadius: 12, backgroundColor: fixed.surface },

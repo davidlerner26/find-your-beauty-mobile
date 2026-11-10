@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Switch, View } from 'react-native';
-import { Text, TextInput } from './text';
+import { Text } from './text';
 import { t } from '../i18n';
 import { Availability, DateRange } from '../models/professional';
 import { fixed, Theme } from '../theme/colors';
@@ -10,15 +10,10 @@ import { PendingRange } from '../utils/range-picker';
 import { toDateKey } from '../utils/slots';
 import { WEEKDAYS } from '../utils/weekdays';
 import { Button } from './button';
+import { TimeField } from './time-field';
 import { DateRangePicker } from './date-range-picker';
 
 const KEYS = WEEKDAYS.map(({ key }) => key);
-
-// "0930" -> "09:30" while typing (the field takes digits only)
-export const maskTime = (text: string) => {
-  const digits = text.replace(/\D/g, '').slice(0, 4);
-  return digits.length > 2 ? `${digits.slice(0, 2)}:${digits.slice(2)}` : digits;
-};
 
 const useStyles = () => {
   const theme = useTheme();
@@ -68,39 +63,32 @@ export function AvailabilityEditor({
         const config = availability.weekly[day.key];
         return (
           <View key={day.key} style={styles.day}>
-            <View style={styles.dayHead}>
-              <Text style={styles.bold}>{day.label}</Text>
-              <Switch
-                accessibilityLabel={day.label}
-                value={config.enabled}
-                onValueChange={(enabled) => setDay(day.key, { enabled })}
-                trackColor={{ true: fixed.brand }}
-              />
-            </View>
+            <Switch
+              accessibilityLabel={day.label}
+              value={config.enabled}
+              onValueChange={(enabled) => setDay(day.key, { enabled })}
+              trackColor={{ true: fixed.accent }}
+              style={styles.toggle}
+            />
+            <Text numberOfLines={1} style={styles.dayName}>
+              {day.label}
+            </Text>
             {config.enabled ? (
-              <View style={styles.times}>
-                <TextInput
-                  accessibilityLabel={t('Abertura: {{day}}', { day: day.label })}
+              <>
+                <TimeField
+                  label={t('Abertura: {{day}}', { day: day.label })}
                   value={config.start}
-                  onChangeText={(text) => setDay(day.key, { start: maskTime(text) })}
-                  keyboardType="number-pad"
-                  placeholder="08:00"
-                  maxLength={5}
-                  style={styles.time}
+                  onChange={(start) => setDay(day.key, { start })}
                 />
                 <Text style={styles.muted}>{t('às')}</Text>
-                <TextInput
-                  accessibilityLabel={t('Fechamento: {{day}}', { day: day.label })}
+                <TimeField
+                  label={t('Fechamento: {{day}}', { day: day.label })}
                   value={config.end}
-                  onChangeText={(text) => setDay(day.key, { end: maskTime(text) })}
-                  keyboardType="number-pad"
-                  placeholder="18:00"
-                  maxLength={5}
-                  style={styles.time}
+                  onChange={(end) => setDay(day.key, { end })}
                 />
-              </View>
+              </>
             ) : (
-              <Text style={styles.muted}>{t('Folga')}</Text>
+              <Text style={styles.off}>{t('Folga')}</Text>
             )}
           </View>
         );
@@ -166,21 +154,20 @@ const makeStyles = (theme: Theme) =>
     subheading: { fontSize: 16, fontWeight: '700', color: theme.text, marginTop: 8 },
     label: { fontWeight: '600', color: theme.text },
     chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-    day: { gap: 6, paddingVertical: 6, borderBottomWidth: 1, borderBottomColor: theme.line },
-    dayHead: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-    times: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-    time: {
-      minWidth: 84,
-      minHeight: 44,
+    // One row per day, a see-through bar like the site: the switch, the day, and the opening and closing times
+    day: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+      minHeight: 60,
       paddingHorizontal: 12,
-      borderWidth: 1.5,
-      borderColor: 'transparent',
-      borderRadius: 14,
-      backgroundColor: theme.field,
-      fontSize: 16,
-      textAlign: 'center',
-      color: fixed.ink,
+      paddingVertical: 8,
+      borderRadius: 12,
+      backgroundColor: theme.name === 'pro' ? theme.primaryLight : fixed.surface,
     },
+    toggle: { transform: [{ scale: 0.8 }], marginHorizontal: -6 },
+    dayName: { flexShrink: 1, minWidth: 64, fontWeight: '600', color: theme.text },
+    off: { flex: 1, textAlign: 'right', color: theme.muted },
     bold: { fontWeight: '700', color: theme.text },
     blockedChip: {
       flexDirection: 'row',
