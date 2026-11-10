@@ -10,7 +10,6 @@ export const en: Record<string, string> = {
   '{{list}}, a partir das {{start}}': '{{list}}, from {{start}}',
   '{{list}}, até {{end}}': '{{list}}, until {{end}}',
   '{{list}}, o dia todo': '{{list}}, all day',
-  '{{minutes}} min': '{{minutes}} min',
   '1 estrela': '1 star',
   '1 resultado': '1 result',
   'A conexão com o Instagram ainda não foi configurada.':
@@ -160,7 +159,6 @@ export const en: Record<string, string> = {
   Dom: 'Sun',
   Domingo: 'Sunday',
   'Duração (h:mm)': 'Duration (h:mm)',
-  'Duração de cada horário': 'Length of each time slot',
   'e a': 'and the',
   'E-mail': 'Email',
   'E-mail ou senha incorretos.': 'Wrong email or password.',
@@ -533,4 +531,5 @@ export const en: Record<string, string> = {
   Remover: 'Remove',
   'Ex: aos sábados o serviço custa mais. O preço vale pelo horário de início do atendimento.':
     'E.g. on Saturdays the service costs more. The price applies to the start time of the appointment.',
+  'Adicionar preço por dia e horário': 'Add a price by day and time',
 };

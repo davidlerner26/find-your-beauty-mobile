@@ -10,10 +10,8 @@ import { PendingRange } from '../utils/range-picker';
 import { toDateKey } from '../utils/slots';
 import { WEEKDAYS } from '../utils/weekdays';
 import { Button } from './button';
-import { Chip } from './chip';
 import { DateRangePicker } from './date-range-picker';
 
-const SLOT_OPTIONS = [15, 30, 45, 60, 90, 120];
 const KEYS = WEEKDAYS.map(({ key }) => key);
 
 // "0930" -> "09:30" while typing (the field takes digits only)
@@ -65,18 +63,6 @@ export function AvailabilityEditor({
       <Text accessibilityRole="header" style={styles.heading}>
         {t('Horários de atendimento')}
       </Text>
-
-      <Text style={styles.label}>{t('Duração de cada horário')}</Text>
-      <View style={styles.chips}>
-        {SLOT_OPTIONS.map((minutes) => (
-          <Chip
-            key={minutes}
-            label={t('{{minutes}} min', { minutes })}
-            active={availability.slotMinutes === minutes}
-            onPress={() => onChange({ ...availability, slotMinutes: minutes })}
-          />
-        ))}
-      </View>
 
       {WEEKDAYS.map((day) => {
         const config = availability.weekly[day.key];

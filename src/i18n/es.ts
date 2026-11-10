@@ -10,7 +10,6 @@ export const es: Record<string, string> = {
   '{{list}}, a partir das {{start}}': '{{list}}, desde las {{start}}',
   '{{list}}, até {{end}}': '{{list}}, hasta las {{end}}',
   '{{list}}, o dia todo': '{{list}}, todo el día',
-  '{{minutes}} min': '{{minutes}} min',
   '1 estrela': '1 estrella',
   '1 resultado': '1 resultado',
   'A conexão com o Instagram ainda não foi configurada.':
@@ -161,7 +160,6 @@ export const es: Record<string, string> = {
   Dom: 'Dom',
   Domingo: 'Domingo',
   'Duração (h:mm)': 'Duración (h:mm)',
-  'Duração de cada horário': 'Duración de cada horario',
   'e a': 'y la',
   'E-mail': 'Correo electrónico',
   'E-mail ou senha incorretos.': 'Correo o contraseña incorrectos.',
@@ -540,4 +538,5 @@ export const es: Record<string, string> = {
   Remover: 'Quitar',
   'Ex: aos sábados o serviço custa mais. O preço vale pelo horário de início do atendimento.':
     'Ej: los sábados el servicio cuesta más. El precio vale por la hora de inicio de la atención.',
+  'Adicionar preço por dia e horário': 'Añadir un precio por día y horario',
 };

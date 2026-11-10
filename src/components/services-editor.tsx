@@ -313,17 +313,13 @@ export function ServicesEditor({
                   />
                 </View>
               ))}
-              <Pressable
-                accessibilityRole="button"
-                accessibilityLabel={t('Preço por dia e horário')}
+              <Button
+                variant="outline"
+                label={t('Adicionar preço por dia e horário')}
                 onPress={() =>
                   update(service.id, { priceRules: [...service.priceRules, newRuleDraft()] })
                 }
-              >
-                <Text style={{ color: theme.primary, fontSize: 16 }}>
-                  + {t('Preço por dia e horário')}
-                </Text>
-              </Pressable>
+              />
               {service.priceRules.length ? null : (
                 <Text style={styles.muted}>
                   {t(
