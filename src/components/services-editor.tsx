@@ -1,7 +1,7 @@
 import { Image } from 'expo-image';
 import { useMemo } from 'react';
 import { MaterialIcons } from '@expo/vector-icons';
-import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, Switch, View } from 'react-native';
 import { Text, TextInput } from './text';
 import { t } from '../i18n';
 import { ServiceCategory } from '../models/professional';
@@ -94,8 +94,8 @@ function TimeField({
   );
 }
 
-// A check box with its text, like the ones of the site
-function Check({
+// A switch with its text on the side ("Início do dia" / "Fim do dia")
+function Toggle({
   label,
   checked,
   onChange,
@@ -106,19 +106,15 @@ function Check({
 }) {
   const styles = useStyles();
   return (
-    <Pressable
-      accessibilityRole="checkbox"
-      accessibilityLabel={label}
-      accessibilityState={{ checked }}
-      onPress={onChange}
-      hitSlop={6}
-      style={styles.check}
-    >
-      <View style={[styles.box, checked && styles.boxOn]}>
-        {checked ? <MaterialIcons name="check" size={16} color={fixed.white} /> : null}
-      </View>
-      <Text style={styles.checkText}>{label}</Text>
-    </Pressable>
+    <View style={styles.toggle}>
+      <Switch
+        accessibilityLabel={label}
+        value={checked}
+        onValueChange={onChange}
+        trackColor={{ true: fixed.accent }}
+      />
+      <Text style={styles.toggleText}>{label}</Text>
+    </View>
   );
 }
 
@@ -247,37 +243,43 @@ export function ServicesEditor({
                   <View style={styles.ruleFields}>
                     <View style={styles.ruleTime}>
                       <Text style={styles.label}>{t('Das')}</Text>
-                      <TimeField
-                        label={t('A partir das')}
-                        value={rule.start === DAY_START ? '' : rule.start}
-                        disabled={rule.start === DAY_START}
-                        onChange={(start) => updateRule(service, rule.id, { start })}
-                      />
-                      <Check
-                        label={t('Início do dia')}
-                        checked={rule.start === DAY_START}
-                        onChange={() =>
-                          updateRule(service, rule.id, {
-                            start: rule.start === DAY_START ? '' : DAY_START,
-                          })
-                        }
-                      />
+                      <View style={styles.timeRow}>
+                        <TimeField
+                          label={t('A partir das')}
+                          value={rule.start === DAY_START ? '' : rule.start}
+                          disabled={rule.start === DAY_START}
+                          onChange={(start) => updateRule(service, rule.id, { start })}
+                        />
+                        <Toggle
+                          label={t('Início do dia')}
+                          checked={rule.start === DAY_START}
+                          onChange={() =>
+                            updateRule(service, rule.id, {
+                              start: rule.start === DAY_START ? '' : DAY_START,
+                            })
+                          }
+                        />
+                      </View>
                     </View>
                     <View style={styles.ruleTime}>
                       <Text style={styles.label}>{t('Até')}</Text>
-                      <TimeField
-                        label={t('Até as')}
-                        value={rule.end === DAY_END ? '' : rule.end}
-                        disabled={rule.end === DAY_END}
-                        onChange={(end) => updateRule(service, rule.id, { end })}
-                      />
-                      <Check
-                        label={t('Fim do dia')}
-                        checked={rule.end === DAY_END}
-                        onChange={() =>
-                          updateRule(service, rule.id, { end: rule.end === DAY_END ? '' : DAY_END })
-                        }
-                      />
+                      <View style={styles.timeRow}>
+                        <TimeField
+                          label={t('Até as')}
+                          value={rule.end === DAY_END ? '' : rule.end}
+                          disabled={rule.end === DAY_END}
+                          onChange={(end) => updateRule(service, rule.id, { end })}
+                        />
+                        <Toggle
+                          label={t('Fim do dia')}
+                          checked={rule.end === DAY_END}
+                          onChange={() =>
+                            updateRule(service, rule.id, {
+                              end: rule.end === DAY_END ? '' : DAY_END,
+                            })
+                          }
+                        />
+                      </View>
                     </View>
                     <View style={styles.ruleTime}>
                       <Text style={styles.label}>{t('Preço (R$)')}</Text>
@@ -450,26 +452,16 @@ const makeStyles = (theme: Theme) =>
     rules: { gap: 10 },
     rule: { gap: 10, padding: 12, borderWidth: 1, borderRadius: 12 },
     ruleDays: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
-    ruleFields: { flexDirection: 'row', gap: 8, alignItems: 'flex-start' },
-    ruleTime: { flex: 1, gap: 6 },
+    ruleFields: { gap: 12 },
+    ruleTime: { gap: 6 },
+    timeRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+    toggle: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 8 },
+    toggleText: { flex: 1, color: theme.text },
     ruleInput: { minHeight: 44, paddingHorizontal: 12 },
-    timeBox: { justifyContent: 'center' },
+    timeBox: { flex: 1, justifyContent: 'center' },
     timeInput: { paddingRight: 32 },
     clock: { position: 'absolute', right: 10 },
     off: { opacity: 0.5 },
-    check: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-    box: {
-      width: 20,
-      height: 20,
-      borderRadius: 4,
-      alignItems: 'center',
-      justifyContent: 'center',
-      backgroundColor: fixed.white,
-      borderWidth: 1.5,
-      borderColor: fixed.border,
-    },
-    boxOn: { backgroundColor: fixed.brand, borderColor: fixed.brand },
-    checkText: { fontSize: 13.5, color: theme.text },
     ruleRemove: { alignSelf: 'flex-end' },
     underlined: { color: theme.errorFg, textDecorationLine: 'underline' },
     photosHead: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline' },
