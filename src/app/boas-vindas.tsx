@@ -80,7 +80,7 @@ export default function Onboarding() {
             />
             <Button
               label={t('Entrar com e-mail')}
-              onPress={() => router.replace(PATHS.signup as never)}
+              onPress={() => router.replace(PATHS.login as never)}
             />
             <Pressable
               accessibilityRole="button"
