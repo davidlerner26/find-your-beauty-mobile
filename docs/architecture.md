@@ -91,11 +91,9 @@ cards read that format. The professional area keeps the light look of the client
 is not applied).
 
 **Instagram.** `services/instagram.ts` opens the authorization in the system browser (`openAuthSessionAsync`) and sends
-the code to the same Cloud Functions as the site. Instagram only takes https redirect addresses that are listed in the
-Meta app, so the redirect is a static page of the site (`public/instagram-app/index.html` in the site's repo, at
-`<site>/instagram-app/`, with the trailing slash) that hands the `code` and the `state` over to the app by its link
-(`findyourbeauty://pro/instagram`). That address of each environment has to be listed in the Meta app as a valid OAuth
-redirect URI. It needs a development or store build: Expo Go has no `findyourbeauty://` link.
+the code to the same Cloud Functions as the site. The redirect address has to be listed in the Meta app
+(`Linking.createURL('pro/instagram')`: `findyourbeauty://pro/instagram` in a build); Meta may require an https address,
+in which case the site needs a page that hands the code over to the app.
 
 **Legal pages** are the pages of the site, opened in the in-app browser (`components/legal-screen.tsx`): one copy of the
 text in three languages. **The address** of the sign up is checked by geocoding it (`expo-location`), since the site's
@@ -147,8 +145,7 @@ Open, each one needs an account, a console or a change outside this repo:
   the key of the site is restricted to web referrers.
 - **Google Places key.** A key restricted to the iOS bundle id and the Android package, set as
   `EXPO_PUBLIC_GOOGLE_MAPS_API_KEY`, for the address suggestions (the key of the site does not work from the apps).
-- **Instagram.** The redirect address of each environment (`https://dev.findyourbeauty.com.br/instagram-app/` and the
-  one of production) in the Meta app, and the site with the `instagram-app` page published.
+- **Instagram.** The redirect address in the Meta app (see above).
 - **Push notifications (proposal).** `expo-notifications` to get a token, stored in `users/{uid}` (or `professionals/{id}/private`),
   and a Cloud Function (in the site's repo) that sends a push where it already writes `users/{uid}/notifications`. It needs
   a change in the backend, so it waits for a decision.

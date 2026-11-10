@@ -1,8 +1,4 @@
-import {
-  instagramAuthorizeUrl,
-  instagramRedirectUri,
-  parseInstagramReturn,
-} from './instagram-oauth';
+import { instagramAuthorizeUrl, parseInstagramReturn } from './instagram-oauth';
 
 describe('instagramAuthorizeUrl', () => {
   it('asks for the basic permission with the app, the redirect and the state', () => {
@@ -34,16 +30,5 @@ describe('parseInstagramReturn', () => {
       parseInstagramReturn('myapp://pro/instagram?error=access_denied&error_description=Negado'),
     ).toEqual({ ok: false, reason: 'Negado' });
     expect(parseInstagramReturn('not a url')).toEqual({ ok: false, reason: '' });
-  });
-});
-
-describe('instagramRedirectUri', () => {
-  it('is the hand-over page of the site, with the trailing slash', () => {
-    expect(instagramRedirectUri('https://dev.findyourbeauty.com.br')).toBe(
-      'https://dev.findyourbeauty.com.br/instagram-app/',
-    );
-    expect(instagramRedirectUri('https://findyourbeauty.com.br/')).toBe(
-      'https://findyourbeauty.com.br/instagram-app/',
-    );
   });
 });
