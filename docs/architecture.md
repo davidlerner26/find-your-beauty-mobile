@@ -92,13 +92,14 @@ is not applied).
 
 **Profiles made by an admin.** An admin can make the profile of a professional who has no account (`/admin/perfis`,
 `services/professional-drafts.ts`). It is a draft in `professionalDrafts/{id}` (only admins read it, so it is never in the
-catalog) with the basics: name, e-mail, phone, language, Instagram, about and photo. The admin sends an invite by e-mail
-(`createProfessionalInvite`, Resend); the link has a one-use token (only its hash is saved) and opens
-`/convite/{draftId}/{token}` on the site, or `findyourbeauty://convite/{draftId}/{token}` in the app
-(`app/convite/[draftId]/[token].tsx`). The professional signs in or creates the password with the invited e-mail, and
-`claimProfessionalDraft` copies the draft (and its photos) to `professionals/{uid}` and deletes it. The document id has to be
-the account uid, which the rules, Storage and the Instagram functions depend on, and nothing can point to a draft, so the copy
-costs nothing. The new profile is approved but **not published**: it has no CPF, hours or services, and saving the complete
+catalog) with the basics: name, optional e-mail, phone, language, Instagram, about and photo. No e-mail is sent: the admin makes
+an invite link (`createProfessionalInvite`; only the hash of its token is saved, so the link is shown once, copied and
+shareable, and asking again makes a new one) and sends it by hand (WhatsApp, Instagram). The link opens `/convite/{draftId}/{token}`
+on the site, or `findyourbeauty://convite/{draftId}/{token}` in the app (`app/convite/[draftId]/[token].tsx`). The professional
+signs in or creates the password and `claimProfessionalDraft` copies the draft (and its photos) to `professionals/{uid}` and
+deletes it. With an e-mail on the draft only that account can claim it; without one, whoever has the link can. The document id has
+to be the account uid, which the rules, Storage and the Instagram functions depend on, and nothing can point to a draft, so the
+copy costs nothing. The new profile is approved but **not published**: it has no CPF, hours or services, and saving the complete
 profile publishes it as for any other professional. The backend is in the site's repo.
 
 **Instagram.** `services/instagram.ts` opens the authorization in the system browser (`openAuthSessionAsync`) and sends

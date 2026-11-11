@@ -72,11 +72,12 @@ export type AuthActions = {
   finishSignup: () => Promise<void>;
   clearSignupSubmitted: () => void;
   signOut: () => Promise<void>;
-  // An invite to claim a profile an admin made (see services/professional-drafts.ts). The link went to the invited
-  // e-mail, so these accounts skip the e-mail code of the client sign up.
+  // An invite to claim a profile an admin made (see services/professional-drafts.ts). The admin sends the link by
+  // hand, so these accounts skip the e-mail code of the client sign up.
   signUpWithInvite: (email: string, password: string) => Promise<void>;
   signInWithInvite: (email: string, password: string) => Promise<void>;
-  // The Google account has to be the one of the invite. Resolves to false when the person closed the Google window.
+  // The Google account has to be the one of the invite, when it has an e-mail. Resolves to false when the person closed
+  // the Google window.
   signInWithGoogleForInvite: (invitedEmail: string) => Promise<boolean>;
   // Copies the draft to professionals/{uid}; then the account is a professional
   claimProfessional: (draftId: string, token: string) => Promise<void>;
@@ -439,7 +440,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       async signInWithGoogleForInvite(invitedEmail) {
         const user = await googleCredential();
         if (!user) return false;
-        if ((user.email ?? '').toLowerCase() !== invitedEmail.toLowerCase()) {
+        if (invitedEmail && (user.email ?? '').toLowerCase() !== invitedEmail.toLowerCase()) {
           await deleteUser(user).catch((error) => {
             log.warn(
               'Failed to remove the account with another e-mail, signing out instead',

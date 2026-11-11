@@ -13,7 +13,7 @@ import { useTheme } from '../../../theme/theme';
 import { inviteErrorMessage } from '../../../utils/drafts';
 import { log } from '../../../utils/log';
 import { PATHS } from '../../../utils/paths';
-import { isValidPassword, PASSWORD_RULE } from '../../../utils/validators';
+import { isValidEmail, isValidPassword, PASSWORD_RULE } from '../../../utils/validators';
 
 // The screen of an invite to claim a profile an admin made (findyourbeauty://convite/{draftId}/{token}; the link of the
 // e-mail opens the same page on the site). The professional signs in, or creates the password, with the invited
@@ -57,10 +57,16 @@ export default function Invite() {
     <AuthScreen
       pro
       title={t('Olá, {{name}}', { name: invite.name })}
-      subtitle={t(
-        'Montamos o seu perfil no Find Your Beauty. Entre com {{email}} para assumir o perfil.',
-        { email: invite.email },
-      )}
+      subtitle={
+        invite.email
+          ? t(
+              'Montamos o seu perfil no Find Your Beauty. Entre com {{email}} para assumir o perfil.',
+              { email: invite.email },
+            )
+          : t(
+              'Montamos o seu perfil no Find Your Beauty. Entre ou crie a sua conta para assumir o perfil.',
+            )
+      }
       free={false}
     >
       <Claim invite={invite} draftId={draftId} token={token} />
@@ -79,6 +85,8 @@ function Claim({ invite, draftId, token }: { invite: InviteInfo; draftId: string
     claimProfessional,
     signOut,
   } = useAuthActions();
+  // Only asked when the invite has no e-mail: then the professional uses her own
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   // "Already have an account": signs in instead of creating the password
   const [hasAccount, setHasAccount] = useState(false);
@@ -86,8 +94,11 @@ function Claim({ invite, draftId, token }: { invite: InviteInfo; draftId: string
   const [working, setWorking] = useState(false);
   const [error, setError] = useState('');
 
+  // The signed in account can claim right away: it is the one of the invite, or the invite has no e-mail
   const signedEmail = auth.user?.email?.toLowerCase();
-  const matches = !!signedEmail && signedEmail === invite.email.toLowerCase();
+  const matches = !invite.email || (!!signedEmail && signedEmail === invite.email.toLowerCase());
+  const accountEmail = invite.email || email.trim();
+  const emailMissing = !invite.email && !isValidEmail(email);
 
   const run = async (action: () => Promise<boolean | void>) => {
     setError('');
@@ -110,10 +121,10 @@ function Claim({ invite, draftId, token }: { invite: InviteInfo; draftId: string
 
   const submit = async () => {
     setSubmitted(true);
-    if (!isValidPassword(password)) return;
+    if (!isValidPassword(password) || emailMissing) return;
     await run(async () => {
-      if (hasAccount) await signInWithInvite(invite.email, password);
-      else await signUpWithInvite(invite.email, password);
+      if (hasAccount) await signInWithInvite(accountEmail, password);
+      else await signUpWithInvite(accountEmail, password);
       await claim();
     });
   };
@@ -148,6 +159,19 @@ function Claim({ invite, draftId, token }: { invite: InviteInfo; draftId: string
 
   return (
     <>
+      {invite.email ? null : (
+        <AuthField
+          icon="mail"
+          placeholder={t('E-mail')}
+          value={email}
+          onChangeText={setEmail}
+          error={submitted && emailMissing ? t('Digite um e-mail válido.') : undefined}
+          keyboardType="email-address"
+          autoCapitalize="none"
+          autoComplete="email"
+          textContentType="emailAddress"
+        />
+      )}
       <AuthField
         icon="lock"
         placeholder={hasAccount ? t('Sua senha') : t('Crie uma senha')}

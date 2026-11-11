@@ -3,11 +3,13 @@ import { useCallback, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet } from 'react-native';
 import { AdminCard, AdminTop } from '../../../components/admin-kit';
 import { Button } from '../../../components/button';
+import { InviteLinkBox } from '../../../components/invite-link-box';
 import { Screen } from '../../../components/screen';
 import { Spinner } from '../../../components/spinner';
 import { Text } from '../../../components/text';
 import { t } from '../../../i18n';
-import { listDrafts, sendInvite } from '../../../services/professional-drafts';
+import { copyText } from '../../../services/clipboard';
+import { createInviteLink, listDrafts } from '../../../services/professional-drafts';
 import { fixed, radius } from '../../../theme/colors';
 import { useTheme } from '../../../theme/theme';
 import { inviteStatus, ProfessionalDraft } from '../../../utils/drafts';
@@ -21,7 +23,8 @@ export default function AdminDrafts() {
   const theme = useTheme();
   const [list, setList] = useState<ProfessionalDraft[] | null>(null);
   const [error, setError] = useState('');
-  const [message, setMessage] = useState('');
+  // The link that was just made
+  const [made, setMade] = useState<{ name: string; url: string; copied: boolean } | null>(null);
   // Id of the draft whose invite is being sent
   const [working, setWorking] = useState<string | null>(null);
 
@@ -43,17 +46,17 @@ export default function AdminDrafts() {
     }, [load]),
   );
 
-  const invite = async (draft: ProfessionalDraft) => {
+  const makeLink = async (draft: ProfessionalDraft) => {
     setWorking(draft.id);
     setError('');
-    setMessage('');
+    setMade(null);
     try {
-      await sendInvite(draft.id);
-      setMessage(t('Convite enviado para {{email}}.', { email: draft.form.email }));
+      const url = await createInviteLink(draft.id);
+      setMade({ name: draft.form.name, url, copied: await copyText(url) });
       await load();
     } catch (failure) {
-      log.error('Failed to send the invite', failure);
-      setError(t('Não foi possível enviar o convite. Tente novamente.'));
+      log.error('Failed to make the invite link', failure);
+      setError(t('Não foi possível gerar o link. Tente novamente.'));
     } finally {
       setWorking(null);
     }
@@ -62,9 +65,9 @@ export default function AdminDrafts() {
   const statusText = (draft: ProfessionalDraft) => {
     const status = inviteStatus(draft);
     if (status === 'sent') {
-      return t('Convite enviado {{when}}', { when: formatRelative(draft.invitedAt) });
+      return t('Link gerado {{when}}', { when: formatRelative(draft.invitedAt) });
     }
-    return status === 'expired' ? t('Convite expirado') : t('Convite ainda não enviado');
+    return status === 'expired' ? t('Link expirado') : t('Link ainda não gerado');
   };
 
   return (
@@ -73,7 +76,7 @@ export default function AdminDrafts() {
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={{ color: theme.muted }}>
           {t(
-            'Crie o perfil de um profissional que ainda não tem conta e envie um convite por e-mail. Ele assume o perfil entrando com o e-mail do convite.',
+            'Crie o perfil de um profissional que ainda não tem conta e gere um link para enviar a ele (por WhatsApp, Instagram...). Ele assume o perfil abrindo o link.',
           )}
         </Text>
         <Button
@@ -85,11 +88,7 @@ export default function AdminDrafts() {
             {error}
           </Text>
         ) : null}
-        {message ? (
-          <Text accessibilityRole="alert" style={[styles.message, { color: theme.primary }]}>
-            {message}
-          </Text>
-        ) : null}
+        {made ? <InviteLinkBox url={made.url} copied={made.copied} name={made.name} /> : null}
         {list === null ? (
           <Spinner small />
         ) : list.length ? (
@@ -102,7 +101,9 @@ export default function AdminDrafts() {
                 style={styles.info}
               >
                 <Text style={[styles.name, { color: theme.text }]}>{draft.form.name}</Text>
-                <Text style={{ color: theme.muted }}>{draft.form.email}</Text>
+                {draft.form.email ? (
+                  <Text style={{ color: theme.muted }}>{draft.form.email}</Text>
+                ) : null}
                 <Text
                   style={{ color: inviteStatus(draft) === 'expired' ? fixed.danger : theme.muted }}
                 >
@@ -111,8 +112,10 @@ export default function AdminDrafts() {
               </Pressable>
               <Button
                 variant="light"
-                label={inviteStatus(draft) === 'none' ? t('Enviar convite') : t('Reenviar convite')}
-                onPress={() => void invite(draft)}
+                label={
+                  inviteStatus(draft) === 'none' ? t('Gerar e copiar link') : t('Gerar novo link')
+                }
+                onPress={() => void makeLink(draft)}
                 loading={working === draft.id}
                 disabled={working !== null}
               />
@@ -130,7 +133,6 @@ const styles = StyleSheet.create({
   content: { padding: 24, gap: 16 },
   info: { gap: 2 },
   name: { fontSize: 18, fontWeight: '700', marginBottom: 2 },
-  message: { fontWeight: '600' },
   error: {
     padding: 12,
     borderRadius: radius.card,

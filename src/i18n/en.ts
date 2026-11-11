@@ -536,39 +536,20 @@ export const en: Record<string, string> = {
   Hora: 'Hour',
   Minutos: 'Minutes',
   'Perfis criados por você, sem conta': 'Profiles you created, without an account',
-  'Cancelar o convite? O link enviado deixa de funcionar.':
-    'Cancel the invite? The link that was sent stops working.',
-  'Cancelar convite': 'Cancel invite',
-  'Não foi possível cancelar o convite.': 'Could not cancel the invite.',
   'Apagar o perfil de {{name}}? Isso não pode ser desfeito.':
     'Delete the profile of {{name}}? This cannot be undone.',
   'Apagar perfil': 'Delete profile',
   'Não foi possível apagar o perfil.': 'Could not delete the profile.',
   'Criar perfil': 'Create profile',
   'Editar perfil': 'Edit profile',
-  'E-mail do convite': 'Invite email',
-  'O convite vai para este e-mail, e só quem entrar com ele consegue assumir o perfil.':
-    'The invite goes to this email, and only whoever signs in with it can take over the profile.',
   'Idioma dos e-mails': 'Language of the emails',
   Instagram: 'Instagram',
   '@usuario': '@username',
   'Serviços, horários, endereço e CPF ficam para o profissional completar depois de assumir o perfil.':
     'Services, hours, address and CPF are left for the professional to complete after taking over the profile.',
-  'Há um convite enviado e ainda válido.': 'There is an invite that was sent and is still valid.',
-  'O convite expirou. Envie outro.': 'The invite expired. Send another one.',
   'Salvando...': 'Saving...',
-  'Salvar e enviar convite': 'Save and send invite',
   'Não foi possível carregar os perfis.': 'Could not load the profiles.',
-  'Convite enviado para {{email}}.': 'Invite sent to {{email}}.',
-  'Não foi possível enviar o convite. Tente novamente.': 'Could not send the invite. Try again.',
-  'Convite enviado {{when}}': 'Invite sent {{when}}',
-  'Convite expirado': 'Invite expired',
-  'Convite ainda não enviado': 'Invite not sent yet',
   'Perfis criados por você': 'Profiles you created',
-  'Crie o perfil de um profissional que ainda não tem conta e envie um convite por e-mail. Ele assume o perfil entrando com o e-mail do convite.':
-    'Create the profile of a professional who does not have an account yet and send an invite by email. They take over the profile by signing in with the email of the invite.',
-  'Enviar convite': 'Send invite',
-  'Reenviar convite': 'Send invite again',
   'Nenhum perfil criado ainda.': 'No profiles created yet.',
   'Convite indisponível': 'Invite unavailable',
   Convite: 'Invite',
@@ -588,4 +569,33 @@ export const en: Record<string, string> = {
   'Já tenho uma conta': 'I already have an account',
   'Digite o nome (pelo menos 3 letras).': 'Enter the name (at least 3 letters).',
   'Entre com o e-mail do convite.': 'Sign in with the email of the invite.',
+  'Cancelar link': 'Cancel link',
+  'Cancelar o link? O link enviado deixa de funcionar.':
+    'Cancel the link? The link that was sent stops working.',
+  'Compartilhar link': 'Share link',
+  'Copie o link e envie.': 'Copy the link and send it.',
+  'Crie o perfil de um profissional que ainda não tem conta e gere um link para enviar a ele (por WhatsApp, Instagram...). Ele assume o perfil abrindo o link.':
+    'Create the profile of a professional who does not have an account yet and make a link to send them (by WhatsApp, Instagram...). They take over the profile by opening the link.',
+  'E-mail (opcional)': 'Email (optional)',
+  'Este link aparece só agora. Se precisar de outro, gere um novo: o anterior deixa de funcionar.':
+    'This link only shows now. If you need another one, make a new one: the previous one stops working.',
+  'Gerar e copiar link': 'Make and copy link',
+  'Gerar novo link': 'Make a new link',
+  'Há um link gerado e ainda válido.': 'There is a link that was made and is still valid.',
+  'Link ainda não gerado': 'Link not made yet',
+  'Link copiado. Cole na conversa para enviar.': 'Link copied. Paste it in the chat to send it.',
+  'Link de {{name}} copiado. Cole na conversa para enviar.':
+    'Link of {{name}} copied. Paste it in the chat to send it.',
+  'Link de {{name}}. Copie e envie.': 'Link of {{name}}. Copy it and send it.',
+  'Link expirado': 'Link expired',
+  'Link gerado {{when}}': 'Link made {{when}}',
+  'Montamos o seu perfil no Find Your Beauty. Entre ou crie a sua conta para assumir o perfil.':
+    'We set up your profile on Find Your Beauty. Sign in or create your account to take over the profile.',
+  'Não foi possível cancelar o link.': 'Could not cancel the link.',
+  'Não foi possível gerar o link. Tente novamente.': 'Could not make the link. Try again.',
+  'O link expirou. Gere outro.': 'The link expired. Make another one.',
+  'Salvar e gerar link': 'Save and make link',
+  'Salvar e gerar novo link': 'Save and make a new link',
+  'Se preencher, só quem entrar com este e-mail consegue assumir o perfil. Se deixar em branco, quem tiver o link assume.':
+    'If you fill it in, only whoever signs in with this email can take over the profile. If you leave it blank, whoever has the link can.',
 };

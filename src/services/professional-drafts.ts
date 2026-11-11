@@ -18,7 +18,7 @@ import { db, firebaseAuth, functions } from './firebase';
 import { removePhoto, uploadPhoto } from './photos';
 
 // Profiles an admin makes for professionals who have no account yet. They are not public: only admins read
-// `professionalDrafts` (see firestore.rules of the site). An invite by e-mail lets the professional claim one; claiming
+// `professionalDrafts` (see firestore.rules of the site). An invite link lets the professional claim one; claiming
 // copies it to `professionals/{uid}` (Cloud Function claimProfessionalDraft).
 
 const toDate = (value: unknown) => (value instanceof Timestamp ? value.toDate() : null);
@@ -57,15 +57,17 @@ export const saveDraft = (id: string, form: DraftForm, isNew: boolean) => {
   });
 };
 
-// Sends the invite by e-mail. A new one replaces the old: the previous link stops working.
-export const sendInvite = async (id: string) => {
-  await httpsCallable<{ draftId: string }, { ok: boolean; expiresAt: number }>(
+// Makes the invite link, to send by hand. A new one replaces the old: the previous link stops working. The link is
+// only shown now (the server keeps the hash of its token).
+export const createInviteLink = async (id: string) => {
+  const { data } = await httpsCallable<{ draftId: string }, { ok: boolean; url: string }>(
     functions,
     'createProfessionalInvite',
   )({ draftId: id });
+  return data.url;
 };
 
-// The link in the e-mail stops working
+// The link stops working
 export const revokeInvite = (id: string) =>
   updateDoc(doc(db, COLLECTIONS.professionalDrafts, id), {
     inviteHash: deleteField(),

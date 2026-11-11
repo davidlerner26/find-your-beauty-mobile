@@ -21,7 +21,7 @@ const form: DraftForm = {
 const date = (value: unknown) => (value instanceof Date ? value : null);
 
 describe('inviteStatus', () => {
-  it('is none before the invite is sent', () => {
+  it('is none before the link is made', () => {
     expect(inviteStatus({ invited: false, inviteExpiresAt: null })).toBe('none');
   });
 
@@ -32,8 +32,9 @@ describe('inviteStatus', () => {
 });
 
 describe('validateDraft', () => {
-  it('asks for a name and a valid e-mail', () => {
+  it('asks for a name, and for a valid e-mail only when there is one', () => {
     expect(validateDraft(form)).toEqual({});
+    expect(validateDraft({ ...form, email: '' })).toEqual({});
     expect(Object.keys(validateDraft({ ...form, name: 'An' }))).toEqual(['name']);
     expect(Object.keys(validateDraft({ ...form, email: 'ana@' }))).toEqual(['email']);
   });

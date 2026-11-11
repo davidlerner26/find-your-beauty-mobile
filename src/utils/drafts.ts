@@ -3,7 +3,7 @@ import { t } from '../i18n';
 import { aboutToParagraphs, paragraphsToAbout } from './profile-form';
 import { authErrorMessage, isValidEmail } from './validators';
 
-// What the admin types to make a profile for a professional who has no account yet
+// What the admin types to make a profile for a professional who has no account yet. The e-mail is optional.
 export type DraftForm = {
   name: string;
   email: string;
@@ -36,7 +36,7 @@ export type ProfessionalDraft = {
   createdAt: Date | null;
 };
 
-// The invite of a draft: not sent yet, waiting for the professional, or past its date
+// The invite link of a draft: not made yet, waiting for the professional, or past its date
 export const inviteStatus = (
   draft: Pick<ProfessionalDraft, 'invited' | 'inviteExpiresAt'>,
   now = Date.now(),
@@ -50,7 +50,10 @@ export type DraftErrors = Partial<Record<'name' | 'email', string>>;
 // What is wrong before the draft can be saved
 export const validateDraft = (form: DraftForm): DraftErrors => ({
   ...(form.name.trim().length >= 3 ? {} : { name: t('Digite o nome (pelo menos 3 letras).') }),
-  ...(isValidEmail(form.email.trim()) ? {} : { email: t('Digite um e-mail válido.') }),
+  // Optional: with one only that account can claim the profile, without one whoever has the link can
+  ...(!form.email.trim() || isValidEmail(form.email.trim())
+    ? {}
+    : { email: t('Digite um e-mail válido.') }),
 });
 
 // "@ana.makeup" and "https://instagram.com/ana.makeup/" both become "ana.makeup"

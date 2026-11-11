@@ -4,8 +4,8 @@ import { functions } from './firebase';
 
 export type InviteInfo = { name: string; image: string; email: string };
 
-// What the invite screen shows before the professional signs in. It answers only for a valid token (the one that was
-// sent to the invited e-mail); anything else is an error with a message ready to show.
+// What the invite screen shows before the professional signs in. It answers only for a valid token (the one of the link
+// the admin sent); anything else is an error with a message ready to show. `email` is empty when the draft has none.
 export const inviteInfo = async (draftId: string, token: string) => {
   const { data } = await httpsCallable<
     { draftId: string; token: string; lang: string },

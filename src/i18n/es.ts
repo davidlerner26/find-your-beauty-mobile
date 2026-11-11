@@ -543,40 +543,20 @@ export const es: Record<string, string> = {
   Hora: 'Hora',
   Minutos: 'Minutos',
   'Perfis criados por você, sem conta': 'Perfiles que creaste, sin cuenta',
-  'Cancelar o convite? O link enviado deixa de funcionar.':
-    '¿Cancelar la invitación? El enlace enviado deja de funcionar.',
-  'Cancelar convite': 'Cancelar invitación',
-  'Não foi possível cancelar o convite.': 'No fue posible cancelar la invitación.',
   'Apagar o perfil de {{name}}? Isso não pode ser desfeito.':
     '¿Eliminar el perfil de {{name}}? Esto no se puede deshacer.',
   'Apagar perfil': 'Eliminar perfil',
   'Não foi possível apagar o perfil.': 'No fue posible eliminar el perfil.',
   'Criar perfil': 'Crear perfil',
   'Editar perfil': 'Editar perfil',
-  'E-mail do convite': 'Correo de la invitación',
-  'O convite vai para este e-mail, e só quem entrar com ele consegue assumir o perfil.':
-    'La invitación va a este correo, y solo quien entre con él puede asumir el perfil.',
   'Idioma dos e-mails': 'Idioma de los correos',
   Instagram: 'Instagram',
   '@usuario': '@usuario',
   'Serviços, horários, endereço e CPF ficam para o profissional completar depois de assumir o perfil.':
     'Los servicios, los horarios, la dirección y el CPF quedan para que el profesional los complete después de asumir el perfil.',
-  'Há um convite enviado e ainda válido.': 'Hay una invitación enviada y todavía válida.',
-  'O convite expirou. Envie outro.': 'La invitación venció. Envía otra.',
   'Salvando...': 'Guardando...',
-  'Salvar e enviar convite': 'Guardar y enviar invitación',
   'Não foi possível carregar os perfis.': 'No fue posible cargar los perfiles.',
-  'Convite enviado para {{email}}.': 'Invitación enviada a {{email}}.',
-  'Não foi possível enviar o convite. Tente novamente.':
-    'No fue posible enviar la invitación. Inténtalo de nuevo.',
-  'Convite enviado {{when}}': 'Invitación enviada {{when}}',
-  'Convite expirado': 'Invitación vencida',
-  'Convite ainda não enviado': 'Invitación aún no enviada',
   'Perfis criados por você': 'Perfiles que creaste',
-  'Crie o perfil de um profissional que ainda não tem conta e envie um convite por e-mail. Ele assume o perfil entrando com o e-mail do convite.':
-    'Crea el perfil de un profesional que aún no tiene cuenta y envía una invitación por correo. Asume el perfil entrando con el correo de la invitación.',
-  'Enviar convite': 'Enviar invitación',
-  'Reenviar convite': 'Reenviar invitación',
   'Nenhum perfil criado ainda.': 'Ningún perfil creado todavía.',
   'Convite indisponível': 'Invitación no disponible',
   Convite: 'Invitación',
@@ -596,4 +576,35 @@ export const es: Record<string, string> = {
   'Já tenho uma conta': 'Ya tengo una cuenta',
   'Digite o nome (pelo menos 3 letras).': 'Escribe el nombre (al menos 3 letras).',
   'Entre com o e-mail do convite.': 'Entra con el correo de la invitación.',
+  'Cancelar link': 'Cancelar enlace',
+  'Cancelar o link? O link enviado deixa de funcionar.':
+    '¿Cancelar el enlace? El enlace enviado deja de funcionar.',
+  'Compartilhar link': 'Compartir enlace',
+  'Copie o link e envie.': 'Copia el enlace y envíalo.',
+  'Crie o perfil de um profissional que ainda não tem conta e gere um link para enviar a ele (por WhatsApp, Instagram...). Ele assume o perfil abrindo o link.':
+    'Crea el perfil de un profesional que aún no tiene cuenta y genera un enlace para enviárselo (por WhatsApp, Instagram...). Asume el perfil abriendo el enlace.',
+  'E-mail (opcional)': 'Correo (opcional)',
+  'Este link aparece só agora. Se precisar de outro, gere um novo: o anterior deixa de funcionar.':
+    'Este enlace aparece solo ahora. Si necesitas otro, genera uno nuevo: el anterior deja de funcionar.',
+  'Gerar e copiar link': 'Generar y copiar enlace',
+  'Gerar novo link': 'Generar un nuevo enlace',
+  'Há um link gerado e ainda válido.': 'Hay un enlace generado y todavía válido.',
+  'Link ainda não gerado': 'Enlace aún no generado',
+  'Link copiado. Cole na conversa para enviar.':
+    'Enlace copiado. Pégalo en la conversación para enviarlo.',
+  'Link de {{name}} copiado. Cole na conversa para enviar.':
+    'Enlace de {{name}} copiado. Pégalo en la conversación para enviarlo.',
+  'Link de {{name}}. Copie e envie.': 'Enlace de {{name}}. Cópialo y envíalo.',
+  'Link expirado': 'Enlace vencido',
+  'Link gerado {{when}}': 'Enlace generado {{when}}',
+  'Montamos o seu perfil no Find Your Beauty. Entre ou crie a sua conta para assumir o perfil.':
+    'Armamos tu perfil en Find Your Beauty. Entra o crea tu cuenta para asumir el perfil.',
+  'Não foi possível cancelar o link.': 'No fue posible cancelar el enlace.',
+  'Não foi possível gerar o link. Tente novamente.':
+    'No fue posible generar el enlace. Inténtalo de nuevo.',
+  'O link expirou. Gere outro.': 'El enlace venció. Genera otro.',
+  'Salvar e gerar link': 'Guardar y generar enlace',
+  'Salvar e gerar novo link': 'Guardar y generar un nuevo enlace',
+  'Se preencher, só quem entrar com este e-mail consegue assumir o perfil. Se deixar em branco, quem tiver o link assume.':
+    'Si lo completas, solo quien entre con este correo puede asumir el perfil. Si lo dejas en blanco, quien tenga el enlace puede.',
 };
