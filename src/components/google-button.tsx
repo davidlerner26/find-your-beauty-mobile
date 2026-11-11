@@ -18,6 +18,7 @@ const KNOWN = [
   'auth/professional-not-registered',
   'auth/pending-approval',
   'auth/account-is-client',
+  'auth/invite-email',
 ];
 
 // "ou" and the button to sign in or sign up with a Google account. Only in a development or store build: Expo Go

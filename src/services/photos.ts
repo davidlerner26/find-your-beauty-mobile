@@ -5,15 +5,17 @@ import { resizeForUpload } from './images';
 
 export type PhotoFolder = 'profile' | 'gallery' | 'services';
 
-// Uploads a photo of the professional (shrunk first) and returns its public URL
+// Uploads a photo of the professional (shrunk first) and returns its public URL. A draft an admin makes keeps its
+// photos in professionalDrafts/{id} until the professional claims it.
 export const uploadPhoto = async (
   uid: string,
   folder: PhotoFolder,
   photo: { uri: string; width: number; height: number },
+  root: 'professionals' | 'professionalDrafts' = 'professionals',
 ) => {
   const uri = await resizeForUpload(photo.uri, photo.width, photo.height);
   const blob = await (await fetch(uri)).blob();
-  const target = ref(storage, `professionals/${uid}/${folder}/${Date.now()}.jpg`);
+  const target = ref(storage, `${root}/${uid}/${folder}/${Date.now()}.jpg`);
   await uploadBytes(target, blob, { contentType: 'image/jpeg' });
   return getDownloadURL(target);
 };

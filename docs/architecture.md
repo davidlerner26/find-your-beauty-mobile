@@ -90,6 +90,17 @@ the addresses of the site (`utils/address-format.ts`), because the neighborhood 
 cards read that format. The professional area keeps the light look of the client area for now (the site's blue theme
 is not applied).
 
+**Profiles made by an admin.** An admin can make the profile of a professional who has no account (`/admin/perfis`,
+`services/professional-drafts.ts`). It is a draft in `professionalDrafts/{id}` (only admins read it, so it is never in the
+catalog) with the basics: name, e-mail, phone, language, Instagram, about and photo. The admin sends an invite by e-mail
+(`createProfessionalInvite`, Resend); the link has a one-use token (only its hash is saved) and opens
+`/convite/{draftId}/{token}` on the site, or `findyourbeauty://convite/{draftId}/{token}` in the app
+(`app/convite/[draftId]/[token].tsx`). The professional signs in or creates the password with the invited e-mail, and
+`claimProfessionalDraft` copies the draft (and its photos) to `professionals/{uid}` and deletes it. The document id has to be
+the account uid, which the rules, Storage and the Instagram functions depend on, and nothing can point to a draft, so the copy
+costs nothing. The new profile is approved but **not published**: it has no CPF, hours or services, and saving the complete
+profile publishes it as for any other professional. The backend is in the site's repo.
+
 **Instagram.** `services/instagram.ts` opens the authorization in the system browser (`openAuthSessionAsync`) and sends
 the code to the same Cloud Functions as the site. The redirect address has to be listed in the Meta app
 (`Linking.createURL('pro/instagram')`: `findyourbeauty://pro/instagram` in a build); Meta may require an https address,

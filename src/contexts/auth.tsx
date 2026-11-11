@@ -25,6 +25,7 @@ import {
 } from 'react';
 import { firebaseAuth, functions } from '../services/firebase';
 import { googleIdToken, googleSignOut } from '../services/google';
+import { claimDraft } from '../services/invites';
 import { professionalAccounts } from '../services/professional-accounts';
 import { users } from '../services/users';
 import { APP_LANGUAGE } from '../utils/locale';
@@ -71,6 +72,14 @@ export type AuthActions = {
   finishSignup: () => Promise<void>;
   clearSignupSubmitted: () => void;
   signOut: () => Promise<void>;
+  // An invite to claim a profile an admin made (see services/professional-drafts.ts). The link went to the invited
+  // e-mail, so these accounts skip the e-mail code of the client sign up.
+  signUpWithInvite: (email: string, password: string) => Promise<void>;
+  signInWithInvite: (email: string, password: string) => Promise<void>;
+  // The Google account has to be the one of the invite. Resolves to false when the person closed the Google window.
+  signInWithGoogleForInvite: (invitedEmail: string) => Promise<boolean>;
+  // Copies the draft to professionals/{uid}; then the account is a professional
+  claimProfessional: (draftId: string, token: string) => Promise<void>;
 };
 
 const StateContext = createContext<AuthState | null>(null);
@@ -413,6 +422,40 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       signOut: async () => {
         await signOut(firebaseAuth);
         await googleSignOut();
+      },
+
+      async signUpWithInvite(email, password) {
+        const { user } = await createUserWithEmailAndPassword(firebaseAuth, email.trim(), password);
+        dispatch({ type: 'user', user });
+        await resolveRole(user);
+      },
+
+      async signInWithInvite(email, password) {
+        const { user } = await signInWithEmailAndPassword(firebaseAuth, email.trim(), password);
+        await resolveRole(user);
+      },
+
+      // Another Google account is removed, as the sign in just created it
+      async signInWithGoogleForInvite(invitedEmail) {
+        const user = await googleCredential();
+        if (!user) return false;
+        if ((user.email ?? '').toLowerCase() !== invitedEmail.toLowerCase()) {
+          await deleteUser(user).catch((error) => {
+            log.warn(
+              'Failed to remove the account with another e-mail, signing out instead',
+              error,
+            );
+            return signOut(firebaseAuth);
+          });
+          throw { code: 'auth/invite-email' };
+        }
+        await resolveRole(user);
+        return true;
+      },
+
+      async claimProfessional(draftId, token) {
+        await claimDraft(draftId, token);
+        await resolveRole(firebaseAuth.currentUser);
       },
     };
   }, [resolveRole]);

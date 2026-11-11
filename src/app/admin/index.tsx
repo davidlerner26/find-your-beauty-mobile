@@ -16,6 +16,7 @@ import { useTheme } from '../../theme/theme';
 import { PendingProfessional } from '../../utils/admin-list';
 import { formatRelative } from '../../utils/format-date';
 import { log } from '../../utils/log';
+import { PATHS } from '../../utils/paths';
 
 export default function Admin() {
   const router = useRouter();
@@ -67,6 +68,15 @@ export default function Admin() {
     <Screen scroll={false} padded={false} edges={['top']}>
       <AdminTop title={t('Administração')} />
       <ScrollView contentContainerStyle={styles.content}>
+        <Pressable
+          accessibilityRole="link"
+          accessibilityLabel={t('Perfis criados por você, sem conta')}
+          onPress={() => router.push(PATHS.adminDrafts as never)}
+        >
+          <Text style={[styles.link, { color: theme.primary }]}>
+            {t('Perfis criados por você, sem conta')}
+          </Text>
+        </Pressable>
         {list?.length ? (
           <Text accessibilityRole="header" style={[styles.heading, { color: theme.muted }]}>
             {t('Aguardando aprovação')}

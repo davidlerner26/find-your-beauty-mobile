@@ -40,6 +40,7 @@ const AUTH_ERRORS: Record<string, string> = {
   'auth/invalid-action-code': t(
     'Este link é inválido ou já foi usado. Peça um novo link de redefinição.',
   ),
+  'auth/invite-email': t('Entre com o e-mail do convite.'),
   'auth/operation-not-allowed': t('Login por e-mail não está ativado no Firebase.'),
 };
 
