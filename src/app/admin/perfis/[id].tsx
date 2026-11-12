@@ -1,12 +1,26 @@
 import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
+import * as Location from 'expo-location';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
-import { Alert, ScrollView, StyleSheet, View } from 'react-native';
+import { useEffect, useRef, useState } from 'react';
+import { MaterialIcons } from '@expo/vector-icons';
+import {
+  ActivityIndicator,
+  Alert,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  useWindowDimensions,
+  View,
+} from 'react-native';
+import { AddressField } from '../../../components/address-field';
+import { AvailabilityEditor } from '../../../components/availability-editor';
+import { PhotoPositioner } from '../../../components/photo-positioner';
+import { ServicesEditor } from '../../../components/services-editor';
 import { AdminTop } from '../../../components/admin-kit';
 import { Button } from '../../../components/button';
 import { InviteLinkBox } from '../../../components/invite-link-box';
-import { FormField } from '../../../components/form-kit';
+import { FormField, FormSection } from '../../../components/form-kit';
 import { Screen } from '../../../components/screen';
 import { SelectField } from '../../../components/select-field';
 import { Spinner } from '../../../components/spinner';
@@ -23,21 +37,29 @@ import {
   saveDraft,
   uploadDraftPhoto,
 } from '../../../services/professional-drafts';
+import { SERVICE_PLACES } from '../../../models/professional';
+import { placesAvailable } from '../../../services/places';
 import { fixed, radius } from '../../../theme/colors';
 import { useTheme } from '../../../theme/theme';
 import {
   DraftForm,
-  EMPTY_DRAFT_FORM,
+  draftMissing,
+  draftNeedsAddress,
+  emptyDraftForm,
   inviteStatus,
+  NO_POSITION,
   ProfessionalDraft,
   validateDraft,
 } from '../../../utils/drafts';
 import { log } from '../../../utils/log';
+import { formatAddress } from '../../../utils/address-format';
+import { formatCpf } from '../../../utils/cpf';
 import { formatPhone } from '../../../utils/phone';
 import { PATHS } from '../../../utils/paths';
 
-// Makes or edits a profile for a professional who has no account yet. Only the basics: the professional completes
-// the services, hours, address and CPF after claiming it.
+// Makes or edits a profile for a professional who has no account yet. It has everything of the sign up of a
+// professional (CPF, photos, address, services, hours), except connecting the Instagram: that needs her own login, so
+// here it is only the link. What is left empty she completes after claiming the profile.
 export default function AdminDraft() {
   const router = useRouter();
   const theme = useTheme();
@@ -51,12 +73,17 @@ export default function AdminDraft() {
   const isNew = creating && !created;
 
   const [draft, setDraft] = useState<ProfessionalDraft | null>(null);
-  const [form, setForm] = useState<DraftForm>(EMPTY_DRAFT_FORM);
+  const [form, setForm] = useState<DraftForm>(emptyDraftForm);
   // The link that was just made
   const [made, setMade] = useState<{ url: string; copied: boolean } | null>(null);
   const [loading, setLoading] = useState(!isNew);
   const [saving, setSaving] = useState(false);
-  const [uploading, setUploading] = useState(false);
+  const [uploading, setUploading] = useState<'profile' | 'gallery' | 'services' | null>(null);
+  const [addressError, setAddressError] = useState('');
+  const [checkingAddress, setCheckingAddress] = useState(false);
+  // Photos that the draft no longer uses: deleted from the storage once it is saved
+  const removed = useRef<string[]>([]);
+  const { width } = useWindowDimensions();
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState('');
 
@@ -90,21 +117,77 @@ export default function AdminDraft() {
 
   const errors = submitted ? validateDraft(form) : {};
 
-  const pickPhoto = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images'] });
-    if (result.canceled) return;
-    setUploading(true);
+  const hasPlace = (place: 'studio' | 'home') =>
+    form.serviceMode === place || form.serviceMode === 'both';
+  // Each place is switched on or off on its own; both on is 'both'
+  const togglePlace = (place: 'studio' | 'home') => {
+    const studio = hasPlace('studio') !== (place === 'studio');
+    const home = hasPlace('home') !== (place === 'home');
+    change('serviceMode', studio && home ? 'both' : studio ? 'studio' : home ? 'home' : null);
+  };
+
+  // Picks photos of the library and uploads them to the folder of the draft
+  const pickAndUpload = async (folder: 'profile' | 'gallery' | 'services') => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      allowsMultipleSelection: folder === 'gallery',
+    });
+    if (result.canceled) return [];
+    setUploading(folder);
     setError('');
     try {
-      const previous = form.image;
-      change('image', await uploadDraftPhoto(id, result.assets[0]));
-      // The old one goes away now; a draft that was never saved has none
-      if (previous) await removeDraftPhoto(previous);
+      return await Promise.all(result.assets.map((asset) => uploadDraftPhoto(id, folder, asset)));
     } catch (failure) {
       log.error('Failed to upload the photo', failure);
       setError(t('Não foi possível enviar a foto. Use uma imagem e tente novamente.'));
+      return [];
     } finally {
-      setUploading(false);
+      setUploading(null);
+    }
+  };
+
+  const changeProfilePhoto = async () => {
+    const [url] = await pickAndUpload('profile');
+    if (!url) return;
+    // A new photo starts centered; the old one goes away once the draft is saved
+    if (form.image) removed.current.push(form.image);
+    setForm((current) => ({ ...current, image: url, imagePosition: { x: 50, y: 50 } }));
+  };
+
+  const addGallery = async () => {
+    const urls = await pickAndUpload('gallery');
+    if (urls.length) setForm((current) => ({ ...current, gallery: [...current.gallery, ...urls] }));
+  };
+
+  const removeGallery = (url: string) => {
+    removed.current.push(url);
+    setForm((current) => ({ ...current, gallery: current.gallery.filter((p) => p !== url) }));
+  };
+
+  // Without a Google key there are no suggestions: the address is confirmed with the geocoder of the phone
+  const confirmAddress = async () => {
+    const typed = form.address.trim();
+    if (typed.length < 5) return;
+    setCheckingAddress(true);
+    setAddressError('');
+    try {
+      const [found] = await Location.geocodeAsync(typed);
+      if (!found) {
+        setAddressError(t('Não encontramos esse endereço. Inclua a rua, o número e a cidade.'));
+        return;
+      }
+      const [parts] = await Location.reverseGeocodeAsync(found).catch(() => []);
+      setForm((current) => ({
+        ...current,
+        address: formatAddress(typed, parts),
+        position: { lat: found.latitude, lng: found.longitude },
+        addressConfirmed: true,
+      }));
+    } catch (failure) {
+      log.warn('Failed to find the address', failure);
+      setAddressError(t('Não encontramos esse endereço. Inclua a rua, o número e a cidade.'));
+    } finally {
+      setCheckingAddress(false);
     }
   };
 
@@ -118,6 +201,9 @@ export default function AdminDraft() {
     setMade(null);
     try {
       await saveDraft(id, form, isNew);
+      // Only deletes the removed photos once the draft no longer points to them
+      await Promise.all(removed.current.map(removeDraftPhoto));
+      removed.current = [];
       if (!withLink) {
         router.replace(PATHS.adminDrafts as never);
         return;
@@ -165,7 +251,12 @@ export default function AdminDraft() {
           text: t('Apagar perfil'),
           style: 'destructive',
           onPress: () => {
-            deleteDraft(id, form.image)
+            deleteDraft(id, [
+              form.image,
+              ...form.gallery,
+              ...form.services.flatMap((service) => service.photos),
+              ...removed.current,
+            ])
               .then(() => router.replace(PATHS.adminDrafts as never))
               .catch((failure) => {
                 log.error('Failed to delete the draft', failure);
@@ -177,7 +268,9 @@ export default function AdminDraft() {
     );
 
   const status = draft ? inviteStatus(draft) : 'none';
-  const busy = saving || uploading;
+  const busy = saving || uploading !== null;
+  const missing = draftMissing(form);
+  const photoSize = Math.floor((width - 48 - 24) / 3);
 
   return (
     <Screen scroll={false} padded={false} edges={['top']}>
@@ -209,6 +302,14 @@ export default function AdminDraft() {
             )}
           </Text>
           <FormField
+            label="CPF"
+            value={form.cpf}
+            onChangeText={(text) => change('cpf', formatCpf(text))}
+            error={errors.cpf}
+            keyboardType="number-pad"
+            placeholder="000.000.000-00"
+          />
+          <FormField
             label={t('Celular')}
             value={form.phone}
             onChangeText={(value) => change('phone', formatPhone(value))}
@@ -225,14 +326,37 @@ export default function AdminDraft() {
             ]}
             onChange={(value) => change('lang', value)}
           />
-          <FormField
-            label={t('Instagram')}
-            value={form.instagram}
-            onChangeText={(value) => change('instagram', value)}
-            placeholder={t('@usuario')}
-            autoCapitalize="none"
-            autoComplete="off"
-          />
+
+          <Text accessibilityRole="header" style={[styles.heading, { color: theme.text }]}>
+            {t('Foto')}
+          </Text>
+          <Text style={{ color: theme.muted }}>
+            {t('Aparece nos cards, no topo da página e redonda nas mensagens.')}
+          </Text>
+          <View style={styles.photo}>
+            {form.image ? null : (
+              <View style={[styles.preview, styles.empty, { backgroundColor: theme.primaryLight }]}>
+                <Text style={{ color: theme.primary }}>{t('Sem foto')}</Text>
+              </View>
+            )}
+            <View style={styles.flex}>
+              <Button
+                variant="light"
+                label={form.image ? t('Trocar foto') : t('Escolher foto')}
+                onPress={() => void changeProfilePhoto()}
+                loading={uploading === 'profile'}
+                disabled={saving}
+              />
+            </View>
+          </View>
+          {form.image ? (
+            <PhotoPositioner
+              src={form.image}
+              position={form.imagePosition}
+              onChange={(imagePosition) => change('imagePosition', imagePosition)}
+            />
+          ) : null}
+
           <FormField
             label={t('Sobre')}
             value={form.about}
@@ -241,35 +365,176 @@ export default function AdminDraft() {
             maxLength={1500}
           />
 
-          <Text accessibilityRole="header" style={[styles.heading, { color: theme.text }]}>
-            {t('Foto')}
-          </Text>
-          <View style={styles.photo}>
-            {form.image ? (
-              <Image
-                accessibilityIgnoresInvertColors
-                source={{ uri: form.image }}
-                style={styles.preview}
-                contentFit="cover"
-              />
-            ) : (
-              <View style={[styles.preview, styles.empty, { backgroundColor: theme.primaryLight }]}>
-                <Text style={{ color: theme.primary }}>{t('Sem foto')}</Text>
-              </View>
-            )}
-            <Button
-              variant="light"
-              label={form.image ? t('Trocar foto') : t('Escolher foto')}
-              onPress={() => void pickPhoto()}
-              loading={uploading}
-              disabled={saving}
+          <FormSection title="Instagram">
+            <FormField
+              label={t('Link do Instagram')}
+              value={form.instagram}
+              onChangeText={(value) => change('instagram', value)}
+              placeholder="https://instagram.com/usuario"
+              autoCapitalize="none"
+              autoComplete="off"
+              keyboardType="url"
             />
-          </View>
+            <Text style={{ color: theme.muted }}>
+              {t(
+                'Só o link: conectar o Instagram para importar as fotos exige o login dela. Depois de assumir o perfil, ela mesma pode conectar.',
+              )}
+            </Text>
+          </FormSection>
+
+          <FormSection
+            title={t('Galeria')}
+            right={
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={t('Adicionar fotos')}
+                accessibilityState={{ busy: uploading === 'gallery' }}
+                disabled={uploading === 'gallery'}
+                onPress={() => void addGallery()}
+                hitSlop={8}
+              >
+                {uploading === 'gallery' ? (
+                  <ActivityIndicator color={theme.primary} />
+                ) : (
+                  <Text style={{ color: theme.primary, fontSize: 16 }}>
+                    + {t('Adicionar fotos')}
+                  </Text>
+                )}
+              </Pressable>
+            }
+          >
+            {form.gallery.length ? (
+              <View style={styles.gallery}>
+                {form.gallery.map((photo) => (
+                  <View key={photo} style={{ width: photoSize, height: photoSize }}>
+                    <Image
+                      accessibilityIgnoresInvertColors
+                      source={{ uri: photo }}
+                      contentFit="cover"
+                      style={styles.thumb}
+                    />
+                    <Pressable
+                      accessibilityRole="button"
+                      accessibilityLabel={t('Remover foto')}
+                      hitSlop={6}
+                      onPress={() => removeGallery(photo)}
+                      style={styles.remove}
+                    >
+                      <MaterialIcons name="close" size={16} color={fixed.white} />
+                    </Pressable>
+                  </View>
+                ))}
+              </View>
+            ) : (
+              <Text style={{ color: theme.muted }}>
+                {t('Mostre o trabalho dela: as fotos aparecem na galeria do perfil.')}
+              </Text>
+            )}
+          </FormSection>
+
+          <FormSection title={t('Localização')}>
+            <Text style={{ color: theme.muted }}>
+              {t('Onde ela atende? Pode escolher os dois.')}
+            </Text>
+            <View
+              style={styles.modes}
+              accessibilityRole="radiogroup"
+              accessibilityLabel={t('Onde ela atende')}
+            >
+              {SERVICE_PLACES.map(({ key, label }) => {
+                const on = hasPlace(key);
+                return (
+                  <Pressable
+                    key={key}
+                    accessibilityRole="button"
+                    accessibilityLabel={label}
+                    accessibilityState={{ selected: on }}
+                    onPress={() => togglePlace(key)}
+                    style={[
+                      styles.mode,
+                      { borderColor: on ? theme.primary : theme.muted },
+                      on && { backgroundColor: theme.selectedBg },
+                    ]}
+                  >
+                    <Text style={{ color: on ? theme.selectedFg : theme.text, fontWeight: '500' }}>
+                      {label}
+                    </Text>
+                  </Pressable>
+                );
+              })}
+            </View>
+            {form.serviceMode && draftNeedsAddress(form) ? (
+              <>
+                <AddressField
+                  variant="form"
+                  label={t('Endereço')}
+                  placeholder={t('Rua, número, bairro e cidade')}
+                  value={form.address}
+                  onChangeText={(address) => {
+                    setForm((current) => ({
+                      ...current,
+                      address,
+                      addressConfirmed: false,
+                      position: NO_POSITION,
+                    }));
+                    setAddressError('');
+                  }}
+                  onPlace={(place) => {
+                    setForm((current) => ({
+                      ...current,
+                      address: place.address,
+                      position: place.position,
+                      addressConfirmed: true,
+                    }));
+                    setAddressError('');
+                  }}
+                  confirmed={form.addressConfirmed}
+                  error={addressError || undefined}
+                />
+                {!placesAvailable() && !form.addressConfirmed ? (
+                  <Button
+                    variant="outline"
+                    label={t('Confirmar endereço')}
+                    loading={checkingAddress}
+                    onPress={() => void confirmAddress()}
+                    disabled={form.address.trim().length < 5}
+                  />
+                ) : null}
+              </>
+            ) : null}
+          </FormSection>
+
+          <ServicesEditor
+            services={form.services}
+            onChange={(services) => change('services', services)}
+            tried={submitted}
+            uploading={uploading === 'services'}
+            onAddPhoto={async () => (await pickAndUpload('services'))[0] ?? null}
+            onDiscard={(urls) => removed.current.push(...urls)}
+          />
+          {errors.services ? (
+            <Text accessibilityRole="alert" style={styles.error}>
+              {errors.services}
+            </Text>
+          ) : null}
+
+          <AvailabilityEditor
+            availability={form.availability}
+            onChange={(availability) => change('availability', availability)}
+          />
+          {errors.hours ? (
+            <Text accessibilityRole="alert" style={styles.error}>
+              {errors.hours}
+            </Text>
+          ) : null}
 
           <Text style={{ color: theme.muted }}>
-            {t(
-              'Serviços, horários, endereço e CPF ficam para o profissional completar depois de assumir o perfil.',
-            )}
+            {missing.length
+              ? t(
+                  'Falta para o perfil aparecer aos clientes assim que ela assumir: {{missing}}. Ela também pode completar depois.',
+                  { missing: missing.join(', ') },
+                )
+              : t('O perfil está completo: aparece aos clientes assim que ela assumir.')}
           </Text>
           {!isNew && status === 'sent' ? (
             <Text style={{ color: theme.text }}>{t('Há um link gerado e ainda válido.')}</Text>
@@ -289,7 +554,7 @@ export default function AdminDraft() {
             label={saving ? t('Salvando...') : t('Salvar')}
             onPress={() => void save(false)}
             loading={saving}
-            disabled={uploading}
+            disabled={uploading !== null}
           />
           <Button
             variant="light"
@@ -310,8 +575,30 @@ export default function AdminDraft() {
 const styles = StyleSheet.create({
   content: { padding: 24, gap: 16 },
   heading: { fontSize: 18, fontWeight: '700' },
+  flex: { flex: 1 },
   photo: { flexDirection: 'row', alignItems: 'center', gap: 16 },
   preview: { width: 96, height: 96, borderRadius: 48 },
+  gallery: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
+  thumb: { flex: 1, borderRadius: 12, backgroundColor: fixed.surface },
+  remove: {
+    position: 'absolute',
+    top: 6,
+    right: 6,
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+  },
+  modes: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  mode: {
+    paddingHorizontal: 20,
+    minHeight: 44,
+    justifyContent: 'center',
+    borderRadius: radius.pill,
+    borderWidth: 1.5,
+  },
   empty: { alignItems: 'center', justifyContent: 'center' },
   error: {
     padding: 12,

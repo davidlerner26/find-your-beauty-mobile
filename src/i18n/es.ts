@@ -550,10 +550,6 @@ export const es: Record<string, string> = {
   'Criar perfil': 'Crear perfil',
   'Editar perfil': 'Editar perfil',
   'Idioma dos e-mails': 'Idioma de los correos',
-  Instagram: 'Instagram',
-  '@usuario': '@usuario',
-  'Serviços, horários, endereço e CPF ficam para o profissional completar depois de assumir o perfil.':
-    'Los servicios, los horarios, la dirección y el CPF quedan para que el profesional los complete después de asumir el perfil.',
   'Salvando...': 'Guardando...',
   'Não foi possível carregar os perfis.': 'No fue posible cargar los perfiles.',
   'Perfis criados por você': 'Perfiles que creaste',
@@ -607,4 +603,17 @@ export const es: Record<string, string> = {
   'Salvar e gerar novo link': 'Guardar y generar un nuevo enlace',
   'Se preencher, só quem entrar com este e-mail consegue assumir o perfil. Se deixar em branco, quem tiver o link assume.':
     'Si lo completas, solo quien entre con este correo puede asumir el perfil. Si lo dejas en blanco, quien tenga el enlace puede.',
+  'Aparece nos cards, no topo da página e redonda nas mensagens.':
+    'Aparece en las tarjetas, en la parte superior de la página y redonda en los mensajes.',
+  'Link do Instagram': 'Enlace de Instagram',
+  'Só o link: conectar o Instagram para importar as fotos exige o login dela. Depois de assumir o perfil, ela mesma pode conectar.':
+    'Solo el enlace: conectar Instagram para importar las fotos requiere su propio inicio de sesión. Después de asumir el perfil, ella misma puede conectarlo.',
+  'Mostre o trabalho dela: as fotos aparecem na galeria do perfil.':
+    'Muestra su trabajo: las fotos aparecen en la galería del perfil.',
+  'Onde ela atende? Pode escolher os dois.': '¿Dónde atiende? Puedes elegir los dos.',
+  'Onde ela atende': 'Dónde atiende',
+  'Falta para o perfil aparecer aos clientes assim que ela assumir: {{missing}}. Ela também pode completar depois.':
+    'Falta para que el perfil aparezca a los clientes en cuanto ella lo asuma: {{missing}}. Ella también puede completarlo después.',
+  'O perfil está completo: aparece aos clientes assim que ela assumir.':
+    'El perfil está completo: aparece a los clientes en cuanto ella lo asuma.',
 };

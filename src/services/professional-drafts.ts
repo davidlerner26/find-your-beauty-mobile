@@ -12,10 +12,9 @@ import {
 } from 'firebase/firestore';
 import { httpsCallable } from 'firebase/functions';
 import { COLLECTIONS } from '../../shared/domain';
-import { DEFAULT_AVAILABILITY } from '../models/professional';
 import { draftFields, DraftForm, draftFromData } from '../utils/drafts';
 import { db, firebaseAuth, functions } from './firebase';
-import { removePhoto, uploadPhoto } from './photos';
+import { PhotoFolder, removePhoto, uploadPhoto } from './photos';
 
 // Profiles an admin makes for professionals who have no account yet. They are not public: only admins read
 // `professionalDrafts` (see firestore.rules of the site). An invite link lets the professional claim one; claiming
@@ -45,13 +44,6 @@ export const saveDraft = (id: string, form: DraftForm, isNew: boolean) => {
 
   return setDoc(ref, {
     ...draftFields(form),
-    // The rest of a professional profile, empty: the professional completes it after claiming
-    address: '',
-    tags: [],
-    services: [],
-    gallery: [],
-    position: { lat: 0, lng: 0 },
-    availability: DEFAULT_AVAILABILITY,
     createdBy: firebaseAuth.currentUser?.uid ?? '',
     createdAt: serverTimestamp(),
   });
@@ -77,12 +69,13 @@ export const revokeInvite = (id: string) =>
 
 export const uploadDraftPhoto = (
   id: string,
+  folder: PhotoFolder,
   photo: { uri: string; width: number; height: number },
-) => uploadPhoto(id, 'profile', photo, 'professionalDrafts');
+) => uploadPhoto(id, folder, photo, 'professionalDrafts');
 
 export const removeDraftPhoto = removePhoto;
 
-export const deleteDraft = async (id: string, image: string) => {
+export const deleteDraft = async (id: string, urls: string[]) => {
   await deleteDoc(doc(db, COLLECTIONS.professionalDrafts, id));
-  if (image) await removePhoto(image);
+  await Promise.all(urls.filter(Boolean).map(removePhoto));
 };

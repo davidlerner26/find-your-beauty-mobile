@@ -543,10 +543,6 @@ export const en: Record<string, string> = {
   'Criar perfil': 'Create profile',
   'Editar perfil': 'Edit profile',
   'Idioma dos e-mails': 'Language of the emails',
-  Instagram: 'Instagram',
-  '@usuario': '@username',
-  'Serviços, horários, endereço e CPF ficam para o profissional completar depois de assumir o perfil.':
-    'Services, hours, address and CPF are left for the professional to complete after taking over the profile.',
   'Salvando...': 'Saving...',
   'Não foi possível carregar os perfis.': 'Could not load the profiles.',
   'Perfis criados por você': 'Profiles you created',
@@ -598,4 +594,17 @@ export const en: Record<string, string> = {
   'Salvar e gerar novo link': 'Save and make a new link',
   'Se preencher, só quem entrar com este e-mail consegue assumir o perfil. Se deixar em branco, quem tiver o link assume.':
     'If you fill it in, only whoever signs in with this email can take over the profile. If you leave it blank, whoever has the link can.',
+  'Aparece nos cards, no topo da página e redonda nas mensagens.':
+    'Appears on the cards, at the top of the page and round in messages.',
+  'Link do Instagram': 'Instagram link',
+  'Só o link: conectar o Instagram para importar as fotos exige o login dela. Depois de assumir o perfil, ela mesma pode conectar.':
+    'Link only: connecting Instagram to import photos needs her own login. After she claims the profile, she can connect it herself.',
+  'Mostre o trabalho dela: as fotos aparecem na galeria do perfil.':
+    'Show her work: the photos appear in the gallery of the profile.',
+  'Onde ela atende? Pode escolher os dois.': 'Where does she work? You can pick both.',
+  'Onde ela atende': 'Where she works',
+  'Falta para o perfil aparecer aos clientes assim que ela assumir: {{missing}}. Ela também pode completar depois.':
+    'Missing for the profile to show to clients as soon as she claims it: {{missing}}. She can also complete it later.',
+  'O perfil está completo: aparece aos clientes assim que ela assumir.':
+    'The profile is complete: it shows to clients as soon as she claims it.',
 };
