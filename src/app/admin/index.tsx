@@ -77,6 +77,13 @@ export default function Admin() {
             {t('Perfis criados por você, sem conta')}
           </Text>
         </Pressable>
+        <Pressable
+          accessibilityRole="link"
+          accessibilityLabel={t('Apagar um usuário')}
+          onPress={() => router.push(PATHS.adminUsers as never)}
+        >
+          <Text style={[styles.link, { color: fixed.danger }]}>{t('Apagar um usuário')}</Text>
+        </Pressable>
         {list?.length ? (
           <Text accessibilityRole="header" style={[styles.heading, { color: theme.muted }]}>
             {t('Aguardando aprovação')}

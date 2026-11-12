@@ -613,4 +613,26 @@ export const en: Record<string, string> = {
   'Perfil privado: os clientes não encontram você. Abra o perfil para ver o que falta.':
     'Private profile: clients cannot find you. Open the profile to see what is missing.',
   'Abrir no Instagram': 'Open on Instagram',
+  'Apagar um usuário': 'Delete a user',
+  'Procure a conta pelo e-mail, pelo nome ou pelo id. Apagar remove tudo dela: o perfil, os agendamentos, as conversas, as avaliações, os favoritos, as fotos e o login. Não dá para desfazer.':
+    'Find the account by e-mail, name or id. Deleting removes everything: the profile, bookings, conversations, reviews, favorites, photos and the login. It cannot be undone.',
+  'Buscar usuário': 'Search user',
+  'E-mail, nome ou id': 'E-mail, name or id',
+  'Nenhum usuário encontrado.': 'No user found.',
+  Cliente: 'Client',
+  'Sem perfil': 'No profile',
+  Admin: 'Admin',
+  'Contas de admin não são apagadas aqui. Tire o admin primeiro.':
+    'Admin accounts are not deleted here. Take the admin flag away first.',
+  'Isso apaga tudo de {{name}}: Firestore, Storage e login. Para confirmar, digite {{word}}.':
+    'This deletes everything of {{name}}: Firestore, Storage and login. To confirm, type {{word}}.',
+  'Apagando...': 'Deleting...',
+  'Apagar tudo': 'Delete everything',
+  Apagar: 'Delete',
+  'Não foi possível buscar os usuários.': 'Could not search the users.',
+  'Usuário apagado: {{name}}': 'User deleted: {{name}}',
+  'Este usuário tem um agendamento com pagamento em aberto. Cancele o agendamento antes de apagar.':
+    'This user has a booking with a payment still open. Cancel the booking before deleting.',
+  'Não foi possível apagar o usuário. Tente novamente.': 'Could not delete the user. Try again.',
+  Profissional: 'Professional',
 };

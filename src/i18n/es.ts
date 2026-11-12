@@ -622,4 +622,27 @@ export const es: Record<string, string> = {
   'Perfil privado: os clientes não encontram você. Abra o perfil para ver o que falta.':
     'Perfil privado: los clientes no te encuentran. Abre el perfil para ver qué falta.',
   'Abrir no Instagram': 'Abrir en Instagram',
+  'Apagar um usuário': 'Eliminar un usuario',
+  'Procure a conta pelo e-mail, pelo nome ou pelo id. Apagar remove tudo dela: o perfil, os agendamentos, as conversas, as avaliações, os favoritos, as fotos e o login. Não dá para desfazer.':
+    'Busca la cuenta por correo, nombre o id. Eliminar quita todo: el perfil, las reservas, las conversaciones, las valoraciones, los favoritos, las fotos y el acceso. No se puede deshacer.',
+  'Buscar usuário': 'Buscar usuario',
+  'E-mail, nome ou id': 'Correo, nombre o id',
+  'Nenhum usuário encontrado.': 'No se encontró ningún usuario.',
+  Cliente: 'Cliente',
+  'Sem perfil': 'Sin perfil',
+  Admin: 'Admin',
+  'Contas de admin não são apagadas aqui. Tire o admin primeiro.':
+    'Las cuentas de admin no se eliminan aquí. Quita primero el admin.',
+  'Isso apaga tudo de {{name}}: Firestore, Storage e login. Para confirmar, digite {{word}}.':
+    'Esto elimina todo de {{name}}: Firestore, Storage y acceso. Para confirmar, escribe {{word}}.',
+  'Apagando...': 'Eliminando...',
+  'Apagar tudo': 'Eliminar todo',
+  Apagar: 'Eliminar',
+  'Não foi possível buscar os usuários.': 'No se pudo buscar a los usuarios.',
+  'Usuário apagado: {{name}}': 'Usuario eliminado: {{name}}',
+  'Este usuário tem um agendamento com pagamento em aberto. Cancele o agendamento antes de apagar.':
+    'Este usuario tiene una reserva con un pago abierto. Cancela la reserva antes de eliminar.',
+  'Não foi possível apagar o usuário. Tente novamente.':
+    'No se pudo eliminar al usuario. Inténtalo de nuevo.',
+  Profissional: 'Profesional',
 };
