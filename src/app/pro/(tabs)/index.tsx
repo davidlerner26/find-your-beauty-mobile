@@ -1,6 +1,7 @@
 import { Link } from '../../../components/link';
 import { MaterialIcons } from '@expo/vector-icons';
-import { Alert, StyleSheet, View } from 'react-native';
+import { useRouter } from 'expo-router';
+import { Alert, Pressable, StyleSheet, View } from 'react-native';
 import { Text } from '../../../components/text';
 import { Guard } from '../../../components/guard';
 import { ProBookingCard } from '../../../components/pro-booking-card';
@@ -14,7 +15,6 @@ import { ProfessionalAnswer } from '../../../../shared/domain';
 import { Booking } from '../../../models/booking';
 import { setBookingStatus } from '../../../services/bookings';
 import { fixed } from '../../../theme/colors';
-import { useTheme } from '../../../theme/theme';
 import { proAgendaLists } from '../../../utils/booking-lists';
 import { log } from '../../../utils/log';
 import { PATHS } from '../../../utils/paths';
@@ -32,7 +32,7 @@ function ProAgenda() {
   const toast = useToast();
   const uid = useAuth().user?.uid ?? '';
   const profile = useProfessionals().byId(uid);
-  const theme = useTheme();
+  const router = useRouter();
   const { pending, upcoming, history } = proAgendaLists(received);
 
   const answer = (booking: Booking, status: ProfessionalAnswer) => {
@@ -77,18 +77,30 @@ function ProAgenda() {
         <Text accessibilityRole="header" style={styles.title}>
           {t('Agenda')}
         </Text>
-        {/* The clients can find this profile */}
-        {profile?.published ? (
-          <View
-            accessibilityRole="text"
-            accessibilityLabel={t('Perfil público')}
-            style={[styles.public, { backgroundColor: theme.primaryLight }]}
+        {/* The state of the profile: green when the clients find it, red when they do not */}
+        {profile ? (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={
+              profile.published
+                ? t('Perfil público: os clientes encontram você')
+                : t(
+                    'Perfil privado: os clientes não encontram você. Abra o perfil para ver o que falta.',
+                  )
+            }
+            onPress={() => router.push(PATHS.proProfile as never)}
+            style={[
+              styles.state,
+              { backgroundColor: profile.published ? fixed.success : fixed.dangerStrong },
+            ]}
           >
-            <MaterialIcons name="public" size={18} color={theme.primary} />
-            <Text style={[styles.publicLabel, { color: theme.primary }]}>
-              {t('Perfil público')}
-            </Text>
-          </View>
+            <MaterialIcons
+              name={profile.published ? 'visibility' : 'visibility-off'}
+              size={18}
+              color={fixed.white}
+            />
+            <Text style={styles.stateLabel}>{profile.published ? t('Público') : t('Privado')}</Text>
+          </Pressable>
         ) : null}
       </View>
 
@@ -133,7 +145,7 @@ function ProAgenda() {
 const styles = StyleSheet.create({
   head: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12 },
   title: { fontSize: 24, fontWeight: '700', color: fixed.ink },
-  public: {
+  state: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
@@ -141,7 +153,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderRadius: 999,
   },
-  publicLabel: { fontSize: 14, fontWeight: '600' },
+  stateLabel: { fontSize: 14, fontWeight: '600', color: fixed.white },
   heading: { fontSize: 18, fontWeight: '700', color: fixed.ink, marginTop: 8 },
   notice: {
     backgroundColor: fixed.warningBg,

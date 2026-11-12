@@ -607,5 +607,9 @@ export const en: Record<string, string> = {
     'Missing for the profile to show to clients as soon as she claims it: {{missing}}. She can also complete it later.',
   'O perfil está completo: aparece aos clientes assim que ela assumir.':
     'The profile is complete: it shows to clients as soon as she claims it.',
-  'Perfil público': 'Public profile',
+  Público: 'Public',
+  Privado: 'Private',
+  'Perfil público: os clientes encontram você': 'Public profile: clients can find you',
+  'Perfil privado: os clientes não encontram você. Abra o perfil para ver o que falta.':
+    'Private profile: clients cannot find you. Open the profile to see what is missing.',
 };

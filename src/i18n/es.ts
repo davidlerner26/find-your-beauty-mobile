@@ -616,5 +616,9 @@ export const es: Record<string, string> = {
     'Falta para que el perfil aparezca a los clientes en cuanto ella lo asuma: {{missing}}. Ella también puede completarlo después.',
   'O perfil está completo: aparece aos clientes assim que ela assumir.':
     'El perfil está completo: aparece a los clientes en cuanto ella lo asuma.',
-  'Perfil público': 'Perfil público',
+  Público: 'Público',
+  Privado: 'Privado',
+  'Perfil público: os clientes encontram você': 'Perfil público: los clientes te encuentran',
+  'Perfil privado: os clientes não encontram você. Abra o perfil para ver o que falta.':
+    'Perfil privado: los clientes no te encuentran. Abre el perfil para ver qué falta.',
 };
