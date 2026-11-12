@@ -612,4 +612,5 @@ export const en: Record<string, string> = {
   'Perfil público: os clientes encontram você': 'Public profile: clients can find you',
   'Perfil privado: os clientes não encontram você. Abra o perfil para ver o que falta.':
     'Private profile: clients cannot find you. Open the profile to see what is missing.',
+  'Abrir no Instagram': 'Open on Instagram',
 };

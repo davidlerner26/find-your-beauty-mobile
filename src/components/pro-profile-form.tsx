@@ -6,6 +6,7 @@ import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import {
   ActivityIndicator,
   Alert,
+  Linking,
   Pressable,
   StyleSheet,
   Switch,
@@ -490,6 +491,27 @@ function Form({ profile, signup }: { profile: Professional; signup: boolean }) {
         ) : profile.instagramConnected ? (
           <>
             <Text style={[styles.bold, { color: theme.text }]}>@{profile.instagram}</Text>
+            {/* The photos that show on the profile: they come from Instagram, so there is nothing to edit here */}
+            {profile.instagramPhotos?.length ? (
+              <View style={styles.gallery}>
+                {profile.instagramPhotos.map((photo) => (
+                  <Pressable
+                    key={photo.id}
+                    accessibilityRole="link"
+                    accessibilityLabel={t('Abrir no Instagram')}
+                    onPress={() => void Linking.openURL(photo.permalink)}
+                    style={{ width: photoSize, height: photoSize }}
+                  >
+                    <Image
+                      accessibilityIgnoresInvertColors
+                      source={{ uri: photo.url }}
+                      contentFit="cover"
+                      style={styles.thumb}
+                    />
+                  </Pressable>
+                ))}
+              </View>
+            ) : null}
             <Pressable
               accessibilityRole="button"
               accessibilityLabel={t('Atualizar fotos')}
