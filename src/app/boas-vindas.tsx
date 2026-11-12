@@ -13,6 +13,7 @@ import { t } from '../i18n';
 import { fixed, radius } from '../theme/colors';
 import { PATHS } from '../utils/paths';
 import { markWelcomeSeen } from '../utils/welcome';
+import { Guard } from '../components/guard';
 
 const STEPS = [
   {
@@ -38,7 +39,7 @@ const STEPS = [
 ];
 
 // The first visit: a photo on the whole screen and four steps; the last one asks to sign up (it has no dots)
-export default function Onboarding() {
+function OnboardingContent() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { signInWithGoogle } = useAuthActions();
@@ -146,3 +147,12 @@ const styles = StyleSheet.create({
   signin: { color: fixed.white, textAlign: 'center', marginTop: 8 },
   signinLink: { fontWeight: '600', color: fixed.accent },
 });
+
+// Closed to a signed in professional: she has her own area
+export default function Onboarding() {
+  return (
+    <Guard kind="clientArea">
+      <OnboardingContent />
+    </Guard>
+  );
+}

@@ -14,8 +14,9 @@ import { fixed } from '../theme/colors';
 import { useTheme } from '../theme/theme';
 import { catalogLabel } from '../utils/catalog';
 import { Card } from '../utils/search-filter';
+import { Guard } from '../components/guard';
 
-export default function SearchScreen() {
+function SearchContent() {
   return (
     <SearchProvider>
       <Search />
@@ -258,3 +259,12 @@ const styles = StyleSheet.create({
   },
   locateText: { color: fixed.white, fontWeight: '600' },
 });
+
+// Closed to a signed in professional: she has her own area
+export default function SearchScreen() {
+  return (
+    <Guard kind="clientArea">
+      <SearchContent />
+    </Guard>
+  );
+}

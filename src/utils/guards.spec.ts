@@ -12,9 +12,9 @@ const client = state({ signedIn: true, role: 'client' });
 const professional = state({ signedIn: true, role: 'professional' });
 
 describe('guardRedirect', () => {
-  it('client: visitors go to the login and professionals to the start', () => {
+  it('client: visitors go to the login and professionals to their agenda', () => {
     expect(guardRedirect('client', state())).toBe(PATHS.login);
-    expect(guardRedirect('client', professional)).toBe(PATHS.home);
+    expect(guardRedirect('client', professional)).toBe(PATHS.proHome);
     expect(guardRedirect('client', client)).toBeNull();
   });
 

@@ -11,11 +11,12 @@ import { fixed } from '../theme/colors';
 import { useTheme } from '../theme/theme';
 import { cleanCode, clock, CODE_LENGTH } from '../utils/auth-forms';
 import { PATHS } from '../utils/paths';
+import { Guard } from '../components/guard';
 
 const RESEND_SECONDS = 60;
 
 // Confirms the e-mail of a new client with the 4 digit code that was sent to it, then signs the client in
-export default function VerifyEmail() {
+function VerifyEmailContent() {
   const router = useRouter();
   const theme = useTheme();
   const auth = useAuth();
@@ -175,3 +176,12 @@ const styles = StyleSheet.create({
   submit: { marginTop: 8 },
   back: { textAlign: 'center', fontWeight: '600', padding: 8 },
 });
+
+// Closed to a signed in professional: she has her own area
+export default function VerifyEmail() {
+  return (
+    <Guard kind="clientArea">
+      <VerifyEmailContent />
+    </Guard>
+  );
+}

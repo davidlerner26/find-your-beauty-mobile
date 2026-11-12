@@ -46,10 +46,11 @@ import { reviewsLabel, viewsLabel } from '../../../utils/labels';
 import { localizeAddress } from '../../../utils/address';
 import { log } from '../../../utils/log';
 import { PATHS } from '../../../utils/paths';
+import { Guard } from '../../../components/guard';
 
 const CATEGORIES: ServiceCategory[] = ['Maquiagem', 'Cabelo'];
 
-export default function ProfessionalPage() {
+function ProfessionalContent() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { status, byId } = useProfessionals();
   const artist = byId(id);
@@ -547,3 +548,12 @@ const styles = StyleSheet.create({
   },
   notFound: { color: fixed.gray, textAlign: 'center', marginTop: 40 },
 });
+
+// Closed to a signed in professional: she has her own area
+export default function ProfessionalPage() {
+  return (
+    <Guard kind="clientArea">
+      <ProfessionalContent />
+    </Guard>
+  );
+}

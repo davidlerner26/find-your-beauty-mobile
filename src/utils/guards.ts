@@ -24,8 +24,10 @@ export const guardRedirect = (
     // Booking is for signed-in clients (the profile data is checked by the screen)
     case 'client':
       if (!state.signedIn) return PATHS.login;
+      if (state.role === 'professional') return PATHS.proHome;
       return state.role === 'client' ? null : PATHS.home;
-    // The agenda, messages, notifications and profile of the client are not for professionals.
+    // Every screen of the client (the start, the map, the search, a professional's page, the agenda, messages,
+    // notifications, profile...) is closed to professionals.
     // Visitors get in: each screen tells them to sign in.
     case 'clientArea':
       return state.role === 'professional' ? (options.proPath ?? PATHS.proHome) : null;
