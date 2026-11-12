@@ -14,7 +14,6 @@ import {
   View,
 } from 'react-native';
 import { AddressField } from '../../../components/address-field';
-import { AvailabilityEditor } from '../../../components/availability-editor';
 import { PhotoPositioner } from '../../../components/photo-positioner';
 import { ServicesEditor } from '../../../components/services-editor';
 import { AdminTop } from '../../../components/admin-kit';
@@ -357,14 +356,6 @@ export default function AdminDraft() {
             />
           ) : null}
 
-          <FormField
-            label={t('Sobre')}
-            value={form.about}
-            onChangeText={(value) => change('about', value)}
-            multiline
-            maxLength={1500}
-          />
-
           <FormSection title="Instagram">
             <FormField
               label={t('Link do Instagram')}
@@ -511,20 +502,11 @@ export default function AdminDraft() {
             uploading={uploading === 'services'}
             onAddPhoto={async () => (await pickAndUpload('services'))[0] ?? null}
             onDiscard={(urls) => removed.current.push(...urls)}
+            simple
           />
           {errors.services ? (
             <Text accessibilityRole="alert" style={styles.error}>
               {errors.services}
-            </Text>
-          ) : null}
-
-          <AvailabilityEditor
-            availability={form.availability}
-            onChange={(availability) => change('availability', availability)}
-          />
-          {errors.hours ? (
-            <Text accessibilityRole="alert" style={styles.error}>
-              {errors.hours}
             </Text>
           ) : null}
 

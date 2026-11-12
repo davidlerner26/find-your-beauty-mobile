@@ -39,6 +39,8 @@ type Props = {
   // Photos that the profile no longer uses (deleted from the storage when it is saved)
   onDiscard: (urls: string[]) => void;
   uploading: boolean;
+  // Only the basics of a service (category, name, price, duration): no description, prices by day and time or photos
+  simple?: boolean;
 };
 
 function Field({
@@ -96,6 +98,7 @@ export function ServicesEditor({
   onAddPhoto,
   onDiscard,
   uploading,
+  simple = false,
 }: Props) {
   const theme = useTheme();
   const styles = useStyles();
@@ -190,165 +193,171 @@ export function ServicesEditor({
               </View>
             </View>
 
-            <Field label={t('Descrição')}>
-              <TextInput
-                accessibilityLabel={t('Descrição')}
-                value={service.description}
-                onChangeText={(description) => update(service.id, { description })}
-                multiline
-                maxLength={1000}
-                style={[styles.input, styles.multiline]}
-              />
-            </Field>
+            {simple ? null : (
+              <>
+                <Field label={t('Descrição')}>
+                  <TextInput
+                    accessibilityLabel={t('Descrição')}
+                    value={service.description}
+                    onChangeText={(description) => update(service.id, { description })}
+                    multiline
+                    maxLength={1000}
+                    style={[styles.input, styles.multiline]}
+                  />
+                </Field>
 
-            {/* Another price for some days of the week and times */}
-            <View style={styles.rules}>
-              <Text style={styles.label}>{t('Preço por dia e horário')}</Text>
-              {service.priceRules.map((rule) => (
-                <View key={rule.id} style={[styles.rule, { borderColor: theme.muted }]}>
-                  <View style={styles.ruleDays}>
-                    {WEEKDAYS.map((day) => (
-                      <Chip
-                        key={day.key}
-                        small
-                        label={day.label.slice(0, 3)}
-                        active={rule.days.includes(Number(day.key))}
-                        onPress={() => {
-                          const next = { ...rule, days: [...rule.days] };
-                          toggleRuleDay(next, Number(day.key));
-                          updateRule(service, rule.id, { days: next.days });
-                        }}
+                {/* Another price for some days of the week and times */}
+                <View style={styles.rules}>
+                  <Text style={styles.label}>{t('Preço por dia e horário')}</Text>
+                  {service.priceRules.map((rule) => (
+                    <View key={rule.id} style={[styles.rule, { borderColor: theme.muted }]}>
+                      <View style={styles.ruleDays}>
+                        {WEEKDAYS.map((day) => (
+                          <Chip
+                            key={day.key}
+                            small
+                            label={day.label.slice(0, 3)}
+                            active={rule.days.includes(Number(day.key))}
+                            onPress={() => {
+                              const next = { ...rule, days: [...rule.days] };
+                              toggleRuleDay(next, Number(day.key));
+                              updateRule(service, rule.id, { days: next.days });
+                            }}
+                          />
+                        ))}
+                      </View>
+                      <View style={styles.ruleFields}>
+                        <View style={styles.ruleTime}>
+                          <Text style={styles.label}>{t('Das')}</Text>
+                          <View style={styles.timeRow}>
+                            <TimeField
+                              label={t('A partir das')}
+                              value={rule.start === DAY_START ? '' : rule.start}
+                              disabled={rule.start === DAY_START}
+                              onChange={(start) => updateRule(service, rule.id, { start })}
+                            />
+                            <Toggle
+                              label={t('Início do dia')}
+                              checked={rule.start === DAY_START}
+                              onChange={() =>
+                                updateRule(service, rule.id, {
+                                  start: rule.start === DAY_START ? '' : DAY_START,
+                                })
+                              }
+                            />
+                          </View>
+                        </View>
+                        <View style={styles.ruleTime}>
+                          <Text style={styles.label}>{t('Até')}</Text>
+                          <View style={styles.timeRow}>
+                            <TimeField
+                              label={t('Até as')}
+                              value={rule.end === DAY_END ? '' : rule.end}
+                              disabled={rule.end === DAY_END}
+                              onChange={(end) => updateRule(service, rule.id, { end })}
+                            />
+                            <Toggle
+                              label={t('Fim do dia')}
+                              checked={rule.end === DAY_END}
+                              onChange={() =>
+                                updateRule(service, rule.id, {
+                                  end: rule.end === DAY_END ? '' : DAY_END,
+                                })
+                              }
+                            />
+                          </View>
+                        </View>
+                        <View style={styles.ruleTime}>
+                          <Text style={styles.label}>{t('Preço (R$)')}</Text>
+                          <View style={styles.timeRow}>
+                            <TextInput
+                              accessibilityLabel={t('Preço (R$)')}
+                              value={rule.price}
+                              onChangeText={(text) =>
+                                updateRule(service, rule.id, { price: maskMoney(text) })
+                              }
+                              keyboardType="number-pad"
+                              style={[styles.input, styles.ruleInput, styles.half]}
+                            />
+                            <View style={styles.toggle} />
+                          </View>
+                        </View>
+                      </View>
+                      {tried && !isRuleComplete(rule) ? (
+                        <Text style={styles.error}>
+                          {t('Escolha os dias, um horário de início antes do fim e um preço.')}
+                        </Text>
+                      ) : null}
+                      <Button
+                        variant="danger"
+                        label={t('Remover')}
+                        onPress={() =>
+                          update(service.id, {
+                            priceRules: service.priceRules.filter((r) => r.id !== rule.id),
+                          })
+                        }
                       />
-                    ))}
-                  </View>
-                  <View style={styles.ruleFields}>
-                    <View style={styles.ruleTime}>
-                      <Text style={styles.label}>{t('Das')}</Text>
-                      <View style={styles.timeRow}>
-                        <TimeField
-                          label={t('A partir das')}
-                          value={rule.start === DAY_START ? '' : rule.start}
-                          disabled={rule.start === DAY_START}
-                          onChange={(start) => updateRule(service, rule.id, { start })}
-                        />
-                        <Toggle
-                          label={t('Início do dia')}
-                          checked={rule.start === DAY_START}
-                          onChange={() =>
-                            updateRule(service, rule.id, {
-                              start: rule.start === DAY_START ? '' : DAY_START,
-                            })
-                          }
-                        />
-                      </View>
                     </View>
-                    <View style={styles.ruleTime}>
-                      <Text style={styles.label}>{t('Até')}</Text>
-                      <View style={styles.timeRow}>
-                        <TimeField
-                          label={t('Até as')}
-                          value={rule.end === DAY_END ? '' : rule.end}
-                          disabled={rule.end === DAY_END}
-                          onChange={(end) => updateRule(service, rule.id, { end })}
-                        />
-                        <Toggle
-                          label={t('Fim do dia')}
-                          checked={rule.end === DAY_END}
-                          onChange={() =>
-                            updateRule(service, rule.id, {
-                              end: rule.end === DAY_END ? '' : DAY_END,
-                            })
-                          }
-                        />
-                      </View>
-                    </View>
-                    <View style={styles.ruleTime}>
-                      <Text style={styles.label}>{t('Preço (R$)')}</Text>
-                      <View style={styles.timeRow}>
-                        <TextInput
-                          accessibilityLabel={t('Preço (R$)')}
-                          value={rule.price}
-                          onChangeText={(text) =>
-                            updateRule(service, rule.id, { price: maskMoney(text) })
-                          }
-                          keyboardType="number-pad"
-                          style={[styles.input, styles.ruleInput, styles.half]}
-                        />
-                        <View style={styles.toggle} />
-                      </View>
-                    </View>
-                  </View>
-                  {tried && !isRuleComplete(rule) ? (
-                    <Text style={styles.error}>
-                      {t('Escolha os dias, um horário de início antes do fim e um preço.')}
-                    </Text>
-                  ) : null}
+                  ))}
                   <Button
-                    variant="danger"
-                    label={t('Remover')}
+                    variant="outline"
+                    label={t('Adicionar preço por dia e horário')}
                     onPress={() =>
-                      update(service.id, {
-                        priceRules: service.priceRules.filter((r) => r.id !== rule.id),
-                      })
+                      update(service.id, { priceRules: [...service.priceRules, newRuleDraft()] })
                     }
                   />
-                </View>
-              ))}
-              <Button
-                variant="outline"
-                label={t('Adicionar preço por dia e horário')}
-                onPress={() =>
-                  update(service.id, { priceRules: [...service.priceRules, newRuleDraft()] })
-                }
-              />
-              {service.priceRules.length ? null : (
-                <Text style={styles.muted}>
-                  {t(
-                    'Ex: aos sábados o serviço custa mais. O preço vale pelo horário de início do atendimento.',
+                  {service.priceRules.length ? null : (
+                    <Text style={styles.muted}>
+                      {t(
+                        'Ex: aos sábados o serviço custa mais. O preço vale pelo horário de início do atendimento.',
+                      )}
+                    </Text>
                   )}
-                </Text>
-              )}
-            </View>
+                </View>
 
-            {/* Photos of the service: the card on the professional page shows them as a gallery */}
-            <Text style={styles.label}>{t('Fotos do serviço')}</Text>
-            {service.photos.length ? (
-              <View style={styles.chips}>
-                {service.photos.map((photo) => (
-                  <View key={photo} style={styles.photo}>
-                    <Image
-                      accessibilityIgnoresInvertColors
-                      source={{ uri: photo }}
-                      contentFit="cover"
-                      style={styles.photoImage}
-                    />
-                    <Pressable
-                      accessibilityRole="button"
-                      accessibilityLabel={t('Remover foto')}
-                      hitSlop={6}
-                      onPress={() => {
-                        onDiscard([photo]);
-                        update(service.id, { photos: service.photos.filter((p) => p !== photo) });
-                      }}
-                      style={styles.photoRemove}
-                    >
-                      <MaterialIcons name="close" size={16} color={fixed.white} />
-                    </Pressable>
+                {/* Photos of the service: the card on the professional page shows them as a gallery */}
+                <Text style={styles.label}>{t('Fotos do serviço')}</Text>
+                {service.photos.length ? (
+                  <View style={styles.chips}>
+                    {service.photos.map((photo) => (
+                      <View key={photo} style={styles.photo}>
+                        <Image
+                          accessibilityIgnoresInvertColors
+                          source={{ uri: photo }}
+                          contentFit="cover"
+                          style={styles.photoImage}
+                        />
+                        <Pressable
+                          accessibilityRole="button"
+                          accessibilityLabel={t('Remover foto')}
+                          hitSlop={6}
+                          onPress={() => {
+                            onDiscard([photo]);
+                            update(service.id, {
+                              photos: service.photos.filter((p) => p !== photo),
+                            });
+                          }}
+                          style={styles.photoRemove}
+                        >
+                          <MaterialIcons name="close" size={16} color={fixed.white} />
+                        </Pressable>
+                      </View>
+                    ))}
                   </View>
-                ))}
-              </View>
-            ) : null}
+                ) : null}
 
-            <Button
-              variant="outline"
-              label={t('Adicionar fotos')}
-              loading={uploading}
-              onPress={() =>
-                void onAddPhoto().then((url) => {
-                  if (url) update(service.id, { photos: [...service.photos, url] });
-                })
-              }
-            />
+                <Button
+                  variant="outline"
+                  label={t('Adicionar fotos')}
+                  loading={uploading}
+                  onPress={() =>
+                    void onAddPhoto().then((url) => {
+                      if (url) update(service.id, { photos: [...service.photos, url] });
+                    })
+                  }
+                />
+              </>
+            )}
 
             <View style={styles.removeGap}>
               <Button

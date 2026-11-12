@@ -10,14 +10,12 @@ import {
 import { formatCpf, isValidCpf } from './cpf';
 import {
   aboutToParagraphs,
-  invalidDayKeys,
   missingFields,
   paragraphsToAbout,
   toAvailabilityDraft,
 } from './profile-form';
 import { isServiceComplete, ServiceDraft, toService, toServiceDraft } from './service-draft';
 import { authErrorMessage, isValidEmail } from './validators';
-import { WEEKDAYS } from './weekdays';
 
 export type DraftPosition = { lat: number; lng: number };
 export const NO_POSITION: DraftPosition = { lat: 0, lng: 0 };
@@ -102,7 +100,7 @@ export const inviteStatus = (
   return draft.inviteExpiresAt !== null && now > draft.inviteExpiresAt ? 'expired' : 'sent';
 };
 
-export type DraftErrors = Partial<Record<'name' | 'email' | 'cpf' | 'services' | 'hours', string>>;
+export type DraftErrors = Partial<Record<'name' | 'email' | 'cpf' | 'services', string>>;
 
 // What is wrong before the draft can be saved. The rest (CPF, services, hours...) may be left for later: the draft
 // is saved as it is, and `draftMissing` says what is left.
@@ -120,12 +118,6 @@ export const validateDraft = (form: DraftForm): DraftErrors => ({
           'Preencha todos os campos obrigatórios dos serviços ou remova os que estiverem vazios.',
         ),
       }),
-  ...(invalidDayKeys(
-    form.availability,
-    WEEKDAYS.map(({ key }) => key),
-  ).length
-    ? { hours: t('O horário de fechamento precisa ser depois do de abertura.') }
-    : {}),
 });
 
 // "@ana.makeup" and "https://instagram.com/ana.makeup/" both become "ana.makeup"
