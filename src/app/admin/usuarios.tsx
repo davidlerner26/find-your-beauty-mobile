@@ -78,7 +78,7 @@ export default function AdminUsers() {
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
         <Text style={{ color: theme.muted }}>
           {t(
-            'Procure a conta pelo e-mail, pelo nome ou pelo id. Apagar remove tudo dela: o perfil, os agendamentos, as conversas, as avaliações, os favoritos, as fotos e o login. Não dá para desfazer.',
+            'Procure a conta pelo e-mail, pelo nome ou pelo id. Apagar remove tudo dela: o perfil, os agendamentos, as conversas, as avaliações, os favoritos, as fotos, o cliente da Stripe e o login. Não dá para desfazer.',
           )}
         </Text>
         <FormField
@@ -122,7 +122,7 @@ export default function AdminUsers() {
                 <View style={styles.confirm}>
                   <Text style={{ color: theme.text }}>
                     {t(
-                      'Isso apaga tudo de {{name}}: Firestore, Storage e login. Para confirmar, digite {{word}}.',
+                      'Isso apaga tudo de {{name}}: Firestore, Storage, Stripe e login. Para confirmar, digite {{word}}.',
                       { name: account.name || account.email, word: confirmationText(account) },
                     )}
                   </Text>

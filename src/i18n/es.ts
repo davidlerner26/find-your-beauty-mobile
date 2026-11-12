@@ -623,8 +623,6 @@ export const es: Record<string, string> = {
     'Perfil privado: los clientes no te encuentran. Abre el perfil para ver qué falta.',
   'Abrir no Instagram': 'Abrir en Instagram',
   'Apagar um usuário': 'Eliminar un usuario',
-  'Procure a conta pelo e-mail, pelo nome ou pelo id. Apagar remove tudo dela: o perfil, os agendamentos, as conversas, as avaliações, os favoritos, as fotos e o login. Não dá para desfazer.':
-    'Busca la cuenta por correo, nombre o id. Eliminar quita todo: el perfil, las reservas, las conversaciones, las valoraciones, los favoritos, las fotos y el acceso. No se puede deshacer.',
   'Buscar usuário': 'Buscar usuario',
   'E-mail, nome ou id': 'Correo, nombre o id',
   'Nenhum usuário encontrado.': 'No se encontró ningún usuario.',
@@ -633,8 +631,6 @@ export const es: Record<string, string> = {
   Admin: 'Admin',
   'Contas de admin não são apagadas aqui. Tire o admin primeiro.':
     'Las cuentas de admin no se eliminan aquí. Quita primero el admin.',
-  'Isso apaga tudo de {{name}}: Firestore, Storage e login. Para confirmar, digite {{word}}.':
-    'Esto elimina todo de {{name}}: Firestore, Storage y acceso. Para confirmar, escribe {{word}}.',
   'Apagando...': 'Eliminando...',
   'Apagar tudo': 'Eliminar todo',
   Apagar: 'Eliminar',
@@ -645,4 +641,8 @@ export const es: Record<string, string> = {
   'Não foi possível apagar o usuário. Tente novamente.':
     'No se pudo eliminar al usuario. Inténtalo de nuevo.',
   Profissional: 'Profesional',
+  'Procure a conta pelo e-mail, pelo nome ou pelo id. Apagar remove tudo dela: o perfil, os agendamentos, as conversas, as avaliações, os favoritos, as fotos, o cliente da Stripe e o login. Não dá para desfazer.':
+    'Busca la cuenta por correo, nombre o id. Eliminar quita todo: el perfil, las reservas, las conversaciones, las valoraciones, los favoritos, las fotos, el cliente de Stripe y el acceso. No se puede deshacer.',
+  'Isso apaga tudo de {{name}}: Firestore, Storage, Stripe e login. Para confirmar, digite {{word}}.':
+    'Esto elimina todo de {{name}}: Firestore, Storage, Stripe y acceso. Para confirmar, escribe {{word}}.',
 };
