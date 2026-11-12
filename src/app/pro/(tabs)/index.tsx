@@ -1,7 +1,6 @@
 import { Link } from '../../../components/link';
 import { MaterialIcons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
-import { Alert, Pressable, StyleSheet, View } from 'react-native';
+import { Alert, StyleSheet, View } from 'react-native';
 import { Text } from '../../../components/text';
 import { Guard } from '../../../components/guard';
 import { ProBookingCard } from '../../../components/pro-booking-card';
@@ -32,7 +31,6 @@ function ProAgenda() {
   const toast = useToast();
   const uid = useAuth().user?.uid ?? '';
   const profile = useProfessionals().byId(uid);
-  const router = useRouter();
   const { pending, upcoming, history } = proAgendaLists(received);
 
   const answer = (booking: Booking, status: ProfessionalAnswer) => {
@@ -79,8 +77,8 @@ function ProAgenda() {
         </Text>
         {/* The state of the profile: green when the clients find it, red when they do not */}
         {profile ? (
-          <Pressable
-            accessibilityRole="button"
+          <View
+            accessibilityRole="text"
             accessibilityLabel={
               profile.published
                 ? t('Perfil público: os clientes encontram você')
@@ -88,7 +86,6 @@ function ProAgenda() {
                     'Perfil privado: os clientes não encontram você. Abra o perfil para ver o que falta.',
                   )
             }
-            onPress={() => router.push(PATHS.proProfile as never)}
             style={[
               styles.state,
               { backgroundColor: profile.published ? fixed.success : fixed.dangerStrong },
@@ -100,7 +97,7 @@ function ProAgenda() {
               color={fixed.white}
             />
             <Text style={styles.stateLabel}>{profile.published ? t('Público') : t('Privado')}</Text>
-          </Pressable>
+          </View>
         ) : null}
       </View>
 
