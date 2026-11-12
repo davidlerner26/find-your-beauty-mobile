@@ -4,7 +4,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { Pressable, StyleSheet, Switch, View } from 'react-native';
 import { Text, TextInput } from './text';
 import { t } from '../i18n';
-import { ServiceCategory } from '../models/professional';
+import { COMBO_CATEGORY, comboParts, SERVICE_NAMES, ServiceCategory } from '../models/professional';
 import { fixed, Theme } from '../theme/colors';
 import { useTheme } from '../theme/theme';
 import { catalogLabel } from '../utils/catalog';
@@ -19,6 +19,7 @@ import {
   serviceNamesOf,
   ServiceDraft,
   setCategory,
+  setComboPart,
   toggleRuleDay,
 } from '../utils/service-draft';
 import { WEEKDAYS } from '../utils/weekdays';
@@ -27,7 +28,7 @@ import { Button } from './button';
 import { Chip } from './chip';
 import { SelectField } from './select-field';
 
-const CATEGORIES: ServiceCategory[] = ['Maquiagem', 'Cabelo'];
+const CATEGORIES: ServiceCategory[] = ['Maquiagem', 'Cabelo', COMBO_CATEGORY];
 
 type Props = {
   services: ServiceDraft[];
@@ -150,7 +151,51 @@ export function ServicesEditor({
               />
             </Field>
 
-            {service.category ? (
+            {service.category === COMBO_CATEGORY ? (
+              // A combo joins a makeup service and a hair service
+              <>
+                <Field
+                  label={t('Serviço de maquiagem')}
+                  error={missing && !comboParts(service.name)[0]}
+                >
+                  <SelectField
+                    label={t('Serviço de maquiagem')}
+                    placeholder={t('Selecione')}
+                    value={comboParts(service.name)[0] || null}
+                    options={SERVICE_NAMES.Maquiagem.map((name) => ({
+                      value: name,
+                      label: catalogLabel(name),
+                    }))}
+                    onChange={(name) => {
+                      if (!name) return;
+                      const next = { ...service };
+                      setComboPart(next, 'makeup', name);
+                      update(service.id, { name: next.name });
+                    }}
+                  />
+                </Field>
+                <Field
+                  label={t('Serviço de cabelo')}
+                  error={missing && !comboParts(service.name)[1]}
+                >
+                  <SelectField
+                    label={t('Serviço de cabelo')}
+                    placeholder={t('Selecione')}
+                    value={comboParts(service.name)[1] || null}
+                    options={SERVICE_NAMES.Cabelo.map((name) => ({
+                      value: name,
+                      label: catalogLabel(name),
+                    }))}
+                    onChange={(name) => {
+                      if (!name) return;
+                      const next = { ...service };
+                      setComboPart(next, 'hair', name);
+                      update(service.id, { name: next.name });
+                    }}
+                  />
+                </Field>
+              </>
+            ) : service.category ? (
               <Field label={t('Nome do serviço')} error={missing && !service.name.trim()}>
                 <SelectField
                   label={t('Nome do serviço')}

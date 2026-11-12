@@ -647,4 +647,6 @@ export const en: Record<string, string> = {
     'Build the profile and make the link for the professional to claim it.',
   'Remove a conta com tudo: Firestore, Storage, Stripe e login.':
     'Deletes the account with everything: Firestore, Storage, Stripe and login.',
+  'Serviço de maquiagem': 'Makeup service',
+  'Serviço de cabelo': 'Hair service',
 };

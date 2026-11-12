@@ -14,7 +14,12 @@ import { useUserLocation } from '../../contexts/location';
 import { useProfessionals } from '../../contexts/professionals';
 import { environment } from '../../config/environment';
 import { t } from '../../i18n';
-import { SERVICE_ICONS, SERVICE_NAMES, ServiceCategory } from '../../models/professional';
+import {
+  COMBO_CATEGORY,
+  SERVICE_ICONS,
+  SERVICE_NAMES,
+  ServiceCategory,
+} from '../../models/professional';
 import { fixed } from '../../theme/colors';
 import { useTheme } from '../../theme/theme';
 import { catalogLabel } from '../../utils/catalog';
@@ -26,6 +31,8 @@ const INTERESTS: ServiceCategory[] = ['Maquiagem', 'Cabelo'];
 const CATEGORY_ICONS: Record<ServiceCategory, string> = {
   Maquiagem: 'brush',
   Cabelo: 'content-cut',
+  // Not an interest of the home (a combo shows under makeup and hair), only here to complete the list
+  [COMBO_CATEGORY]: 'auto-awesome',
 };
 
 // The icon names of the site are Material Symbols ("content_cut"); the font of the app writes them with a hyphen

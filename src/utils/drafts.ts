@@ -6,6 +6,7 @@ import {
   ImagePosition,
   Service,
   ServiceMode,
+  tagsOf,
 } from '../models/professional';
 import { formatCpf, isValidCpf } from './cpf';
 import {
@@ -149,7 +150,7 @@ export const draftFields = (form: DraftForm) => {
     address: needsAddress ? form.address.trim() : '',
     position: needsAddress ? form.position : NO_POSITION,
     services,
-    tags: [...new Set(services.map((service) => service.category))],
+    tags: tagsOf(services),
     availability: {
       slotMinutes: Number(form.availability.slotMinutes),
       weekly: form.availability.weekly,

@@ -1,4 +1,9 @@
-import { hasLocation, Professional } from '../models/professional';
+import {
+  categoryOfService,
+  hasLocation,
+  Professional,
+  servicePartsOf,
+} from '../models/professional';
 import { INTL_LOCALE } from './locale';
 
 const ALL_CATEGORIES = ['Maquiagem', 'Cabelo'];
@@ -8,8 +13,13 @@ export const mapServiceTags = (professionals: Professional[], categories: string
   const names = new Set<string>();
   for (const professional of professionals) {
     if (!hasLocation(professional)) continue;
-    for (const service of professional.services)
+    for (const service of professional.services) {
       if (categories.includes(service.category)) names.add(service.name);
+      // The halves of a combo are services of makeup and of hair too
+      for (const part of servicePartsOf(service.name)) {
+        if (part !== service.name && categories.includes(categoryOfService(part))) names.add(part);
+      }
+    }
   }
   return [...names].sort((a, b) => a.localeCompare(b, INTL_LOCALE));
 };
@@ -27,7 +37,10 @@ export const mapProfessionals = (
     (professional) =>
       hasLocation(professional) &&
       (!categories.length || professional.tags.some((tag) => categories.includes(tag))) &&
-      (!offered.length || professional.services.some((s) => offered.includes(s.name))),
+      (!offered.length ||
+        professional.services.some((s) =>
+          servicePartsOf(s.name).some((part) => offered.includes(part)),
+        )),
   );
 };
 

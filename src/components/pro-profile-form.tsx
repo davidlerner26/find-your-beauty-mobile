@@ -26,6 +26,7 @@ import {
   Service,
   SERVICE_PLACES,
   ServiceMode,
+  tagsOf,
 } from '../models/professional';
 import {
   connectInstagram,
@@ -215,7 +216,7 @@ function Form({ profile, signup }: { profile: Professional; signup: boolean }) {
     position: needsAddress ? draft.position : NO_POSITION,
     about: aboutToParagraphs(draft.about),
     services,
-    tags: [...new Set(services.map((service) => service.category))],
+    tags: tagsOf(services),
     gallery: draft.gallery,
     availability: {
       slotMinutes: Number(draft.availability.slotMinutes),

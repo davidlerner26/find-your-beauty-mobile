@@ -31,6 +31,7 @@ import {
   hasLocation,
   Professional,
   Service,
+  COMBO_CATEGORY,
   ServiceCategory,
 } from '../../../models/professional';
 import { missingProfileData } from '../../../models/user';
@@ -48,7 +49,7 @@ import { log } from '../../../utils/log';
 import { PATHS } from '../../../utils/paths';
 import { Guard } from '../../../components/guard';
 
-const CATEGORIES: ServiceCategory[] = ['Maquiagem', 'Cabelo'];
+const CATEGORIES: ServiceCategory[] = ['Maquiagem', 'Cabelo', COMBO_CATEGORY];
 
 function ProfessionalContent() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -312,7 +313,13 @@ function Details({ artist }: { artist: Professional }) {
                         ]}
                       >
                         <MaterialIcons
-                          name={category === 'Maquiagem' ? 'brush' : 'content-cut'}
+                          name={
+                            category === 'Maquiagem'
+                              ? 'brush'
+                              : category === COMBO_CATEGORY
+                                ? 'auto-awesome'
+                                : 'content-cut'
+                          }
                           size={24}
                           color={on ? theme.primary : fixed.ink}
                         />
