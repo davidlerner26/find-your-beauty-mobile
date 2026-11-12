@@ -7,8 +7,11 @@ import {
   useRef,
   useState,
 } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
+import { Pressable, StyleSheet, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Text } from '../components/text';
+import { t } from '../i18n';
 import { fixed } from '../theme/colors';
 
 type Toast = { show: (text: string, milliseconds?: number) => void };
@@ -19,11 +22,17 @@ const ToastContext = createContext<Toast | null>(null);
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [text, setText] = useState('');
   const current = useRef(0);
+  const insets = useSafeAreaInsets();
 
   const show = useCallback((message: string, milliseconds = 3500) => {
     const id = ++current.current;
     setText(message);
     setTimeout(() => current.current === id && setText(''), milliseconds);
+  }, []);
+  // The X closes it right away
+  const dismiss = useCallback(() => {
+    current.current++;
+    setText('');
   }, []);
   const value = useMemo(() => ({ show }), [show]);
 
@@ -31,10 +40,22 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     <ToastContext.Provider value={value}>
       {children}
       {text ? (
-        <View style={styles.wrap} pointerEvents="none">
-          <Text accessibilityRole="alert" accessibilityLiveRegion="polite" style={styles.toast}>
-            {text}
-          </Text>
+        // On top of the screen, under the status bar. Only the message takes touches: the screen below stays usable.
+        <View style={[styles.wrap, { top: insets.top + 12 }]} pointerEvents="box-none">
+          <View style={styles.toast}>
+            <Text accessibilityRole="alert" accessibilityLiveRegion="polite" style={styles.text}>
+              {text}
+            </Text>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={t('Fechar')}
+              hitSlop={10}
+              onPress={dismiss}
+              style={styles.close}
+            >
+              <MaterialIcons name="close" size={18} color={fixed.white} />
+            </Pressable>
+          </View>
         </View>
       ) : null}
     </ToastContext.Provider>
@@ -48,14 +69,26 @@ export const useToast = () => {
 };
 
 const styles = StyleSheet.create({
-  wrap: { position: 'absolute', left: 16, right: 16, bottom: 100, alignItems: 'center' },
+  wrap: { position: 'absolute', left: 16, right: 16, alignItems: 'center' },
   toast: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    width: '100%',
+    maxWidth: 448,
     backgroundColor: fixed.ink,
-    color: fixed.white,
-    paddingHorizontal: 16,
+    paddingLeft: 16,
+    paddingRight: 12,
     paddingVertical: 12,
-    borderRadius: 999,
-    overflow: 'hidden',
-    textAlign: 'center',
+    borderRadius: 16,
+  },
+  text: { flex: 1, color: fixed.white },
+  close: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.18)',
   },
 });
