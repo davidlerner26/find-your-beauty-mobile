@@ -659,4 +659,5 @@ export const es: Record<string, string> = {
     'Elimina la cuenta con todo: Firestore, Storage, Stripe y acceso.',
   'Serviço de maquiagem': 'Servicio de maquillaje',
   'Serviço de cabelo': 'Servicio de cabello',
+  'Sobre (opcional)': 'Acerca de (opcional)',
 };

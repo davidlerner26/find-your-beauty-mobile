@@ -325,6 +325,13 @@ export default function AdminDraft() {
             ]}
             onChange={(value) => change('lang', value)}
           />
+          <FormField
+            label={t('Sobre (opcional)')}
+            value={form.about}
+            onChangeText={(value) => change('about', value)}
+            multiline
+            maxLength={1500}
+          />
 
           <Text accessibilityRole="header" style={[styles.heading, { color: theme.text }]}>
             {t('Foto')}

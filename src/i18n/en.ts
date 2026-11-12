@@ -649,4 +649,5 @@ export const en: Record<string, string> = {
     'Deletes the account with everything: Firestore, Storage, Stripe and login.',
   'Serviço de maquiagem': 'Makeup service',
   'Serviço de cabelo': 'Hair service',
+  'Sobre (opcional)': 'About (optional)',
 };
