@@ -542,7 +542,6 @@ export const es: Record<string, string> = {
   Pronto: 'Listo',
   Hora: 'Hora',
   Minutos: 'Minutos',
-  'Perfis criados por você, sem conta': 'Perfiles que creaste, sin cuenta',
   'Apagar o perfil de {{name}}? Isso não pode ser desfeito.':
     '¿Eliminar el perfil de {{name}}? Esto no se puede deshacer.',
   'Apagar perfil': 'Eliminar perfil',
@@ -645,4 +644,17 @@ export const es: Record<string, string> = {
     'Busca la cuenta por correo, nombre o id. Eliminar quita todo: el perfil, las reservas, las conversaciones, las valoraciones, los favoritos, las fotos, el cliente de Stripe y el acceso. No se puede deshacer.',
   'Isso apaga tudo de {{name}}: Firestore, Storage, Stripe e login. Para confirmar, digite {{word}}.':
     'Esto elimina todo de {{name}}: Firestore, Storage, Stripe y acceso. Para confirmar, escribe {{word}}.',
+  'Visão geral': 'Resumen',
+  'Profissionais públicos': 'Profesionales públicos',
+  'Profissionais privados': 'Profesionales privados',
+  'de {{n}} aprovados': 'de {{n}} aprobados',
+  'ocultos ou incompletos': 'ocultos o incompletos',
+  'Perfis sem conta': 'Perfiles sin cuenta',
+  '{{n}} com link ativo': '{{n}} con enlace activo',
+  Atalhos: 'Atajos',
+  'Criar perfil sem conta': 'Crear un perfil sin cuenta',
+  'Monte o perfil e gere o link para o profissional assumir.':
+    'Arma el perfil y genera el enlace para que el profesional lo asuma.',
+  'Remove a conta com tudo: Firestore, Storage, Stripe e login.':
+    'Elimina la cuenta con todo: Firestore, Storage, Stripe y acceso.',
 };

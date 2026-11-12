@@ -90,7 +90,103 @@ export function StatusPill({
   return <Text style={[styles.pill, look]}>{label}</Text>;
 }
 
+// A card of the dashboard with a number: an icon, the number, what it counts and a note. It is a button when it goes to
+// a screen; `attention` paints it yellow (someone is waiting for an answer).
+export function StatCard({
+  icon,
+  value,
+  label,
+  note,
+  attention,
+  onPress,
+}: {
+  icon: keyof typeof MaterialIcons.glyphMap;
+  value: number | null;
+  label: string;
+  note?: string;
+  attention?: boolean;
+  onPress?: () => void;
+}) {
+  const theme = useTheme();
+  const color = attention ? fixed.warning : theme.text;
+  const body = (
+    <CardSurface>
+      <View
+        style={[
+          styles.stat,
+          attention && { backgroundColor: fixed.warningBg, borderRadius: radius.card },
+        ]}
+      >
+        <View
+          style={[styles.icon, { backgroundColor: attention ? fixed.white : theme.primaryLight }]}
+        >
+          <MaterialIcons name={icon} size={22} color={attention ? fixed.warning : theme.primary} />
+        </View>
+        <Text style={[styles.number, { color }]}>{value ?? '–'}</Text>
+        <Text style={[styles.statLabel, { color }]}>{label}</Text>
+        {note ? (
+          <Text style={{ color: attention ? fixed.warning : theme.muted }}>{note}</Text>
+        ) : null}
+      </View>
+    </CardSurface>
+  );
+  return onPress ? (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      onPress={onPress}
+      style={styles.half}
+    >
+      {body}
+    </Pressable>
+  ) : (
+    <View style={styles.half}>{body}</View>
+  );
+}
+
+// A card that goes to another screen of the admin
+export function ShortcutCard({
+  icon,
+  title,
+  text,
+  danger,
+  onPress,
+}: {
+  icon: keyof typeof MaterialIcons.glyphMap;
+  title: string;
+  text: string;
+  danger?: boolean;
+  onPress: () => void;
+}) {
+  const theme = useTheme();
+  return (
+    <Pressable accessibilityRole="link" accessibilityLabel={title} onPress={onPress}>
+      <CardSurface>
+        <View style={styles.shortcut}>
+          <View
+            style={[styles.icon, { backgroundColor: danger ? fixed.dangerBg : theme.primaryLight }]}
+          >
+            <MaterialIcons name={icon} size={22} color={danger ? fixed.danger : theme.primary} />
+          </View>
+          <View style={styles.flex}>
+            <Text style={[styles.statLabel, { color: theme.text }]}>{title}</Text>
+            <Text style={{ color: theme.muted }}>{text}</Text>
+          </View>
+          <MaterialIcons name="chevron-right" size={24} color={theme.muted} />
+        </View>
+      </CardSurface>
+    </Pressable>
+  );
+}
+
 const styles = StyleSheet.create({
+  stat: { padding: 16, gap: 2 },
+  half: { width: '48%', flexGrow: 1 },
+  number: { fontSize: 30, fontWeight: '700', marginTop: 8 },
+  statLabel: { fontSize: 16, fontWeight: '600' },
+  icon: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center' },
+  shortcut: { flexDirection: 'row', alignItems: 'center', gap: 14, padding: 16 },
+  flex: { flex: 1, gap: 2 },
   top: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 12, paddingTop: 8 },
   topTitle: { fontSize: 21, fontWeight: '700' },
   cardBody: { flex: 1, padding: 20, gap: 12 },

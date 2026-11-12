@@ -535,7 +535,6 @@ export const en: Record<string, string> = {
   Pronto: 'Done',
   Hora: 'Hour',
   Minutos: 'Minutes',
-  'Perfis criados por você, sem conta': 'Profiles you created, without an account',
   'Apagar o perfil de {{name}}? Isso não pode ser desfeito.':
     'Delete the profile of {{name}}? This cannot be undone.',
   'Apagar perfil': 'Delete profile',
@@ -635,4 +634,17 @@ export const en: Record<string, string> = {
     'Find the account by e-mail, name or id. Deleting removes everything: the profile, bookings, conversations, reviews, favorites, photos, the Stripe customer and the login. It cannot be undone.',
   'Isso apaga tudo de {{name}}: Firestore, Storage, Stripe e login. Para confirmar, digite {{word}}.':
     'This deletes everything of {{name}}: Firestore, Storage, Stripe and login. To confirm, type {{word}}.',
+  'Visão geral': 'Overview',
+  'Profissionais públicos': 'Public professionals',
+  'Profissionais privados': 'Private professionals',
+  'de {{n}} aprovados': 'of {{n}} approved',
+  'ocultos ou incompletos': 'hidden or incomplete',
+  'Perfis sem conta': 'Profiles without an account',
+  '{{n}} com link ativo': '{{n}} with an active link',
+  Atalhos: 'Shortcuts',
+  'Criar perfil sem conta': 'Create a profile without an account',
+  'Monte o perfil e gere o link para o profissional assumir.':
+    'Build the profile and make the link for the professional to claim it.',
+  'Remove a conta com tudo: Firestore, Storage, Stripe e login.':
+    'Deletes the account with everything: Firestore, Storage, Stripe and login.',
 };
