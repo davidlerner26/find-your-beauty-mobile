@@ -107,6 +107,14 @@ the code to the same Cloud Functions as the site. The redirect address has to be
 (`Linking.createURL('pro/instagram')`: `findyourbeauty://pro/instagram` in a build); Meta may require an https address,
 in which case the site needs a page that hands the code over to the app.
 
+**Pro subscription (read only).** The subscription of the professionals is made on the site (Stripe, in the site's repo): the app
+only **shows** it, because the stores ask for their own purchase flow for subscriptions sold inside an app. `pro` is a field of
+the public profile written only by the Cloud Functions. `features.proSubscription` (on in the test environment, **off in
+production** until the owner says to bring it there; a spec in `config/environment.spec.ts` fails if it is turned on by accident)
+shows the "Pro" badge (`components/pro-badge.tsx`), puts subscribers first in the search when no order is chosen, draws their pins
+in gold and makes the featured section of the home the subscribers in a rotation (`utils/featured.ts`, the same rule as the site).
+On the profile of a professional a line says "Plano Pro ativo" or to subscribe on the site, with no price and no button.
+
 **Legal pages** are the pages of the site, opened in the in-app browser (`components/legal-screen.tsx`): one copy of the
 text in three languages. **The address** of the sign up is checked by geocoding it (`expo-location`), since the site's
 Google Places suggestions need a key restricted to the app.

@@ -5,6 +5,8 @@ export const fixed = {
   brand: '#46586d',
   brandDark: '#374555',
   accent: '#a87558',
+  // Gold of the Pro subscription: the pin on the map (the badge is copper like the rest of the brand)
+  pro: '#d19a1f',
   // Copper as text (`accent` is for fills and icons: it is too light for letters)
   accentText: '#8a5c42',
   ink: '#1c1c1c',

@@ -660,4 +660,9 @@ export const es: Record<string, string> = {
   'Serviço de maquiagem': 'Servicio de maquillaje',
   'Serviço de cabelo': 'Servicio de cabello',
   'Sobre (opcional)': 'Acerca de (opcional)',
+  'Assinante Pro': 'Suscriptor Pro',
+  'Plano Pro': 'Plan Pro',
+  'Seu plano Pro está ativo': 'Tu plan Pro está activo',
+  'Assine o Pro no site para ter mais visibilidade para o seu perfil.':
+    'Suscríbete a Pro en el sitio web para dar más visibilidad a tu perfil.',
 };

@@ -14,6 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Chip } from '../../components/chip';
 import { ExploreCard } from '../../components/explore-card';
 import { MapPin } from '../../components/map-pin';
+import { environment } from '../../config/environment';
 import { NearbySheet } from '../../components/nearby-sheet';
 import { useUserLocation } from '../../contexts/location';
 import { useProfessionals } from '../../contexts/professionals';
@@ -204,6 +205,7 @@ export default function Explore() {
             lat={card.position.lat}
             lng={card.position.lng}
             selected={card.id === selectedId}
+            pro={environment.features.proSubscription && card.pro}
             onPress={() => select(index)}
           />
         ))}

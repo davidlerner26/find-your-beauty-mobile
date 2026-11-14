@@ -8,6 +8,7 @@ import { CardSurface } from './card-surface';
 import { HeartButton } from './heart-button';
 import { Link } from './link';
 import { PhotoPager } from './photo-pager';
+import { ProBadge } from './pro-badge';
 import { Rating } from './rating';
 import { Text } from './text';
 
@@ -24,7 +25,10 @@ function Info({ card }: { card: Card }) {
     <Link href={PATHS.professional(card.id) as never} accessibilityLabel={card.name}>
       <View style={styles.info}>
         <Text style={[styles.tags, { color: theme.primary }]}>{catalogText(card.tags)}</Text>
-        <Text style={styles.name}>{card.name}</Text>
+        <View style={styles.nameRow}>
+          <Text style={styles.name}>{card.name}</Text>
+          <ProBadge pro={card.pro} />
+        </View>
         <Text style={styles.muted}>{card.shortAddress}</Text>
         <View style={styles.rating}>
           <Rating rating={card.rating} count={card.reviewsCount} />
@@ -86,6 +90,7 @@ const styles = StyleSheet.create({
   info: { gap: 4 },
   tags: { fontSize: 13 },
   name: { fontSize: 18, fontWeight: '700', color: fixed.ink },
+  nameRow: { flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', columnGap: 8 },
   muted: { color: fixed.gray },
   rating: { marginTop: 8 },
   nearbyInfo: { flex: 1, padding: 16 },

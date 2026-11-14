@@ -25,6 +25,7 @@ import { useTheme } from '../../theme/theme';
 import { catalogLabel } from '../../utils/catalog';
 import { focusPosition } from '../../utils/labels';
 import { PATHS } from '../../utils/paths';
+import { featuredPro, newSeed } from '../../utils/featured';
 import { toCard } from '../../utils/search-filter';
 
 const INTERESTS: ServiceCategory[] = ['Maquiagem', 'Cabelo'];
@@ -50,9 +51,14 @@ export default function Home() {
 
   const firstName = auth.user?.displayName?.trim().split(/\s+/)[0] || t('visitante');
   const cards = useMemo(() => published.map((p) => toCard(p, position)), [published, position]);
+  // Where the Pro subscription exists the featured are the subscribers, in a rotation (a new order at every visit);
+  // without it, the best rated
+  const proOn = environment.features.proSubscription;
+  const [seed] = useState(newSeed);
   const featured = useMemo(
-    () => [...cards].sort((a, b) => b.rating - a.rating).slice(0, 8),
-    [cards],
+    () =>
+      proOn ? featuredPro(cards, seed) : [...cards].sort((a, b) => b.rating - a.rating).slice(0, 8),
+    [cards, proOn, seed],
   );
   const followed = cards.filter((card) => favorites.ids.includes(card.id));
 
@@ -161,7 +167,7 @@ export default function Home() {
         </View>
       ) : null}
 
-      {environment.features.featuredProfessionals && featured.length ? (
+      {(proOn || environment.features.featuredProfessionals) && featured.length ? (
         <View style={styles.section}>
           <Text accessibilityRole="header" style={styles.heading}>
             {t('Profissionais em destaque')}

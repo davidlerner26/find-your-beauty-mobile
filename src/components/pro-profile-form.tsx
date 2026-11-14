@@ -41,6 +41,7 @@ import { fixed, radius } from '../theme/colors';
 import { useTheme } from '../theme/theme';
 import { formatAddress } from '../utils/address-format';
 import { formatCpf, isValidCpf } from '../utils/cpf';
+import { environment } from '../config/environment';
 import { APP_LANGUAGE } from '../utils/locale';
 import { log } from '../utils/log';
 import { formatPhone } from '../utils/phone';
@@ -406,6 +407,19 @@ function Form({ profile, signup }: { profile: Professional; signup: boolean }) {
       <Text accessibilityRole="header" style={[styles.title, { color: theme.text }]}>
         {signup ? t('Complete seu cadastro') : t('Meu perfil')}
       </Text>
+      {environment.features.proSubscription && !signup ? (
+        // The subscription is made on the site: the app only says where the plan is
+        <View style={[styles.plan, { borderColor: theme.line }]}>
+          <Text accessibilityRole="header" style={[styles.planTitle, { color: theme.text }]}>
+            {t('Plano Pro')}
+          </Text>
+          <Text style={{ color: theme.muted }}>
+            {profile.pro
+              ? t('Seu plano Pro está ativo')
+              : t('Assine o Pro no site para ter mais visibilidade para o seu perfil.')}
+          </Text>
+        </View>
+      ) : null}
       {signup ? (
         <Text style={{ color: theme.muted }}>
           {t(
@@ -741,6 +755,8 @@ function InstagramButton({
 const styles = StyleSheet.create({
   title: { fontSize: 24, fontWeight: '700' },
   message: { padding: 14, borderRadius: 12, overflow: 'hidden' },
+  plan: { gap: 4, padding: 14, borderWidth: 1, borderRadius: 12 },
+  planTitle: { fontSize: 16, fontWeight: '700' },
   subheading: { fontSize: 16, fontWeight: '700', marginTop: 8 },
   bold: { fontWeight: '700' },
   flex: { flex: 1 },

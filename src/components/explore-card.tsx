@@ -6,6 +6,7 @@ import { Card } from '../utils/search-filter';
 import { CardSurface } from './card-surface';
 import { HeartButton } from './heart-button';
 import { PhotoPager } from './photo-pager';
+import { ProBadge } from './pro-badge';
 import { Rating } from './rating';
 import { Text } from './text';
 import { t } from '../i18n';
@@ -52,9 +53,12 @@ export function ExploreCard({
           <Text numberOfLines={1} style={[styles.tags, { color: theme.primary }]}>
             {catalogText(card.tags)}
           </Text>
-          <Text numberOfLines={2} style={styles.name}>
-            {card.name}
-          </Text>
+          <View style={styles.nameRow}>
+            <Text numberOfLines={2} style={[styles.name, styles.nameText]}>
+              {card.name}
+            </Text>
+            <ProBadge pro={card.pro} />
+          </View>
           <Text numberOfLines={2} style={styles.muted}>
             {card.shortAddress}
           </Text>
@@ -79,6 +83,8 @@ const styles = StyleSheet.create({
   info: { flex: 1, minWidth: 0, padding: 14, gap: 2 },
   tags: { fontSize: 13 },
   name: { fontSize: 17, fontWeight: '700', color: fixed.ink },
+  nameRow: { flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', columnGap: 8 },
+  nameText: { flexShrink: 1 },
   muted: { color: fixed.gray, fontSize: 14 },
   rating: { marginTop: 'auto' },
   distance: {

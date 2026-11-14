@@ -2,6 +2,7 @@ import { RJ_NEIGHBORHOODS } from '../models/neighborhoods';
 import {
   DEFAULT_AVAILABILITY,
   hasLocation,
+  isPro,
   locationLabel,
   shortLocationLabel,
   Professional,
@@ -108,6 +109,8 @@ export const toCard = (professional: Professional, user: Point | null) => {
     shortAddress: shortLocationLabel(professional),
     distance: km === null ? null : formatDistance(km),
     km,
+    // An active Pro subscription (the badge only shows where the subscription exists)
+    pro: isPro(professional),
     // The cheapest service: "a partir de"
     minPrice: professional.services.length
       ? Math.min(...professional.services.map(lowestPrice))
@@ -128,6 +131,8 @@ export const search = (
   term: string,
   filters: Filters,
   user: Point | null,
+  // Where the Pro subscription exists, a professional with it comes first when no order was chosen
+  proFirst = false,
 ): Card[] => {
   const text = normalize(term.trim());
   const { date, tags, minRating, maxKm, sort, neighborhood, home, studio } = filters;
@@ -152,8 +157,9 @@ export const search = (
     })
     .map((professional) => toCard(professional, user));
 
-  // No chosen order keeps the order of the catalog. Without a price or a distance, a professional goes last.
-  if (!sort) return found;
+  // No chosen order keeps the order of the catalog (Pro first, where the subscription exists: the sort is stable).
+  // Without a price or a distance, a professional goes last.
+  if (!sort) return proFirst ? found.sort((a, b) => Number(b.pro) - Number(a.pro)) : found;
   const last = (value: number | null, fallback: number) => value ?? fallback;
   return found.sort((a, b) => {
     switch (sort) {

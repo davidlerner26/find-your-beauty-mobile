@@ -12,26 +12,30 @@ export function MapPin({
   lat,
   lng,
   selected,
+  pro = false,
   onPress,
 }: {
   lat: number;
   lng: number;
   selected: boolean;
+  // A subscriber (where the subscription exists): gold, and above the others
+  pro?: boolean;
   onPress: () => void;
 }) {
   // A custom view is drawn into an image that the map keeps: it has to be watched again when the color changes,
   // and can be left alone after a moment (the state is adjusted while rendering, not in an effect)
   const marker = useRef<React.ElementRef<typeof Marker>>(null);
   const [watching, setWatching] = useState(true);
-  const [drawn, setDrawn] = useState(selected);
-  if (drawn !== selected) {
-    setDrawn(selected);
+  const color = selected ? fixed.accent : pro ? fixed.pro : fixed.brand;
+  const [drawn, setDrawn] = useState(color);
+  if (drawn !== color) {
+    setDrawn(color);
     setWatching(true);
   }
   useEffect(() => {
     const timer = setTimeout(() => setWatching(false), 500);
     return () => clearTimeout(timer);
-  }, [selected]);
+  }, [color]);
 
   return (
     <Marker
@@ -39,7 +43,7 @@ export function MapPin({
       coordinate={{ latitude: lat, longitude: lng }}
       anchor={{ x: 0.5, y: 1 }}
       tracksViewChanges={watching}
-      zIndex={selected ? 1 : 0}
+      zIndex={selected ? 2 : pro ? 1 : 0}
       // The map selects a marker that is tapped: the screen keeps the selection. There is no <Callout> child: with the
       // new architecture it breaks the index of the next child and the app closes when the map mounts.
       onPress={() => {
@@ -48,7 +52,7 @@ export function MapPin({
       }}
     >
       <View style={styles.box}>
-        <View style={[styles.drop, { backgroundColor: selected ? fixed.accent : fixed.brand }]} />
+        <View style={[styles.drop, { backgroundColor: color }]} />
         <View style={styles.dot} />
       </View>
     </Marker>

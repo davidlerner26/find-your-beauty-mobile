@@ -5,7 +5,9 @@ const dev = {
   name: 'dev' as 'dev' | 'prod',
   siteUrl: 'https://dev.findyourbeauty.com.br',
   // Features that are only on in the test environment for now (production has them off, like the site)
-  features: { featuredProfessionals: true },
+  // `proSubscription`: the Pro plan of the professionals (badge, featured rotation, priority). The subscription itself is made on
+  // the site: the app only shows it. Off in production until the owner says to bring it there (docs/assinatura-pro.md of the site).
+  features: { featuredProfessionals: true, proSubscription: true },
   // Instagram API with Instagram Login: the same Meta app as the site (the id is public)
   instagramAppId: '1138530759119798',
   // OAuth clients of the Firebase project (Google Cloud Console > Credentials). They are public identifiers.
@@ -37,7 +39,7 @@ export const environment =
     ? {
         name: 'prod' as const,
         siteUrl: env.EXPO_PUBLIC_SITE_URL ?? 'https://findyourbeauty.com.br',
-        features: { featuredProfessionals: false },
+        features: { featuredProfessionals: false, proSubscription: false },
         instagramAppId: env.EXPO_PUBLIC_INSTAGRAM_APP_ID ?? '',
         google: {
           webClientId: env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID ?? '',

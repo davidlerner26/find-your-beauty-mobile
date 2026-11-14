@@ -209,8 +209,13 @@ export type Professional = {
   visible?: boolean;
   // What clients see: visible and complete. Computed when the profile is saved.
   published?: boolean;
+  // The Pro subscription is active (written only by the Cloud Functions of the site, from Stripe)
+  pro?: boolean;
   availability?: Availability;
 };
+
+// A professional with an active Pro subscription (the badge, the priority and the featured section)
+export const isPro = (professional: Pick<Professional, 'pro'>) => professional.pro === true;
 
 // Home-only professionals have no address on the map
 export const hasLocation = (professional: Pick<Professional, 'serviceMode' | 'position'>) =>

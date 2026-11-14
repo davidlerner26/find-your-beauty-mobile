@@ -11,6 +11,7 @@ import { CardSurface } from './card-surface';
 import { HeartButton } from './heart-button';
 import { Link } from './link';
 import { PhotoPager } from './photo-pager';
+import { ProBadge } from './pro-badge';
 import { Rating } from './rating';
 import { Text } from './text';
 
@@ -42,7 +43,10 @@ export function SearchResultCard({ card }: { card: Card }) {
         <Link href={PATHS.professional(card.id) as never} accessibilityLabel={card.name}>
           <View style={styles.info}>
             <Text style={[styles.tags, { color: theme.primary }]}>{catalogText(card.tags)}</Text>
-            <Text style={styles.name}>{card.name}</Text>
+            <View style={styles.nameRow}>
+              <Text style={[styles.name, styles.nameText]}>{card.name}</Text>
+              <ProBadge pro={card.pro} />
+            </View>
             <Text style={styles.address}>{card.address}</Text>
             {card.minPrice !== null ? (
               <Text style={[styles.price, { color: theme.primary }]}>
@@ -66,6 +70,8 @@ const styles = StyleSheet.create({
   info: { padding: 16, gap: 2 },
   tags: { fontSize: 13 },
   name: { fontSize: 18, fontWeight: '700', color: fixed.ink },
+  nameRow: { flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', columnGap: 8 },
+  nameText: { flexShrink: 1 },
   address: { color: fixed.gray, fontSize: 14, marginTop: 2 },
   price: { fontSize: 14, fontWeight: '600', marginTop: 4 },
   rating: { flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', marginTop: 8 },

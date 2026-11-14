@@ -11,6 +11,7 @@ import {
 } from 'react';
 import { useProfessionals } from '../contexts/professionals';
 import { useUserLocation } from '../contexts/location';
+import { environment } from '../config/environment';
 import { neighborhoodsWith, search, suggestions } from '../utils/search-filter';
 import { log } from '../utils/log';
 import {
@@ -81,7 +82,13 @@ export function useSearch() {
       neighborhoods: neighborhoodsWith(published.map((professional) => professional.address)),
       activeFilterCount: activeFilterCount(state),
       searching: isSearching(state),
-      results: search(published, state.term, state.applied, position),
+      results: search(
+        published,
+        state.term,
+        state.applied,
+        position,
+        environment.features.proSubscription,
+      ),
       suggestions: suggestions(published, position),
     };
   }, [state, published, position]);

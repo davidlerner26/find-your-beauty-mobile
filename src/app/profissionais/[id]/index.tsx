@@ -16,6 +16,7 @@ import { Image } from 'expo-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { HeartButton } from '../../../components/heart-button';
 import { PhotoPager } from '../../../components/photo-pager';
+import { ProBadge } from '../../../components/pro-badge';
 import { ReviewsSection } from '../../../components/reviews-section';
 import { Screen } from '../../../components/screen';
 import { ServiceCard } from '../../../components/service-card';
@@ -179,6 +180,7 @@ function Details({ artist }: { artist: Professional }) {
               <Text accessibilityRole="header" style={styles.name}>
                 {artist.name}
               </Text>
+              <ProBadge pro={artist.pro} />
               {auth.role !== 'professional' ? (
                 <Pressable
                   accessibilityRole="button"
