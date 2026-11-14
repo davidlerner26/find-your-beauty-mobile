@@ -47,10 +47,12 @@ import { log } from '../utils/log';
 import { formatPhone } from '../utils/phone';
 import {
   aboutToParagraphs,
+  hasPlace as placeOn,
   invalidDayKeys,
   missingFields,
   paragraphsToAbout,
   toAvailabilityDraft,
+  togglePlace as toggleServicePlace,
 } from '../utils/profile-form';
 import { isServiceComplete, ServiceDraft, toService, toServiceDraft } from '../utils/service-draft';
 import { WEEKDAYS } from '../utils/weekdays';
@@ -161,14 +163,10 @@ function Form({ profile, signup }: { profile: Professional; signup: boolean }) {
   }, [uid]);
 
   const needsAddress = draft.serviceMode !== 'home';
-  const hasPlace = (place: 'studio' | 'home') =>
-    draft.serviceMode === place || draft.serviceMode === 'both';
-  // Each place is switched on or off on its own; both on is 'both'
-  const togglePlace = (place: 'studio' | 'home') => {
-    const studio = hasPlace('studio') !== (place === 'studio');
-    const home = hasPlace('home') !== (place === 'home');
-    set({ serviceMode: studio && home ? 'both' : studio ? 'studio' : home ? 'home' : null });
-  };
+  const hasPlace = (place: 'studio' | 'home') => placeOn(draft.serviceMode, place);
+  // Each place is switched on or off on its own (both on is 'both'), but one always stays on
+  const togglePlace = (place: 'studio' | 'home') =>
+    set({ serviceMode: toggleServicePlace(draft.serviceMode, place) });
 
   const missing = missingFields({
     name: draft.name,
@@ -459,6 +457,13 @@ function Form({ profile, signup }: { profile: Professional; signup: boolean }) {
           onChangeText={(text) => set({ phone: formatPhone(text) })}
           keyboardType="phone-pad"
         />
+        <FormField
+          label={t('Sobre você')}
+          placeholder={t('Conte sobre o seu trabalho')}
+          value={draft.about}
+          onChangeText={(about) => set({ about })}
+          multiline
+        />
 
         <Text accessibilityRole="header" style={[styles.subheading, { color: theme.text }]}>
           {t('Foto')}
@@ -488,14 +493,6 @@ function Form({ profile, signup }: { profile: Professional; signup: boolean }) {
             onChange={(imagePosition) => set({ imagePosition })}
           />
         ) : null}
-
-        <FormField
-          label={t('Sobre você')}
-          placeholder={t('Conte sobre o seu trabalho')}
-          value={draft.about}
-          onChangeText={(about) => set({ about })}
-          multiline
-        />
       </FormSection>
 
       <FormSection title="Instagram">

@@ -159,7 +159,8 @@ const makeStyles = (theme: Theme) =>
       backgroundColor: theme.name === 'pro' ? theme.primaryLight : fixed.surface,
     },
     toggle: { transform: [{ scale: 0.8 }], marginHorizontal: -6 },
-    dayName: { flexShrink: 1, minWidth: 64, fontWeight: '600', color: theme.text },
+    // A fixed width, so the switch, the name and the times line up in columns on every row
+    dayName: { width: 72, fontWeight: '600', color: theme.text },
     off: { flex: 1, textAlign: 'right', color: theme.muted },
     bold: { fontWeight: '700', color: theme.text },
     blockedChip: {
