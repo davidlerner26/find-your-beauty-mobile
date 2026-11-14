@@ -30,7 +30,7 @@ export function Inbox({ pro = false }: { pro?: boolean }) {
   const router = useRouter();
   const theme = useTheme();
   const auth = useAuth();
-  const { conversations } = useMessages();
+  const { conversations, unreadTotal: unreadMessages } = useMessages();
   const notifications = useNotifications();
   const professionals = useProfessionals();
   const [tab, setTab] = useState<'mensagens' | 'notificacoes'>('mensagens');
@@ -101,25 +101,36 @@ export function Inbox({ pro = false }: { pro?: boolean }) {
   return (
     <View style={styles.screen}>
       <View style={[styles.strip, { borderBottomColor: theme.line }]}>
-        {(['mensagens', 'notificacoes'] as const).map((name) => (
-          <Pressable
-            key={name}
-            accessibilityRole="tab"
-            accessibilityState={{ selected: tab === name }}
-            accessibilityLabel={name === 'mensagens' ? t('Mensagens') : t('Notificações')}
-            onPress={() => setTab(name)}
-            style={styles.stripTab}
-          >
-            <Text
-              style={[styles.stripText, tab === name && [styles.stripOn, { color: theme.primary }]]}
+        {(['mensagens', 'notificacoes'] as const).map((name) => {
+          const label = name === 'mensagens' ? t('Mensagens') : t('Notificações');
+          // The news of the other tab can't be seen from this one: a dot says there is something there
+          const news = name === 'mensagens' ? unreadMessages > 0 : notifications.unreadTotal > 0;
+          return (
+            <Pressable
+              key={name}
+              accessibilityRole="tab"
+              accessibilityState={{ selected: tab === name }}
+              accessibilityLabel={news ? t('{{name}}, com novidades', { name: label }) : label}
+              onPress={() => setTab(name)}
+              style={styles.stripTab}
             >
-              {name === 'mensagens' ? t('Mensagens') : t('Notificações')}
-            </Text>
-            {tab === name ? (
-              <View style={[styles.stripDot, { backgroundColor: theme.primary }]} />
-            ) : null}
-          </Pressable>
-        ))}
+              <View style={styles.stripLabel}>
+                <Text
+                  style={[
+                    styles.stripText,
+                    tab === name && [styles.stripOn, { color: theme.primary }],
+                  ]}
+                >
+                  {label}
+                </Text>
+                {news ? <View style={styles.stripNews} /> : null}
+              </View>
+              {tab === name ? (
+                <View style={[styles.stripDot, { backgroundColor: theme.primary }]} />
+              ) : null}
+            </Pressable>
+          );
+        })}
       </View>
 
       {!auth.user ? (
@@ -258,7 +269,10 @@ const styles = StyleSheet.create({
   list: { paddingHorizontal: 24, paddingBottom: 48 },
   strip: { flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: fixed.borderSoft },
   stripTab: { flex: 1, alignItems: 'center', paddingTop: 20, paddingBottom: 16 },
+  stripLabel: { flexDirection: 'row', alignItems: 'flex-start', gap: 4 },
   stripText: { color: fixed.gray, fontSize: 16 },
+  // The dot of the accent color, like the one on the icons of the bottom bar
+  stripNews: { width: 9, height: 9, marginTop: 1, borderRadius: 5, backgroundColor: fixed.accent },
   stripOn: { fontWeight: '600' },
   stripDot: { position: 'absolute', bottom: 4, width: 5, height: 5, borderRadius: 3 },
   flex: { flex: 1 },

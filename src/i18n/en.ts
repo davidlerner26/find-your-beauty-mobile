@@ -655,4 +655,5 @@ export const en: Record<string, string> = {
   'Seu plano Pro está ativo': 'Your Pro plan is active',
   'Assine o Pro no site para ter mais visibilidade para o seu perfil.':
     'Subscribe to Pro on the website to give your profile more visibility.',
+  '{{name}}, com novidades': '{{name}}, with news',
 };
