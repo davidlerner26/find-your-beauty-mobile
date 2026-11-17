@@ -109,11 +109,12 @@ in which case the site needs a page that hands the code over to the app.
 
 **Pro subscription (read only).** The subscription of the professionals is made on the site (Stripe, in the site's repo): the app
 only **shows** it, because the stores ask for their own purchase flow for subscriptions sold inside an app. `pro` is a field of
-the public profile written only by the Cloud Functions. `features.proSubscription` (on in the test environment, **off in
-production** until the owner says to bring it there; a spec in `config/environment.spec.ts` fails if it is turned on by accident)
-shows the "Pro" badge (`components/pro-badge.tsx`), puts subscribers first in the search when no order is chosen, draws their pins
-in gold and makes the featured section of the home the subscribers in a rotation (`utils/featured.ts`, the same rule as the site).
-On the profile of a professional a line says "Plano Pro ativo" or to subscribe on the site, with no price and no button.
+the public profile written only by the Cloud Functions. Two flags in `config/environment.ts`: `features.proSubscription` (the plan:
+the "Pro" badge in `components/pro-badge.tsx`, subscribers first in the search when no order is chosen, gold pins, and the
+featured section of the home made of the subscribers in a rotation, `utils/featured.ts`, the same rule as the site) is on
+everywhere; `features.proSubscriptionSignup` (the profile tells a professional who is not Pro to subscribe on the site, with no
+price and no button) is **off in production** until the owner says to open the subscription. A subscriber always sees "Plano Pro
+ativo". A spec in `config/environment.spec.ts` fails if the signup flag is turned on in production by accident.
 
 **Legal pages** are the pages of the site, opened in the in-app browser (`components/legal-screen.tsx`): one copy of the
 text in three languages. **The address** of the sign up is checked by geocoding it (`expo-location`), since the site's

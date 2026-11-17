@@ -1,6 +1,12 @@
 describe('environments', () => {
   const load = (appEnv?: string) => {
-    let environment!: { features: { featuredProfessionals: boolean; proSubscription: boolean } };
+    let environment!: {
+      features: {
+        featuredProfessionals: boolean;
+        proSubscription: boolean;
+        proSubscriptionSignup: boolean;
+      };
+    };
     jest.isolateModules(() => {
       if (appEnv) process.env.EXPO_PUBLIC_APP_ENV = appEnv;
       else delete process.env.EXPO_PUBLIC_APP_ENV;
@@ -18,14 +24,20 @@ describe('environments', () => {
     expect(load().features.featuredProfessionals).toBe(true);
   });
 
-  // The Pro subscription stays in the test environment until the owner says to bring it to production
-  // (docs/assinatura-pro.md of the site). Changing this is the go-live: change it together with the checklist of that
-  // document.
-  it('production has no Pro subscription: no badge, no featured rotation, no plan on the profile', () => {
-    expect(load('prod').features.proSubscription).toBe(false);
+  // The Pro plan is ready in production (nothing shows while nobody subscribes), but nobody is told to subscribe until the owner
+  // says to open the subscription (docs/assinatura-pro.md of the site). Opening it is the go-live: change
+  // `proSubscriptionSignup` together with the checklist of that document.
+  it('production is ready for the Pro plan but does not tell anyone to subscribe', () => {
+    const { features } = load('prod');
+
+    expect(features.proSubscription).toBe(true);
+    expect(features.proSubscriptionSignup).toBe(false);
   });
 
-  it('the test environment shows the Pro subscription', () => {
-    expect(load().features.proSubscription).toBe(true);
+  it('the test environment shows the Pro subscription and the way to subscribe', () => {
+    const { features } = load();
+
+    expect(features.proSubscription).toBe(true);
+    expect(features.proSubscriptionSignup).toBe(true);
   });
 });

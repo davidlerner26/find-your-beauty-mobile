@@ -405,7 +405,9 @@ function Form({ profile, signup }: { profile: Professional; signup: boolean }) {
       <Text accessibilityRole="header" style={[styles.title, { color: theme.text }]}>
         {signup ? t('Complete seu cadastro') : t('Meu perfil')}
       </Text>
-      {environment.features.proSubscription && !signup ? (
+      {environment.features.proSubscription &&
+      !signup &&
+      (profile.pro || environment.features.proSubscriptionSignup) ? (
         // The subscription is made on the site: the app only says where the plan is
         <View style={[styles.plan, { borderColor: theme.line }]}>
           <Text accessibilityRole="header" style={[styles.planTitle, { color: theme.text }]}>
